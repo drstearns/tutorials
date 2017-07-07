@@ -1,0 +1,24 @@
+{
+  "name": "tutorials",
+  "version": "1.0.0",
+  "description": "tutorials for programming courses",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drstearns/tutorials.git"
+  },
+  "author": "Dave Stearns <dlsinfo@uw.edu>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/drstearns/tutorials/issues"
+  },
+  "homepage": "https://github.com/drstearns/tutorials#readme",
+  "dependencies": {
+    "clean-css": "^4.1.5",
+    "html-minifier": "^3.5.2",
+    "showdown": "^1.7.1"
+  }
+}
