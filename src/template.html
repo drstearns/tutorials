@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.3/css/bulma.min.css">
+    <link rel="icon" href="../img/page-icon.png">
+
+	<!-- TODO: add Open Graph summary properties -->
+
+    <title>{{title}}</title>
+
+    <style>        
+        .bookmark-link {
+            color: #DDD; margin-left: 0.25em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+    	<div class="hero is-primary">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">{{title}}</h1>
+                    <p class="subtitle">{{subtitle}}</p>
+                </div>
+            </div>
+    	</div>
+    </header>
+    <main class="section">
+    	<div class="container">
+            <div class="content">
+                {{{content}}}
+            </div>
+    	</div>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="content">            
+                <p>Created by
+                    <a href="https://ischool.uw.edu/people/faculty/dlsinfo">David Stearns</a>,
+                    <a href="https://ischool.uw.edu">The Information School</a>, 
+                    <a href="https://uw.edu">University of Washington</a>
+                </p>
+                <p>
+                    <a href="..">table of contents</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        var headings = document.querySelectorAll("h2,h3,h4,h5");
+        headings.forEach(function(elem) {
+            var bmark = document.createElement("a");
+            bmark.textContent = "#";
+            bmark.href = "#" + elem.id;
+            bmark.classList.add("bookmark-link");
+            elem.appendChild(bmark);
+        });        
+    </script>
+</body>
+</html>

@@ -4,6 +4,9 @@
   "description": "tutorials for programming courses",
   "main": "index.js",
   "scripts": {
+    "start": "./scripts/start.js",
+    "build": "./scripts/build.js",
+    "clean": "rm -rf docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,7 +20,9 @@
   },
   "homepage": "https://github.com/drstearns/tutorials#readme",
   "dependencies": {
+    "browser-sync": "^2.18.12",
     "clean-css": "^4.1.5",
+    "handlebars": "^4.0.10",
     "html-minifier": "^3.5.2",
     "showdown": "^1.7.1"
   }
