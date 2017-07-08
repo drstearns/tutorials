@@ -55,13 +55,23 @@ cd -
 
 The lines above that are prefixed with `#` are comments, just like comments you add to your Java or JavaScript source files. Anything following a `#` character on the same line will be ignored by the command-line shell.
 
+## The PATH Variable
+
 The other critical environment variable that is already set for you is the `$PATH` variable, which determines which directories the shell looks in for programs that you try to execute at the command-line. You can see your current path using that same `echo` command:
 
 ```bash
 echo $PATH
 ```
 
-You can adjust the `PATH` variable by resetting it, but that change will only affect the current command-line shell window. To make that change persistent across all shell windows you might open, we first need to understand the scoping rules for environment variables.
+You can adjust the `PATH` variable by resetting it, and you can refer to the existing value while you do that. For example, to add a new directory to the end of your path, you can use a command like this:
+
+```bash
+export PATH=$PATH:$HOME/bin
+```
+
+The shell will first expand `$PATH` to be the current value of the `PATH` environment variable, and then expand `$HOME` to be the current value of the `HOME` environment variable (your home directory). So in total, this command will add the `bin` directory within your home directory to the path.
+
+But that change will only affect the current command-line shell window. To make that change persistent across all shell windows you might open, we first need to understand the scoping rules for environment variables.
 
 ## Scoping Rules for Environment Variables
 
