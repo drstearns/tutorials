@@ -98,7 +98,7 @@ function processTutorial(srcPath, destPath) {
         let meta = require(path.join(srcPath, "meta.json"));
 
         //default author
-        meta.author = meta.author || "Dave Stearns";
+        meta.author = meta.author || {name: "Dave Stearns", url: "https://ischool.uw.edu/people/faculty/dlsinfo"};
 
         //set last edited time
         meta.lastEdited = moment(fs.statSync(srcTutorial).mtimeMs).format("ll");

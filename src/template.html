@@ -42,9 +42,11 @@
                             <h1 class="title">{{title}}</h1>
                             <p class="subtitle">{{subtitle}}</p>
                         </div>
-                        <div class="column is-narrow">
+                        <div class="column is-narrow">                            
                             <a href=".." class="home-link">
-                                <i class="fa fa-home fa-2x" aria-hidden="true" aria-label="back to table of contents"></i>
+                                <span class="icon is-medium">
+                                    <i class="fa fa-home" aria-hidden="true" aria-label="back to table of contents"></i>
+                                </span>
                             </a>
                         </div>
                     </div>
@@ -55,7 +57,11 @@
     <main class="section">
     	<div class="container">
             <div class="content">
-                <p class="byline">Last edited on {{lastEdited}} by {{author}}</p>
+                <p class="byline">Last edited on {{lastEdited}} 
+                {{#if author}}
+                by <a href="{{author.url}}">{{author.name}}</a>
+                {{/if}}
+                </p>
                 {{{content}}}
             </div>
     	</div>

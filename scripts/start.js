@@ -14,6 +14,11 @@ const buildScript = path.join(__dirname, "build.js");
 console.log("building tutorials...");
 let buildProc = spawn(buildScript);
 
+function rebuild() {
+    console.log("rebuilding...");
+    spawn(buildScript);
+}
+
 buildProc.on("close", (code) => {
     if (code !== 0) {
         console.error("build failed");
@@ -21,10 +26,7 @@ buildProc.on("close", (code) => {
     }
 
     console.log("watching %s...", srcDir);
-    fs.watch(srcDir, {recursive: true}, () => {
-        console.log("rebuilding...");
-        spawn(buildScript);
-    });
+    fs.watch(srcDir, {recursive: true}, rebuild);
 
     browserSync.init({
         server: docsDir,
