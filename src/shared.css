@@ -1,0 +1,7 @@
+.is-funky {
+    background-image: linear-gradient(to right, #006064, #880E4F);
+}
+.is-funky .title,
+.is-funky .subtitle {
+    color: #FFF;
+}    	

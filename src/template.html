@@ -6,13 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.3/css/bulma.min.css">
+    <link rel="stylesheet" href="../lib/prism.css">
     <link rel="icon" href="../img/page-icon.png">
 
 	<!-- TODO: add Open Graph summary properties -->
 
     <title>{{title}}</title>
 
-    <style>        
+    <style>
+        {{sharedCSS}}
+
         .bookmark-link {
             color: #DDD; margin-left: 0.25em;
         }
@@ -20,7 +23,7 @@
 </head>
 <body>
     <header>
-    	<div class="hero is-primary">
+    	<div class="hero is-funky">
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title">{{title}}</h1>
@@ -51,6 +54,7 @@
         </div>
     </footer>
 
+    <script src="../lib/prism.js"></script>
     <script>
         var headings = document.querySelectorAll("h2,h3,h4,h5");
         headings.forEach(function(elem) {

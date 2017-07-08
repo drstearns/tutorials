@@ -38,6 +38,8 @@ const templatePath = path.join(srcDir, "template.html")
 const template = fs.readFileSync(templatePath, "utf-8");
 const mergeWithTemplate = handlebars.compile(template);
 
+const sharedCSS = fs.readFileSync(path.join(srcDir, "shared.css"), "utf-8");
+
 function isNewer(srcPath, destPath) {
     if (!fs.existsSync(destPath)) {
         return true;
@@ -53,31 +55,28 @@ function ensureDir(dirPath) {
     }
 }
 
-function processHTML(srcPath, destPath) {
+function processIndex(srcPath, destPath) {
     if (isNewer(srcPath, destPath)) {
         let contents = fs.readFileSync(srcPath, "utf-8");
-        let minified = htmlMinify(contents, htmlMinifyOpts);
+        let mergeIndex = handlebars.compile(contents);
+        let merged = mergeIndex({sharedCSS: sharedCSS});
+        let minified = htmlMinify(merged, htmlMinifyOpts);
         fs.writeFileSync(destPath, minified, "utf-8");
     }
 }
 
-function processImage(srcPath, destPath) {
-    //if srcPath is a directory, recurse
-    if (fs.lstatSync(srcPath).isDirectory()) {
-        processImages(srcPath, destPath);
-        return
-    }
-
-    //copy file if necessary
-    if (isNewer(srcPath, destPath)) {
-        fs.createReadStream(srcPath).pipe(fs.createWriteStream(destPath));
-    }
-}
-
-function processImages(srcPath, destPath) {
+function copyTree(srcPath, destPath) {
     ensureDir(destPath);
     fs.readdirSync(srcPath).forEach(f => {
-        processImage(path.join(srcPath, f), path.join(destPath, f));
+        let srcFilePath = path.join(srcPath, f);
+        let destFilePath = path.join(destPath, f);
+        if (fs.lstatSync(srcFilePath).isDirectory()) {
+            copyTree(srcFilePath, destFilePath);
+        } else {
+            if (isNewer(srcFilePath, destFilePath)) {
+                fs.createReadStream(srcFilePath).pipe(fs.createWriteStream(destFilePath));
+            }            
+        }
     });
 }
 
@@ -87,7 +86,7 @@ function processTutorial(srcPath, destPath) {
     //if the tutorial has an img directory, process that
     let srcImgDir = path.join(srcPath, "img");
     if (fs.existsSync(srcImgDir)) {
-        processImages(srcImgDir, path.join(destPath, "img"));
+        copyTree(srcImgDir, path.join(destPath, "img"))
     }
 
     let srcTutorial = path.join(srcPath, "index.md");
@@ -100,6 +99,9 @@ function processTutorial(srcPath, destPath) {
         //set the content
         let md = fs.readFileSync(srcTutorial, "utf-8");
         meta.content = mdConverter.makeHtml(md);
+
+        //set shared CSS
+        meta.sharedCSS = sharedCSS;
 
         //merge and minify
         let merged = mergeWithTemplate(meta);
@@ -114,12 +116,13 @@ function processTutorial(srcPath, destPath) {
 ensureDir(docsDir);
 
 //process the table of contents page
-processHTML(path.join(srcDir, "index.html"), path.join(docsDir, "index.html"));
+processIndex(path.join(srcDir, "index.html"), path.join(docsDir, "index.html"));
 
-//process the global images dir
-processImages(path.join(srcDir, "img"), path.join(docsDir, "img"));
+//process the global img and lib dirs
+copyTree(path.join(srcDir, "img"), path.join(docsDir, "img"));
+copyTree(path.join(srcDir, "lib"), path.join(docsDir, "lib"));
 
 //process each tutorial directory
 fs.readdirSync(srcDir)
-    .filter(f => fs.lstatSync(path.join(srcDir, f)).isDirectory() && f !== "img")
+    .filter(f => fs.lstatSync(path.join(srcDir, f)).isDirectory() && f !== "img" && f !== "lib")
     .forEach(dir => processTutorial(path.join(srcDir, dir), path.join(docsDir, dir)));
