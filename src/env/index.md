@@ -53,6 +53,8 @@ ls ~/Documents
 cd -
 ```
 
+The lines above that are prefixed with `#` are comments, just like comments you add to your Java or JavaScript source files. Anything following a `#` character on the same line will be ignored by the command-line shell.
+
 The other critical environment variable that is already set for you is the `$PATH` variable, which determines which directories the shell looks in for programs that you try to execute at the command-line. You can see your current path using that same `echo` command:
 
 ```bash
@@ -63,9 +65,9 @@ You can adjust the `PATH` variable by resetting it, but that change will only af
 
 ## Scoping Rules for Environment Variables
 
-When you declare a variable inside a function in languages like Java or JavaScript, that variable is visible only inside that function. We call that the variables "scope." Environment variables have a scope as well, and understanding their scoping rules will help you realize why some environment variables are visible in every command line shell, while others are not.
+When you declare a variable inside a function in languages like Java or JavaScript, that variable is visible only inside that function. We call that the variable's "scope." Environment variables have a scope as well, and understanding their scoping rules will help you realize why some environment variables are visible in every command line shell, while others are not.
 
-When we declared a variable above, we used the keyword `export` in front of the variable name. This sets the variable's scope so that it is visible in the current command-line shell, and any other program launched from that shell. If you omit the `export` keyword, the shell will create the variable, but it will be visible only in the current shell, and _not in any other program launched from that shell_. Unexported private variables can be useful at times, but we typically create environment variables so that other programs can read them, so you will most often use the `export` when declaring a new environment variable.
+When we declared a variable above, we used the keyword `export` in front of the variable name. This sets the variable's scope so that it is visible in the current command-line shell, and any other program launched from that shell. If you omit the `export` keyword, the shell will create the variable, but it will be visible only in the current shell, and _not in any other program launched from that shell_. Unexported private variables can be useful at times, but we typically create environment variables so that other programs can read them, so you will most often use `export` when declaring a new environment variable.
 
 But even if you use the `export` keyword, the variable you declare won't be visible to _another_ command-line shell that you start from your desktop. To see this in action, start another command-line (terminal) window and type that echo command again:
 
@@ -79,7 +81,7 @@ To declare a variable that is visible in every command-line shell you open, we n
 
 ## Declaring Persistent User-Global Variables
 
-Now that we understand the scoping rules for environment variables, we can now explain how to set persistent variables that are global for the current operating system user. Follow the instructions below for your particular operating system.
+Now that we understand the scoping rules for environment variables, I can now explain how to set persistent variables that are global for the current operating system user. Follow the instructions below for your particular operating system.
 
 ### MacOS
 
