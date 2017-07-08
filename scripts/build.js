@@ -7,6 +7,7 @@ const path = require("path");
 const htmlMinify = require("html-minifier").minify;
 const showdown = require("showdown");
 const handlebars = require("handlebars");
+const moment = require("moment");
 
 const htmlMinifyOpts = {
     collapseWhitespace: true,
@@ -44,8 +45,8 @@ function isNewer(srcPath, destPath) {
     if (!fs.existsSync(destPath)) {
         return true;
     }
-    let srcStat = fs.lstatSync(srcPath);
-    let destStat = fs.lstatSync(destPath);
+    let srcStat = fs.statSync(srcPath);
+    let destStat = fs.statSync(destPath);
     return srcStat.ctime > destStat.ctime;
 }
 
@@ -70,7 +71,7 @@ function copyTree(srcPath, destPath) {
     fs.readdirSync(srcPath).forEach(f => {
         let srcFilePath = path.join(srcPath, f);
         let destFilePath = path.join(destPath, f);
-        if (fs.lstatSync(srcFilePath).isDirectory()) {
+        if (fs.statSync(srcFilePath).isDirectory()) {
             copyTree(srcFilePath, destFilePath);
         } else {
             if (isNewer(srcFilePath, destFilePath)) {
@@ -95,7 +96,13 @@ function processTutorial(srcPath, destPath) {
     if (isNewer(srcTutorial, destTutorial) || isNewer(templatePath, destTutorial)) {        
         //load the tutorial meta-data
         let meta = require(path.join(srcPath, "meta.json"));
-        
+
+        //default author
+        meta.author = meta.author || "Dave Stearns";
+
+        //set last edited time
+        meta.lastEdited = moment(fs.statSync(srcTutorial).mtimeMs).format("ll");
+
         //set the content
         let md = fs.readFileSync(srcTutorial, "utf-8");
         meta.content = mdConverter.makeHtml(md);
@@ -124,5 +131,5 @@ copyTree(path.join(srcDir, "lib"), path.join(docsDir, "lib"));
 
 //process each tutorial directory
 fs.readdirSync(srcDir)
-    .filter(f => fs.lstatSync(path.join(srcDir, f)).isDirectory() && f !== "img" && f !== "lib")
+    .filter(f => fs.statSync(path.join(srcDir, f)).isDirectory() && f !== "img" && f !== "lib")
     .forEach(dir => processTutorial(path.join(srcDir, dir), path.join(docsDir, dir)));

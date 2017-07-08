@@ -24,6 +24,7 @@
     "clean-css": "^4.1.5",
     "handlebars": "^4.0.10",
     "html-minifier": "^3.5.2",
+    "moment": "^2.18.1",
     "showdown": "^1.7.1"
   }
 }
