@@ -10,13 +10,17 @@ Open a new command-line (terminal) window, so you can follow along as I explain 
 export MY_VARIABLE="some value"
 ```
 
-This creates a new environment variable named `MY_VARIABLE` set to the string `"some value"`. To see the value of an environment variable, use the `echo` command and refer to the variable like so:
+This creates a new environment variable named `MY_VARIABLE` set to the string `"some value"`. The double-quotes around `"some value"` allow us to embed a space in the string while still treating it as a singular value. 
+
+To see the value of an environment variable, use the `echo` command and refer to the variable like so:
 
 ```bash
 echo $MY_VARIABLE
 ```
 
-This will print the current value of the variable named `MY_VARIABLE`, which at this point is `some value`. Note that you use a `$` on the front when you refer to the variable in a command; that way the shell knows you are referring to an environment variable, as opposed to a file or some other program. The `echo` command simply prints whatever you pass to it, so in this case we are simply asking it to print the current value of the `MY_VARIABLE` environment variable.
+This will print the current value of the variable named `MY_VARIABLE`, which at this point is `some value`. Note that you use a `$` on the front when you refer to the variable in a command; that way the shell knows you are referring to an environment variable, as opposed to a file or some other program. 
+
+When the shell sees the `$` prefix, it "expands" the variable into its current value, and then continues processing the overall command. In this case, the shell expand this into `echo "some value"` and then runs the `echo` command passing that string as the first and only parameter. The `echo` command simply prints whatever you pass to it, so it prints `some value` and exits.
 
 You can name your variables whatever you want, and you can actually use any casing you want, but we traditionally use all caps for environment variables. This keeps them visibly separate from the myriad of commands, programs, and files you can refer to at the command line, which are typically in lower-case.
 
@@ -28,7 +32,7 @@ You can use environment variables in any command, and there are several that are
 echo "Hello, $USER"
 ```
 
-Notice the use of double quotation marks. These are used to wrap a string that might contains spaces or other characters that have special meaning to the shell. But note that you can still use environment variables within these strings. The variables will be "expanded" into their current value before the string is passed to the `echo` command. This expansion happens only when you use double-quotes; if you use single quotes, the `$USER` will be treated as literal text and not a variable to be expanded.
+Notice the use of double quotation marks. These are used to wrap a string that might contains spaces or other characters that have special meaning to the shell. But note that you can still use environment variables within these strings. The variables will be expanded into their current value before the string is passed to the `echo` command. This expansion happens only when you use double-quotes; if you use single quotes, the `$USER` will be treated as literal text and not a variable to be expanded.
 
 Another one that is typically set for you is `$HOME`, which is the file path to your home directory. You can use this with the `ls` command, just like you'd use any other file path:
 
@@ -93,26 +97,36 @@ To declare a variable that is visible in every command-line shell you open, we n
 
 Now that we understand the scoping rules for environment variables, I can now explain how to set persistent variables that are global for the current operating system user. Follow the instructions below for your particular operating system.
 
-### MacOS
+### MacOS and Linux
 
-MacOS (formerly OS X) is based on Unix, and it uses [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) as it's default command-line shell, so setting a persistent environment variable is done by simply editing a bash script that runs each time you open a new Terminal window. On MacOS, that script is stored in a file in your home directory named `.bash_profile` (note the leading dot). Open this file in your favorite text editor. If you installed [Visual Studio Code](https://code.visualstudio.com/) and [enabled the `code` shell command](https://code.visualstudio.com/docs/setup/mac#_command-line), you can open this file in VS Code using this command:
+Both MacOS (formerly OS X) and Linxu are based on Unix, and both use [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) as the default command-line shell. Bash has a handy feature where it will execute a script each time you open a new Terminal window, or whenver you sign-in to an account via the command-line (e.g., `ssh` or `su`). These scripts are simply text files containing commands you would have normally typed manually at the command-line, and bash will execute them silently before you even see a prompt.
+
+On MacOS, bash will run the script stored in the `.bash_profile` file in your home directory (`~/.bash_profile`) whenever you open a new Terminal window, or whenever you sign-in to an account via the command line. On Linux, bash will run the script in `~/.bashrc` when you open a new Terminal window, but will run the script in `~/.bash_profile` when you sign-in to an account at the command line.
+
+Since these scripts are run every time you open a new Terminal window, we can use them to declare persistent environment variables that will be available in all new Terminal windows we open.
+ 
+If you're on a Mac, open `~/.bash_profile` in your favorite text editor. On Linux, open `~./bashrc`. If you installed [Visual Studio Code](https://code.visualstudio.com/) and [enabled the `code` shell command](https://code.visualstudio.com/docs/setup/mac#_command-line), you can open the file in VS Code using this command:
 
 ```bash
+# on Mac
 code ~/.bash_profile
+
+# on Linux
+code ~/.bashrc
 ```
 
-Bash scripts are just simple text files containing commands you would have normally typed manually at the command-line. These commands are run sequentially when you start a new Terminal, as if you typed them yourself. So to create an environment variable that gets declared every time you open a new Terminal window, just add the variable declaration to this file:
+Bash scripts are just simple text files containing commands you would have normally typed manually at the command-line. These commands are run sequentially when you start a new Terminal, as if you typed them yourself. So to create an environment variable that gets declared every time you open a new Terminal window, just add the variable declaration to the file using the same syntax you used at the command-line:
 
 ```bash
-# new line inside ~/.bash_profile
+# new line inside ~/.bash_profile (Mac) or ~/.bashrc (Linux)
 export MY_VARIABLE="some value"
 ```
 
-Save the file, open a new Terminal window, and then echo the value of `$MY_VARIABLE`. You should now see the value in the new Terminal window, and any other Terminal window you start from now on.
+Save the file, open a new Terminal window, and then `echo $MY_VARIABLE`. You should now see the value in the new Terminal window, and any other Terminal window you start from now on.
 
-To undo this, just re-edit `~/.bash_profile` and remove that variable declaration. After you save, all new Terminal windows will no longer have that variable set.
+To undo this, just re-edit `~/.bash_profile` (Mac) or `~/.bashrc` (Linux) and remove that variable declaration. After you save, all new Terminal windows will no longer have that variable set.
 
-Editing `~/.bash_profile` has no effect on existing Terminal windows because that script is run just once when you first open the Terminal, but you can re-run the script at any time using the `source` command:
+Editing these files has no effect on existing Terminal windows because that script is run just once when you first open the Terminal, but you can re-run the script at any time using the `source` command:
 
 ```bash
 # re-run the start-up script in the current shell
@@ -126,15 +140,13 @@ This is handy whenever you add or change an environment variable, and want that 
 . ~/.bash_profile
 ```
 
-### Linux
-
-Linux also uses [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) as it's default command-line shell, but unlike MacOS, it uses `~/.bashrc` as the script it runs each time you open a new Terminal window. Follow the instructions in the [MacOS section](#secmacos), but edit `~/.bashrc` file instead of `~/.bash_profile`.
-
 ### Windows
 
-If you are using the Git Bash command-line shell on windows, follow the instructions in the [MacOS section](#secmacos). Git Bash should run a `.bash_profile` script it finds in your home directory.
+If you are using the Git Bash command-line shell on windows, follow the instructions in the [MacOS and Linux section](#secmacosandlinux). Git Bash should run a `.bash_profile` script it finds in your home directory.
 
-If you are running Windows 10 Anniversary Edition or later, you can alternatively use the new [native bash support](https://msdn.microsoft.com/en-us/commandline/wsl/about) in PowerShell. Follow their [installation instructions](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) to enable this feature. Since this enables an Ubuntu Linux subsystem, you should then follow the instructions in the [Linux section](#seclinux).
+If you are running Windows 10 Anniversary Edition or later, you can alternatively use the new [native bash support](https://msdn.microsoft.com/en-us/commandline/wsl/about) in PowerShell. Follow their [installation instructions](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) to enable this feature. Since this enables an Ubuntu Linux subsystem, you should then be able to create/edit a `~/.bashrc` file as described in the [Linux section](#secmacosandlinux) above.
+
+The other alternative on Windows is to run a Linux virutal machine, and share your source files with it so that you can continue to edit the files using your favorite graphical tools. [Vagrant](https://www.vagrantup.com/) and [Docker](https://www.docker.com/) are popular tools for doing this.
 
 
 ## Unsetting Environment Variables
