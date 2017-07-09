@@ -3,9 +3,38 @@ Although Go is [fully-compiled](../gointro/) like C and C++, its syntax and buil
 
 ## Language Syntax
 
+The syntax of Go is based on the C family of languages, so Java and JavaScript developers will find most of it very familiar, but it eliminates some of the symbols that were actually unnecessary. For example, `if` statements in most C-like languages look like this:
 
+```javascript
+if (x == "test") {
+	//...
+}
+```
+
+but those parenthesis around the condition aren't really necessary for the parser, so Go eliminates them, resulting in syntax like this;
+
+```go
+if x == "test" {
+	//...
+} 
+```
+
+Strings in Go are always in double-quotes. Single quotes are only used for single characters. Go also defines a back-tick quote symbols, which preserves line breaks and tabs:
+
+```go
+`this is a
+multi-line string
+with embedded line breaks`
+```
+
+If you commonly forgot the semi-colons at the end of statements in Java or C/C++ and were frustrated by all the compiler errors, don't worry: Go gets rid of those almost completely! Semi-colons are still necessary to separate compound statements on the same line, but in all other cases you can omit them.
+
+Go also defines a strict code style that is enforced by the `gofmt` tool. Most editor/IDE extensions will automatically run this tool on your source code whenever you save the file, and it will adjust your source code as needed. Go noobs are often taken-aback when this happens, but this is actually a good thing: it makes everyone's Go code consistent and easy-to-read. The good news is that if you use `gofmt`, you'll never loose points for sloppy code style!
 
 ## Packages and Imports
+
+
+## Functions
 
 ## Variables and the Simple Data Types
 
