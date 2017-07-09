@@ -19,7 +19,14 @@ if x == 5 {
 } 
 ```
 
-Strings in Go are always in double-quotes. Single quotes are only used for single characters. Go also defines a back-tick quote symbols, which preserves line breaks and tabs:
+Strings in Go are encoded in [UTF-8](https://en.wikipedia.org/wiki/UTF-8) and string literals are always expressed in double-quotes. Single quotes are only used for a single UTF-8 character, which they refer to as a "rune."
+
+```go
+"my string" //a string of UTF-8 characters
+'x'         //a single UTF-8 character
+```
+
+Go also allows you to wrap string literals in a back-tick symbol, which allows for multi-line strings that preserve embedded line breaks and tabs:
 
 ```go
 `this is a
@@ -27,7 +34,7 @@ multi-line string
 with embedded line breaks`
 ```
 
-If you commonly forgot the semi-colons at the end of statements in Java or C/C++ and were frustrated by all the compiler errors, don't worry: Go gets rid of those almost completely! Semi-colons are still necessary to separate compound statements on the same line, but in all other cases you can omit them.
+If you commonly forgot the semi-colons at the end of statements in Java or C/C++ and were frustrated by all the compiler errors, good news: Go gets rid of those almost completely! Semi-colons are still necessary to separate compound statements on the same line, but in all other cases you can omit them.
 
 Go also defines a strict code style that is enforced by the `gofmt` tool. Most editor/IDE extensions will automatically run this tool on your source code whenever you save the file, and it will adjust your source code as needed. Go noobs are often taken-aback when this happens, but this is actually a good thing: it makes everyone's Go code consistent and easy-to-read. The good news is that if you use `gofmt`, you'll never loose points for sloppy code style!
 
