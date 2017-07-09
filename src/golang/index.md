@@ -6,7 +6,7 @@ Although Go is [fully-compiled](../gointro/) like C and C++, its syntax and buil
 The syntax of Go is based on the C family of languages, so Java and JavaScript developers will find most of it very familiar, but it eliminates some of the symbols that were actually unnecessary. For example, `if` statements in most C-like languages look like this:
 
 ```javascript
-if (x == "test") {
+if (x == 5) {
 	//...
 }
 ```
@@ -14,7 +14,7 @@ if (x == "test") {
 but those parenthesis around the condition aren't really necessary for the parser, so Go eliminates them, resulting in syntax like this;
 
 ```go
-if x == "test" {
+if x == 5 {
 	//...
 } 
 ```
