@@ -108,7 +108,7 @@ testinstall.exe
 
 ## Structure of the src Sub-Directory
 
-Since all source code will go into the `$GOPATH/src` directory, Go defines a particular structure for this directory that will keep everything separated. The path for any cloned GitHub repo should be `$GOPATH/src/github.com/<username>/<reponame>`. For example, the repo for these tutorials (`drstearns/tutorials`) should be cloned into `$GOPATH/src/github.com/drstearns/tutorials`.
+Since all source code will go into the `$GOPATH/src` directory, Go defines a particular structure for this directory that will keep everything separated. The path for any cloned GitHub repo should be `$GOPATH/src/github.com/username/reponame`, where `username` is the GitHub user who owns the repo, and `reponame` is the name of the repository. For example, the repo for these tutorials (`drstearns/tutorials`) should be cloned into `$GOPATH/src/github.com/drstearns/tutorials`.
 
 If your repo is hosted on some other cloud service, replace the `github.com` part of the path with the domain name of your cloud service (e.g., `bitbucket.org` or `gitlab.com`).
 
