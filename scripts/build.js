@@ -91,11 +91,12 @@ function processTutorial(srcPath, destPath) {
     }
 
     let srcTutorial = path.join(srcPath, "index.md");
+    let srcMeta = path.join(srcPath, "meta.json");
     let destTutorial = path.join(destPath, "index.html");
 
-    if (isNewer(srcTutorial, destTutorial) || isNewer(templatePath, destTutorial)) {        
+    if (isNewer(srcTutorial, destTutorial) || isNewer(templatePath, destTutorial) || isNewer(srcMeta, destTutorial)) {        
         //load the tutorial meta-data
-        let meta = require(path.join(srcPath, "meta.json"));
+        let meta = require(srcMeta);
 
         //default author
         meta.author = meta.author || {name: "Dave Stearns", url: "https://ischool.uw.edu/people/faculty/dlsinfo"};
