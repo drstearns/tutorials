@@ -134,4 +134,4 @@ Most of these add-ins will have a command to install all the various analysis to
 
 ## Learn the Language
 
-Now that you know what Go is, and have a working installation, continue on by [learning the basics of the language](../golang)!
+Now that you know what Go is, and have a working installation, continue on by [learning the basics of the language](../golang/)!
