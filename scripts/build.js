@@ -19,7 +19,7 @@ const showdownTableExtension = function() {
     return [{
         type: 'output',
         regex: '<table>',
-        replace: '<table class="table">'
+        replace: '<table class="table is-striped">'
     }];
 };
 const mdConverter = new showdown.Converter({

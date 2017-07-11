@@ -292,6 +292,15 @@ r := Rectangle{
 
 Note that when you spread the values onto separate lines, Go syntax requires a comma after _every_ value _including the last one_. This is different than JavaScript, but it's actually a good thing, as it makes it much easier to add a new value to the end of the list when you add a new field to the struct. Since every line gets a comma on the end, you don't need to alter the current last line to add another one after it.
 
+When initializing a struct, if you omit one of the fields the value for that field will be set to the "zero value" for the field's data type:
+
+data type | zero value
+----------|------------
+any number type | `0`
+string | `""` (zero-length string)
+bool | `false`
+any pointer type | `nil`
+ 
 Since `Rectangle` is now a type, we can declare function parameters to be that type, and the Go compiler will ensure that only a `Rectangle` instance can be passed to that parameter:
 
 ```go
