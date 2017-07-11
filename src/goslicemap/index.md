@@ -47,7 +47,7 @@ If you need a more flexible ordered list that can expand as you add elements to 
 
 ## Slicing Arrays
 
-A slice in Go is like a flexible window into an underlying fixed-size array. A slice is actually a small struct that contains three fields: 
+A slice in Go is like a flexible window over an underlying fixed-size array. A slice is actually a small struct that contains three fields: 
 
 - a pointer to the first element in the underlying array that the slice can see
 - the number of elements after the starting element that the slice can see (length)
@@ -87,10 +87,10 @@ names := []string{}
 
 The syntax is similar to how you declare a fixed-length array, but you omit the number of elements between the `[]` symbols. The slice will point to an underlying array, but the slice's length will be zero, and its capacity will be the size of that automatically-allocated underlying array.
 
-You can then add new elements to this slice using the built-in `append()` function:
+You can then add new values to this slice using the built-in `append()` function:
 
 ```go
-//append takes the slice and the element to add to it;
+//append takes the slice and the value to add to it;
 //it then returns the original slice or a new slice
 //if it has to grow the underlying array
 names = append(names, "Alice")
@@ -98,7 +98,7 @@ names = append(names, "Bob")
 names = append(names, "Chang")
 ```
 
-Note that we re-assign the `names` variable to the return value of `append()`. The underlying array naturally has a fixed length, and it may be full, so the `append()` function might need to allocate a new larger array to hold the new element. If so, the `append()` function will allocate a new larger array, copy the elements from the original array to the new array, and return a new slice pointing to the new underlying array. The old array and slice then fall out of scope and are eventually garbage collected. If the underlying array has a enough capacity to hold the new element, `append()` will simply put the value into the next available element and return the original slice.
+Note that we re-assign the `names` variable to the return value of `append()`. The underlying array naturally has a fixed length, and it may be full, so the `append()` function might need to allocate a new larger array to hold the new value. If so, the `append()` function will allocate a new larger array, copy the elements from the original array to the new array, and return a new slice pointing to the new underlying array. The old array and slice then fall out of scope and are eventually garbage collected. If the underlying array has a enough capacity to hold the new value, `append()` will simply put the value into the next available element and return the original slice.
 
 ## Iterating Slices
 
@@ -118,11 +118,11 @@ for _, name := range names {
 }
 ```
 
-If you just need to iterate forwards an entire slice or array, use the `for...range` loop: it's less error-prone and shorter to type. But if you need to iterate backwards, or skip elements, use a traditional `for` loop.
+If you just need to iterate forwards over an entire slice or array, use the `for...range` loop: it's less error-prone and shorter to type. But if you need to iterate backwards, or skip elements, use a traditional `for` loop.
 
 ## Maps
 
-In addition to arrays and slices, which are ordered lists, Go also has a built-in map type, which is an associative set of key/value pairs. Maps are currently implemented using hash tables, which are very efficient data structures for storing and retrieving key/value pairs. Go maps are just like JavaScript Objects (which are just hash tables under the covers), except that Go maps are statically-typed: you declare the data types for keys and values when you declare the map, and the Go compiler ensures that only keys and values of those types can be added to the map.
+In addition to arrays and slices, which are ordered lists, Go also has a built-in map type, which is an associative set of key/value pairs. Maps are currently implemented using hash tables, which are very efficient data structures for storing and retrieving key/value pairs. Go maps are just like JavaScript Objects (which are just hash tables under the hood), except that Go maps are statically-typed: you declare the data types for keys and values when you declare the map, and the Go compiler ensures that only keys and values of those types can be added to the map.
 
 For example, to create a map where the keys are strings and the values are numbers, you use a syntax like this:
 
@@ -157,7 +157,7 @@ for _, w := range words {
 
 This code splits the input text into a slice of words and the iterates over that slice using the `for...range` loop described [earlier](#seciteratingslices). As it iterates, it increments the integer value associated with the word in the map. If the word is not yet added to the map, the expression `occurrences[w]` will return `0`. The `++` operator then increments that value and sets it as the value for the current word.
 
-If you really need to know whether a key is in the map, you can add another variable to the assignment:
+If you really need to know whether a key is in the map, you can add another variable when accessing the map:
 
 ```go
 count, exists := occurrences["the"]
@@ -175,7 +175,7 @@ for word, count := range occurrences {
 }
 ```
 
-But since maps are hash tables, the key/value pairs are in no particular order. In fact, Go will randomize the iteration order just to make sure you don't depend on some particular ordering that may change in the future. For example, each time you run the `for...range` loop above, it will list the words in a different order.
+But since maps are hash tables, the key/value pairs are in no particular order. In fact, Go will [randomize the iteration order](https://blog.golang.org/go-maps-in-action) just to make sure you don't depend on some particular ordering that may change in the future (this is another example where it's obvious this language was designed by seasoned developers who have been bitten by bugs resulting from spurious assumptions about past behavior that was not actually guaranteed). Each time you run the `for...range` loop above, it will list the words in a different order.
 
 If you want to iterate the map in some particular order (e.g. by the keys sorted alphabetically), you must first extract the keys into a slice, sort the slice, and then iterate that sorted slice:
 
@@ -201,6 +201,7 @@ for _, k := range keys {
 The [make() function](https://golang.org/pkg/builtin/#make) is used to create a slice with an underlying array that has a particular capacity. Since we can use the `len()` function to determine how many keys are in the map, we can save unnecessary memory allocations by presetting the slice capacity to the number of keys in the map. That way the `append()` function never has to reallocate the underlying array, as it will always have enough room to fit all the keys.
 
 We then range over the map, but this time we only access the keys in order to append them to the slice. After appending all the keys, we sort the slice alphabetically using the [sort.Strings()](https://golang.org/pkg/sort/#Strings) function. Finally, we iterate the sorted slice of keys, using the current key to get the associated value from the original `occurrences` map.
+
 
 
 
