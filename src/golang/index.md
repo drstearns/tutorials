@@ -5,7 +5,7 @@ Although Go is [fully-compiled](../gointro/) like C and C++, its syntax and buil
 
 The syntax of Go is based on the C family of languages, with a few contemporary upgrades, so Java and JavaScript developers will find most of it very familiar. Most of the contemporary upgrades are best described in context, but a few general differences should be noted at the outset.
 
-First, Go eliminates the need to put semi-colons at the end of single-statement lines (🎉 hooray!). Semi-colons are still necessary to separate compound statements on the same line (e.g., a `for` loop with initializer, test, and step exprssions), but in all other cases you can omit them.
+First, Go eliminates the need to put semi-colons at the end of single-statement lines (🎉!). Semi-colons are still necessary to separate compound statements on the same line (e.g., a `for` loop with initializer, test, and step expressions), but in all other cases you can omit them.
 
 Second, Go eliminates the need for parentheses around various structures like `if` and `for` expressions. For example, `if` statements in most C-like languages look like this:
 
