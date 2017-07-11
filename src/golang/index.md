@@ -205,19 +205,54 @@ if err := doSomethingThatCouldFail(); err != nil {
 
 In the code above, the expression before the `;` is executed, and the result is assigned to a new variable named `err`. The expression after the `;` then checks if that variable is non-nil, and if so, the `if` block body is executed. That `err` variable is visible only within the `if` block, and as soon as it exits, the variable falls out of scope and is eventually gargage collected.
 
-## Other Simple Types
+## Simple Types
 
-In addition to strings, Go offers several other simple types:
+Go offers the usual set of simple types:
 
+- `string`: an [immutable](https://en.wikipedia.org/wiki/Immutable_object) array of [UTF-8 encoded characters](https://en.wikipedia.org/wiki/UTF-8)
 - `bool`: true/false booleans
 - `int` and `uint`: implementation-dependent signed and unsigned integers (64 or 32 bits depending on the target architecture)
 - `int8`, `int16`, `int32`, `int64`, and the unsigned equivalents `uint8`, `uint16`, `uint32`, `uint64`: specific-sized signed and unsigned integers
 - `float32` and `float64`: 32 and 64-bit floating point numbers
 - `complex64` and `complex128`: complex numbers containing both the real and imaginary parts
 - `byte`: an alias for `uint8`
-- `rune`: an alias for `int32`
+- `rune`: an alias for `int32`, and is used for UTF-8 encoded characters
 
-When working with large amounts of data in memory, consider whether you really need 64 bits to hold your numeric values, or whether you could get away with 32, 16, or even 8 bits per number. If so, you will significantly reduce the amount of memory consumed by using `int32`, `int16`, `int8` rather than `int`.
+Note that Go strings are [UTF-8 encoded](https://en.wikipedia.org/wiki/UTF-8), which means that individual characters may be anywhere between one and four bytes long depending on their Unicode number.s UTF-8 encoding can save significant space if most of your characters are in the ASCII range, but the variable byte length makes working with strings a bit precarious. For example, if you use a typical `for` loop to iterate over a string, you are actually iterating over the _bytes_ in the string buffer, not necessarily the characters:
+
+```go
+s := "Hello, 世界"
+//ANTI-PATTERN: this will iterate over the bytes
+//not the characters, producing bad results
+for i := 0; i < len(s); i++ {
+	fmt.Printf("%d = %s\n", i, string(s[i]))
+}
+```
+
+Thankfully Go provides several ways to interact with the characters in a string, regardless of how many bytes they occupy. The first uses their `for...range` looping construct, which works over not only strings, but also [slices and maps](../goslicemap/):
+
+```go
+s := "Hello, 世界"
+//CORRECT: loops over characters, not bytes
+//r will be set to a complete "rune" (UTF-8 char)
+for i, r := range s {
+	fmt.Printf("%d = %s\n", i, string(r))
+}
+```
+
+The section option is to convert the string to a slice of runes and iterate over that:
+
+```go
+s := "Hello, 世界"
+//CORRECT: convert to slice of runes 
+//and iterate over the runes
+runes := []rune(s)
+for i := 0; i < len(runes); i++ {
+	fmt.Printf("%d = %s\n", i, string(runes[i]))
+}
+```
+
+Lastly, the [utf8](https://golang.org/pkg/unicode/utf8/) package in the standard library provides several functions for reading and extracting characters from UTF-8 encoded strings. These can be useful when you only need the first character from a string and you need to know how many bytes that character occupies.
 
 ## Structs
 
