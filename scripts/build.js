@@ -9,6 +9,24 @@ const showdown = require("showdown");
 const handlebars = require("handlebars");
 const moment = require("moment");
 
+var Prism = require('prismjs/components/prism-core.js');
+require('prismjs/components/prism-markup.js');
+require('prismjs/components/prism-clike.js');
+require('prismjs/components/prism-css.js');
+require('prismjs/components/prism-javascript.js');
+require('prismjs/components/prism-http.js');
+require('prismjs/components/prism-bash.js');
+require('prismjs/components/prism-json.js');
+require('prismjs/components/prism-go.js');
+require('prismjs/plugins/custom-class/prism-custom-class.js');
+
+Prism.plugins.customClass.map({
+	number: 'prism-number'
+});
+
+
+const codeRegExp = /<pre>\s*<code\s*class="([^"]+)">([^<]*)<\/code>\s*<\/pre>/g;
+
 const htmlMinifyOpts = {
     collapseWhitespace: true,
     minifyCSS: true,
@@ -81,6 +99,34 @@ function copyTree(srcPath, destPath) {
     });
 }
 
+function highlightCode(html) {
+    return html.replace(codeRegExp, (match, className, code) => {
+            //showdown sets the class attr to be "go language-go"
+            //so split on space and use the first element
+            let languageName = className.trim().split(" ")[0];
+            
+            //if language is "nohighlight" just return the match
+            if (languageName === "nohighlight") {
+                return match;
+            }
+
+            //lookup the grammar and warn if it's missing
+            let grammar = Prism.languages[languageName]
+            if (!grammar) {
+                console.error("WARNING: Prism language %s not found. Make sure you require all languages you use", languageName)
+                //default to generic markup
+                grammar = Prism.languages.markup;
+            }
+
+            //de-entitize the code so that prism highlights it correctly
+            code = code.replace("&amp;", "&");
+            code = code.replace("&lt;", "<");
+            code = code.replace("&gt;", ">");
+            
+            return `<pre class="language-${languageName}"><code class="language-${languageName}">${Prism.highlight(code, grammar)}</code></pre>`;
+    });    
+}
+
 function processTutorial(srcPath, destPath) {
     ensureDir(destPath);
 
@@ -106,7 +152,8 @@ function processTutorial(srcPath, destPath) {
 
         //set the content
         let md = fs.readFileSync(srcTutorial, "utf-8");
-        meta.content = mdConverter.makeHtml(md);
+        let html = mdConverter.makeHtml(md);
+        meta.content = highlightCode(html);
 
         //set shared CSS
         meta.sharedCSS = sharedCSS;

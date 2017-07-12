@@ -153,7 +153,7 @@ The other alternative on Windows is to run a Linux virutal machine, and share yo
 
 If you ever need to unset an environment variable that has been declared in your current shell, use the `unset` command:
 
-```bassh
+```bash
 unset MY_VARIABLE
 ```
 
