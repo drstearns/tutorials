@@ -198,6 +198,9 @@ for _, k := range keys {
 }
 ```
 
+[<span class="button is-primary">Run in the Go Playground</span>](https://play.golang.org/p/gajzuHwiw5)
+
+
 The [make() function](https://golang.org/pkg/builtin/#make) is used to create a slice with an underlying array that has a particular capacity. Since we can use the `len()` function to determine how many keys are in the map, we can save unnecessary memory allocations by presetting the slice capacity to the number of keys in the map. That way the `append()` function never has to reallocate the underlying array, as it will always have enough room to fit all the keys.
 
 We then range over the map, but this time we only access the keys in order to append them to the slice. After appending all the keys, we sort the slice alphabetically using the [sort.Strings()](https://golang.org/pkg/sort/#Strings) function. Finally, we iterate the sorted slice of keys, using the current key to get the associated value from the original `occurrences` map.

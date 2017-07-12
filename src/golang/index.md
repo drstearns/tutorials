@@ -5,7 +5,7 @@ Although Go is [fully-compiled](../gointro/) like C and C++, its syntax and buil
 
 The syntax of Go is based on the C family of languages, with a few contemporary upgrades, so Java and JavaScript developers will find most of it very familiar. Most of the contemporary upgrades are best described in context, but a few general differences should be noted at the outset.
 
-First, Go eliminates the need to put semi-colons at the end of single-statement lines (🎉!). Semi-colons are still necessary to separate compound statements on the same line (e.g., a `for` loop with initializer, test, and step expressions), but in all other cases you can omit them.
+First, Go eliminates the need to put semi-colons at the end of single-statement lines! Semi-colons are still necessary to separate compound statements on the same line (e.g., a `for` loop with initializer, test, and step expressions), but in all other cases you can omit them.
 
 Second, Go eliminates the need for parentheses around various structures like `if` and `for` expressions. For example, `if` statements in most C-like languages look like this:
 
@@ -50,6 +50,8 @@ func main() {
 	fmt.Println("Hello, World!")
 }
 ```
+
+[<span class="button is-primary">Run in the Go Playground</span>](https://play.golang.org/p/1UzYk90llO)
 
 This rather simple program gives us a chance to learn some of the basic constructs of Go that you will use in every program.
 
@@ -222,6 +224,7 @@ Note that Go strings are [UTF-8 encoded](https://en.wikipedia.org/wiki/UTF-8), w
 
 ```go
 s := "Hello, 世界"
+
 //ANTI-PATTERN: this will iterate over the bytes
 //not the characters, producing bad results
 for i := 0; i < len(s); i++ {
@@ -229,28 +232,36 @@ for i := 0; i < len(s); i++ {
 }
 ```
 
+[<span class="button is-primary">Run in the Go Playground</span>](https://play.golang.org/p/TRy7QA8c6E)
+
 Thankfully Go provides several ways to interact with the characters in a string, regardless of how many bytes they occupy. The first uses their `for...range` looping construct, which works over not only strings, but also [slices and maps](../goslicemap/):
 
 ```go
 s := "Hello, 世界"
+
 //CORRECT: loops over characters, not bytes
 //r will be set to a complete "rune" (UTF-8 char)
 for i, r := range s {
-	fmt.Printf("%d = %s\n", i, string(r))
+	fmt.Printf("%d = %c\n", i, r)
 }
 ```
 
-The section option is to convert the string to a slice of runes and iterate over that:
+[<span class="button is-primary">Run in the Go Playground</span>](https://play.golang.org/p/22Dsr64dTp)
+
+The second option is to convert the string to a slice of runes and iterate over that:
 
 ```go
 s := "Hello, 世界"
+
 //CORRECT: convert to slice of runes 
 //and iterate over the runes
 runes := []rune(s)
 for i := 0; i < len(runes); i++ {
-	fmt.Printf("%d = %s\n", i, string(runes[i]))
+	fmt.Printf("%d = %c\n", i, runes[i])
 }
 ```
+
+[<span class="button is-primary">Run in the Go Playground</span>](https://play.golang.org/p/jCqcXeHrch)
 
 Lastly, the [utf8](https://golang.org/pkg/unicode/utf8/) package in the standard library provides several functions for reading and extracting characters from UTF-8 encoded strings. These can be useful when you only need the first character from a string and you need to know how many bytes that character occupies.
 
@@ -368,6 +379,8 @@ func main() {
 	fmt.Printf("area is %d\n", r.Area())
 }
 ```
+
+[<span class="button is-primary">Run in the Go Playground</span>](https://play.golang.org/p/oz6HshrnkB)
 
 A receiver is just like a parameter, except that it is declared on the left side of the function name. You can give the receiver parameter whatever name you want, but we typically use something short like the first letter of the receiver's data type. You then use that name in the function's code, just like any other parameter. In the example above, I literally just moved the parameter declaration to the left, while the function body remained unchanged.
 
