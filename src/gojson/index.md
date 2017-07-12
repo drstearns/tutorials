@@ -23,7 +23,7 @@ type Rectangle struct {
 
 func main() {
 	//create an instance of a Rectangle
-	r := Rectangle{10, 20, 30, 40}
+	r := &Rectangle{10, 20, 30, 40}
 
 	//create a new JSON encoder over stdout
 	//and encode the struct into JSON
@@ -33,7 +33,7 @@ func main() {
 	}
 }
 ```
-<a href="https://play.golang.org/p/Esk_nrSyZ3" class="button is-primary">Run in the Go Playground</a>
+<a href="https://play.golang.org/p/IgpLrMRJJf" class="button is-primary">Run in the Go Playground</a>
 
 The `json.NewEncoder()` function creates a new `json.Encoder` object, which can write JSON-encoded data to the stream supplied as the first parameter. Here we pass `os.Stdout`, which is the [standard output stream](https://en.wikipedia.org/wiki/Standard_streams) from the operating system shell. This creates a data transformation pipeline that looks conceptually like this:
 
@@ -41,7 +41,7 @@ The `json.NewEncoder()` function creates a new `json.Encoder` object, which can 
 
 The output stream can be any writable stream. Here we use standard out, but in a [web server](../goweb/) we will use the HTTP response stream to write encoded JSON back to the client.
 
-The `.Encode()` method of the encoder does the actually JSON and encoding and writing to the target stream. It will return an error if the data you are trying to encode can't be translated into legal JSON. For example, there are several values in Go that can't be represented in JSON: an infinite number, or the not-a-number (NaN) value. Go [maps](../goslicemap/#secmaps) are automatically converted into JSON objects, but Go allows you to use data types for keys other than `string`, while JSON only supports strings for object keys.
+The `.Encode()` method of the encoder does the actual JSON encoding and writing to the target stream. It will return an error if the data you are trying to encode can't be translated into legal JSON. For example, there are several values in Go that can't be represented in JSON: an infinite number, or the not-a-number (NaN) value. Go [maps](../goslicemap/#secmaps) that use a key type other than `string` also can't be encoded into a JSON object, as JSON objects only support string keys.
 
 The encoder will handle all sorts of data types, including maps, slices, and pointers to other structs. Be careful about circular references: the Go garbage collector can handle two struct instances that point to each other, but the JSON encoder will chase those pointers infinitely and hang your program!
 
@@ -49,9 +49,9 @@ The error checking code above also demonstrates a neat trick in Go that isn't co
 
 ## Fields Must be Exported to be Encoded
 
-One thing that trips up most people who are new to Go is that the JSON encoder can only see, and therefore only encode, exported fields in a struct. Recall that Go uses the package boundary as its primary mechanism for encapsulation, and that [only the identifiers that start with a capital letter are exported](../golang/#secpackagesandcodeorganization). Since the JSON encoder is defined in the `json` package and not your `main` package, it can only see the fields in your struct that are exported from your package. Therefore, if you want a field encoded into JSON, it must be exported, so it must start with a capital letter.
+One thing that trips up new Go developers is forgetting that the JSON encoder can only see, and therefore only encode, **exported** fields in a struct. Recall that Go uses the package boundary as its primary mechanism for encapsulation, and that [only the identifiers that start with a capital letter are exported](../golang/#secpackagesandcodeorganization). Since the JSON encoder is defined in the `json` package and not your `main` package, it can only see the fields in your struct that are exported from your package. Therefore, if you want a field encoded into JSON, it must be exported, so it must start with a capital letter.
 
-When I first started learning Go, I spent several hours trying to figure out why a struct like this was being encoded into an empty JSON object:
+When I first started learning Go, I spent several hours trying to figure out why a struct like this was being encoded as an empty JSON object even when the values were set correctly:
 
 ```go
 type Rectangle struct {
@@ -62,9 +62,9 @@ type Rectangle struct {
 }
 ```
 
-See the difference? The fields are all lower-case, and therefore are not exported from the `main` package. You can pass this struct to the JSON encoder, but [the result will always be an empty JSON object](https://play.golang.org/p/cp21hp1k7g) because the code in the `json` package can't see those fields.
+See the difference? The fields are all lower-case, and therefore are not exported from the `main` package. You can pass this struct to the JSON encoder, but [the result will always be an empty JSON object](https://play.golang.org/p/M8E7sX6ukV) because the code in the `json` package can't see those fields.
 
-This is an easy trap to fall into because the `.Encode()` method **won't return any sort of error**. On the one hand this makes sense: unexported fields are private to the package, and therefore shouldn't be encoded into JSON, as those fields are probably used to track private implementation details. But on the other hand, it would lead to less frustrating mistakes if the encoder returned an error when there are no exported fields at all. That case is likely the result of a programming error.
+This is an easy trap to fall into because the `.Encode()` method **won't return any sort of error**. On the one hand this makes sense: unexported fields are private to the package, and therefore shouldn't be encoded into JSON, as those fields are probably used to track private implementation details. But on the other hand, it would lead to less frustrating mistakes if the encoder returned an error when there are _no exported fields at all_. That case is likely the result of a programming error.
 
 But alas, that's the current behavior, so watch out for it.
 
@@ -76,7 +76,7 @@ Since fields must be exported to be encoded, and since exported field names must
 {"Top":10,"Left":20,"Width":30,"Height":40}
 ```
 
-Since the JSON keys are named the same as the struct fields, they all start with a capital letter. This is legal JSON, but it's counter to the JavaScript convention of using `camelCased` property names. Thankfully, Go allows us to customize the JSON encoding, including changing the names of the keys used in the generated JSON.
+Since the JSON keys are named the same as the struct fields, they all start with a capital letter. This is legal JSON, but it's counter to the JavaScript convention of using `camelCased` property names. Thankfully, Go allows us to customize the JSON encoding, including changing the names of the keys.
 
 For example, say we want the JSON keys to be `top`, `left`, `width`, and `height`. We can add "tags" to the struct fields to provide these different key names:
 
@@ -89,9 +89,9 @@ type Rectangle struct {
 }
 ```
 
-Field tags are a generic mechanism for encoding extra meta-data about a field, and the JSON encoder uses this mechanism to let you override the key name in the generated JSON. Whatever name you put in the quotes after the `json:` label will be used both for encoding to and decoding from JSON.
+Field tags are a generic mechanism for encoding extra meta-data about a field, and the JSON encoder uses this mechanism to let you override the key name in the generated JSON. Whatever name you put in the quotes after the `json:` label will be used both for encoding to and decoding from JSON. It can be a different casing than the struct field name, or something entirely different if you want to use a different name in JSON than in your Go struct.
 
-The JSON encoder allow not only a custom name, but a few other options as well. For example, large structures may have many fields that are set to their zero-value, and therefore don't really need to be encoded into JSON. If you want a field omitted when it is set to its zero-value, use the `omitempty` option:
+The JSON encoder allows not only a custom name, but a few other options as well. For example, large structures may have many fields that are set to their zero-value, and therefore don't really need to be encoded into JSON. If you want a field [omitted when it is set to its zero-value](https://play.golang.org/p/V9_ZX8sN4u), use the `omitempty` option:
 
 ```go
 type Rectangle struct {
@@ -102,7 +102,7 @@ type Rectangle struct {
 }
 ```
 
-And if you want a field to be exported so that code in your other packages can see it, but never encoded into JSON, you can set the name to `"-"`, which will always omit it from encoding:
+And if you want a field to be exported so that code in your other packages can see it, but [never encoded into JSON](https://play.golang.org/p/LgjBB1EtCV), you can set the name to `"-"`, which will always omit it from encoding:
 
 ```go
 type Rectangle struct {
@@ -118,7 +118,7 @@ These tags can be laborious to add, so many of the editor/IDE extensions will ge
 
 ## Marshaling
 
-The `json.Encoder` object can write to any writable stream, but sometimes you need the encoded JSON in a variables so that you can manipulate it in memory, or pass it to some other non-stream-oriented function (e.g., a database API). In this case, use the `json.Marshal()` function:
+The `json.Encoder` object can write to any writable stream, but sometimes you need the encoded JSON in a variable so that you can manipulate it in memory, or pass it to some other non-stream-oriented function (e.g., a database API). In this case, use the `json.Marshal()` function:
 
 ```go
 //create an instance of a Rectangle
@@ -156,6 +156,8 @@ fmt.Println(r)
 <a href="https://play.golang.org/p/HmU5_1zQ-z" class="button is-primary">Run in the Go Playground</a>
 
 This code will read a JSON string from the standard input stream supplied by the operating system shell, decode that into a new empty `*Rectangle`, and then just print the struct so you can see it. The Go Playground doesn't have a standard input stream, so the version there uses the `strings` package to create a readable stream over a simple string instead.
+
+Note that the variable `r` is a pointer to a `Rectangle`, so when we pass that to the `.Decode()` method, we are passing a pointer, not a copy of the struct. This allows the method to set the fields of the same struct instance so that we can see those values after the method returns.
 
 The JSON decoder will set the values of struct fields that are found in the input JSON, but it will silently ignore other keys that do not match a field in the target struct. This is good, as it allows you to use a struct definition to enforce a particular schema for the input JSON. If nefarious clients post extra JSON data to your web server, it will just be ignored instead of written unwittingly into your database.
 
