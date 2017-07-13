@@ -99,8 +99,8 @@ function highlightCode(html) {
             //so split on space and use the first element
             let languageName = className.trim().split(" ")[0];
             
-            //if language is "nohighlight" just return the match
-            if (languageName === "nohighlight") {
+            //if language is empty or "nohighlight" just return the match
+            if (languageName.length === 0 || languageName === "nohighlight") {
                 return match;
             }
 
