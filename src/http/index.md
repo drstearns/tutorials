@@ -8,11 +8,13 @@ Before we look at the protocol itself, we need to review and solidify a few key 
 
 ### Protocol
 
-The first part of the URL names the **protocol** to use, which is sometimes referred to as the **scheme**. The name `http` refers to HTTP, and `https` refers to a combination of HTTP and [Transport Layer Security (TLS)](https://en.wikipedia.org/wiki/Transport_Layer_Security). When using TLS, all requests and responses are encrypted as they are sent across the network so that an attacker in the middle can't read the contents. This results in a bit of overhead, but today's computers and networks are fast-enough that HTTPS is quickly becoming the standard for all web traffic.
+The first part of the URL names the **protocol** to use, which is sometimes referred to as the **scheme**. The name `http` refers to HTTP, and `https` refers to a combination of HTTP and [Transport Layer Security (TLS)](https://en.wikipedia.org/wiki/Transport_Layer_Security). When using TLS, all requests and responses are encrypted as they are sent across the network so that an attacker in the middle can't read the contents. This results in a bit of computational and size overhead, but today's computers and networks are fast-enough that HTTPS is quickly becoming the standard for all web traffic.
+
+Never enter sensitive information into a web page where the URL starts with `http`, and never send sensitive data from JavaScript over an `http` connection. Anyone with access to the network can read everything sent over `http` in plain text. Make sure you use `https` when transmitting sensitive information.
 
 ### Host
 
-The next part is the **host** which is the name of the computer we want to talk to. The host can be a domain name such as `example.com`, or it can be a sub-domain of that domain like `api.example.com` or `ischool.uw.edu`. Domain names have to be purchased from domain registrars, but once you register a domain name, you can create as many sub-domains as you like and adjust them whenever you need to.
+The next part is the **host** which is the name of the computer we want to talk to. The host can be a domain name such as `example.com`, or it can be a sub-domain like `api.example.com` or `ischool.uw.edu`. Domain names have to be purchased from domain registrars, but once you register one, you can create as many sub-domains as you like and adjust them whenever necessary.
 
 To make a network connection, the client needs to translate the host name into a numeric IP address. It does this using the [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System). The DNS is a bit like a telephone book that one can use to resolve a host name to an IP address, and you can access it right from the command line. Open a new command-line window (Terminal on Mac or Git Bash/PowerShell on Windows) and type this command:
 
@@ -43,6 +45,8 @@ _Sample Output_
 ```
 ischool.uw.edu has address 128.208.201.29
 ```
+
+The iSchool host name resolves to only one address, but other domain names might resolve to several possible addresses. For example, try `uw.edu` instead. It should return multiple IP addresses, any of which can be used by a web client.
 
 These commands talk to the DNS, but they also consult a hosts file on your local computer that contains well-known host names and their associated IP addresses. On Mac and Linux, this file is at `/etc/hosts`, and on Windows it's at `c:\Windows\System32\Drivers\etc\hosts`. To see the contents of this file use this command:
 
@@ -78,18 +82,40 @@ Technically speaking, `- _ . ! ~ * ' ( )` and space must also be encoded, as wel
 
 ## HTTP Requests
 
-Now that we have our terms straight, let's see how these elements of a URL are used in an HTTP request.
+Now that we have our terms straight, let's see how these URL elements are used in an HTTP request.
 
 ![http get request format](img/req-get.png)
 
-HTTP requests are just plain text, so you can easily read and type them. The first line contains the **method**, **resource path** (which we already discussed [earlier](#secresourcepath)), and requested **protocol version**.
+HTTP requests are just plain text, so you can easily read and type them. The first line (simply called the "request line") contains the **method**, **resource path** (which we already discussed [earlier](#secresourcepath)), and requested **protocol version**.
 
-### Methods
+### Methods and Resources
+
+The core philosophy of HTTP is that clients invoke methods on resources. The resource is the object and the method is the verb. Or to put it another way, the resource path identifies a thing the server can manage, and the method specifies an action the server should take on that resource.
+
+There are several methods defined in the HTTP standard, and the most commonly-used are as follows:
+
+method | meaning
+-------|--------
+GET | return the current state of the resource
+PUT | completely replace the current state of the resource
+PATCH | partially update the current state of the resource
+POST | add a new child resource
+DELETE | delete the resource
+LINK | link the resource to some other resource
+UNLINK | unlink the resource from some other resource
+OPTIONS | list the methods the current user is allowed to use on this resource
+
+Servers may choose to support other methods, including custom methods they define. This is generally fine, but sometimes you can run into troubles if there is a proxy server in the middle that rejects requests with non-standard methods for security reasons. In that case, developers commonly use `POST` with a query string parameter or other custom header that indicates what the real method is.
 
 ### Protocol Version
 
+The request line ends with a protocol version the client wishes to speak. HTTP, like all standards, is an evolving one, and there have been a few versions of HTTP defined over the years. The example above uses [HTTP/1.1](https://tools.ietf.org/html/rfc2616) which is widely supported, but [HTTP/2.0](https://developers.google.com/web/fundamentals/performance/http2/) has now been defined and support for it is growing.
+
+By allowing clients to request a particular protocol version, servers and clients can start supporting the newer version while still being able to fall back to the older version if the other side doesn't yet support the new version. For example, a client can request `HTTP/2.0` but the server can reply saying it only supports `HTTP/1.1`. The client can then gracefully downgrade and use the 1.1 version for the rest of the conversation.
+
 ### Headers
 
+The next lines in the request specify the headers.
 
 ## HTTP Responses
 
