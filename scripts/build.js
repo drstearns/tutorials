@@ -18,12 +18,6 @@ require('prismjs/components/prism-http.js');
 require('prismjs/components/prism-bash.js');
 require('prismjs/components/prism-json.js');
 require('prismjs/components/prism-go.js');
-require('prismjs/plugins/custom-class/prism-custom-class.js');
-
-Prism.plugins.customClass.map({
-	number: 'prism-number'
-});
-
 
 const codeRegExp = /<pre>\s*<code\s*class="([^"]+)">([^<]*)<\/code>\s*<\/pre>/g;
 
