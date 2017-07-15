@@ -16,7 +16,7 @@ Never enter sensitive information into a web page where the URL starts with `htt
 
 The next part is the **host** which is the name of the computer we want to talk to. The host can be a domain name such as `example.com`, or it can be a sub-domain like `api.example.com` or `ischool.uw.edu`. Domain names have to be purchased from domain registrars, but once you register one, you can create as many sub-domains as you like and adjust them whenever necessary.
 
-To make a network connection, the client needs to translate the host name into a numeric IP address. It does this using the [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System). The DNS is a bit like a telephone book that one can use to resolve a host name to an IP address, and you can access it right from the command line. Open a new command-line window (Terminal on Mac or Git Bash/PowerShell on Windows) and type this command:
+To make a network connection, the client needs to translate the host name into a numeric IP address. It does this using the [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System). The DNS is a bit like a telephone book that one can use to resolve a host name to an IP address, and you can access it right from the command line. Open a new command-line window (Terminal on Mac or Git Bash/Linux Subsystem on Windows) and type this command:
 
 ```bash
 nslookup ischool.uw.edu
@@ -152,7 +152,7 @@ Host: www.google.com
 
 After you send the blank line it should respond with a standard HTTP response message followed by a bunch of HTML. That's Google's home page! You requested the resource path `/`, which is the home page for the entire web site.
 
-Hit `Ctrl+C` to exit out of netcat and return to your own command prompt.
+Hit `Ctrl+c` to exit out of netcat and return to your own command prompt.
 
 What you just did is what your web browser does when you enter `http://www.google.com/` into the address bar. The browser parses the URL and determines that the protocol is `http`, the host is `www.google.com` and the resource path is `/`. It then opens a network connection to port 80 (default for HTTP) on `www.google.com` and sends at least those two lines (most browsers include a bunch more headers that provide the server with extra meta-data).
 

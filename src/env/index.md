@@ -144,7 +144,7 @@ This is handy whenever you add or change an environment variable, and want that 
 
 If you are using the Git Bash command-line shell on windows, follow the instructions in the [MacOS and Linux section](#secmacosandlinux). Git Bash should run a `.bash_profile` script it finds in your home directory.
 
-If you are running Windows 10 Anniversary Edition or later, you can alternatively use the new [native bash support](https://msdn.microsoft.com/en-us/commandline/wsl/about) in PowerShell. Follow their [installation instructions](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) to enable this feature. Since this enables an Ubuntu Linux subsystem, you should then be able to create/edit a `~/.bashrc` file as described in the [Linux section](#secmacosandlinux) above.
+If you are running Windows 10 Anniversary Edition or later, you can alternatively use the new [native bash support](https://msdn.microsoft.com/en-us/commandline/wsl/about). Follow their [installation instructions](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) to enable this feature. Since this enables an Ubuntu Linux subsystem, you should then be able to create/edit a `~/.bashrc` file as described in the [Linux section](#secmacosandlinux) above.
 
 The other alternative on Windows is to run a Linux virutal machine, and share your source files with it so that you can continue to edit the files using your favorite graphical tools. [Vagrant](https://www.vagrantup.com/) and [Docker](https://www.docker.com/) are popular tools for doing this.
 

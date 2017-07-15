@@ -113,9 +113,9 @@ function highlightCode(html) {
             }
 
             //de-entitize the code so that prism highlights it correctly
-            code = code.replace("&amp;", "&");
-            code = code.replace("&lt;", "<");
-            code = code.replace("&gt;", ">");
+            code = code.replace(/&amp;/g, "&");
+            code = code.replace(/&lt;/g, "<");
+            code = code.replace(/&gt;/g, ">");
             
             return `<pre class="language-${languageName}"><code class="language-${languageName}">${Prism.highlight(code, grammar)}</code></pre>`;
     });    
