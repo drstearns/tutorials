@@ -54,6 +54,9 @@ const mergeWithTemplate = handlebars.compile(template);
 const sharedCSS = fs.readFileSync(path.join(srcDir, "shared.css"), "utf-8");
 
 function isNewer(srcPath, destPath) {
+    if (!fs.existsSync(srcPath)) {
+        return false;
+    }
     if (!fs.existsSync(destPath)) {
         return true;
     }
@@ -134,9 +137,18 @@ function processTutorial(srcPath, destPath) {
     let srcMeta = path.join(srcPath, "meta.json");
     let destTutorial = path.join(destPath, "index.html");
 
+    if (!fs.existsSync(srcTutorial)) {
+        return;
+    }
+
     if (isNewer(srcTutorial, destTutorial) || isNewer(templatePath, destTutorial) || isNewer(srcMeta, destTutorial)) {        
         //load the tutorial meta-data
-        let meta = require(srcMeta);
+        let meta = {title: "Untitled", subtitle: "add a meta.json file to your directory"};
+        try {
+            meta = require(srcMeta);
+        } catch(err) {
+            console.error("error loading %s: %s", srcMeta, err)
+        }
 
         //default author
         meta.author = meta.author || {name: "Dave Stearns", url: "https://ischool.uw.edu/people/faculty/dlsinfo"};
