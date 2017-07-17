@@ -77,7 +77,7 @@ The command will prompt you for an email address (for expiry notifications) and 
 
 Note that these files are actually symbolic links to files in the `/etc/letsencrypt/archive` directory. This will matter when we start trying to read them using a Docker mapped volume. More details in the sections that follow.
 
-> **Pro Tip:** if you want to script the letsencrypt command, you can agree to the terms of service and supply your email address via command-line flags. Use the command: `sudo letsencrypt certonly --standalone -n --agree-tos --email your-email-address -d your-domain.com`, replacing `your-email-address` with your email address.
+> **Pro Tip:** if you want to script the letsencrypt command, you can agree to the terms of service and supply your email address via command-line flags. Use this command, replacing `your-email-address` with your email address: `sudo letsencrypt certonly --standalone -n --agree-tos --email your-email-address -d your-domain.com`
 
 ## Supporting HTTPS in Go
 
@@ -125,7 +125,7 @@ your-dockerhub-name/your-container-name    #name of container image
 Note that we are mounting the `/etc/letsencrypt` directory as opposed to the `/etc/letsencrypt/live/your-domain.com/` directory, because the files in that latter directory are just symlinks to files in the `/etc/letsencrypt/archive/` directory. If we mount the more specific sub-directory, your Docker container won't be able to follow the symlinks, and thus won't be able to load the files.
 
 
-### Tell NGINX to Use Your Cert and Key
+## Support HTTPS in NGINX
 
 If you are using NGINX to serve a static web site or a web application client, you can configure NGINX to use your new certificate and key for HTTPS connections. You can also configure it to automatically redirect HTTP requests to HTTPS. And to be extra-secure, you can enable [HTTP Strict Transport Security (HSTS)](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security), which tells the browser to always use HTTPS when talking to your site, even if the user types in an HTTP URL.
 
