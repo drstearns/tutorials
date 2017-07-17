@@ -125,7 +125,7 @@ your-dockerhub-name/your-container-name    #name of container image
 Note that we are mounting the `/etc/letsencrypt` directory as opposed to the `/etc/letsencrypt/live/your-domain.com/` directory, because the files in that latter directory are just symlinks to files in the `/etc/letsencrypt/archive/` directory. If we mount the more specific sub-directory, your Docker container won't be able to follow the symlinks, and thus won't be able to load the files.
 
 
-## Support HTTPS in NGINX
+## Supporting HTTPS in NGINX
 
 If you are using NGINX to serve a static web site or a web application client, you can configure NGINX to use your new certificate and key for HTTPS connections. You can also configure it to automatically redirect HTTP requests to HTTPS. And to be extra-secure, you can enable [HTTP Strict Transport Security (HSTS)](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security), which tells the browser to always use HTTPS when talking to your site, even if the user types in an HTTP URL.
 
