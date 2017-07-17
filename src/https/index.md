@@ -17,7 +17,7 @@ This is where asymmetric encryption can help. We can do the following:
 
 Here's a graphical representation of the flow, which comes from [CloudFlare's](https://www.cloudflare.com/) excellent article, [Keyless SSL: The Nitty Gritty Teachnical Details](https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/)
 
-![flowchart of TLS handshake](img/ssl_handshake_diffie_hellman.jpg)
+[![flowchart of TLS handshake](img/ssl_handshake_diffie_hellman.jpg)](img/ssl_handshake_diffie_hellman.jpg)
 
 _source: CloudFlare, [Keyless SSL: The Nitty Gritty Teachnical Details](https://blog.cloudflare.com/keyless-ssl-the-nitty-gritty-technical-details/)_
 
