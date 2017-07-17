@@ -18,6 +18,7 @@ require('prismjs/components/prism-http.js');
 require('prismjs/components/prism-bash.js');
 require('prismjs/components/prism-json.js');
 require('prismjs/components/prism-go.js');
+require('prismjs/components/prism-docker.js');
 
 const codeRegExp = /<pre>\s*<code\s*class="([^"]+)">([^<]*)<\/code>\s*<\/pre>/g;
 
@@ -110,7 +111,7 @@ function highlightCode(html) {
             //lookup the grammar and warn if it's missing
             let grammar = Prism.languages[languageName]
             if (!grammar) {
-                console.error("WARNING: Prism language %s not found. Make sure you require all languages you use", languageName)
+                console.error("WARNING: Prism language '%s' not found. Make sure you require all languages you use", languageName)
                 //default to generic markup
                 grammar = Prism.languages.markup;
             }
