@@ -1,10 +1,6 @@
 To deploy a web server, you need to get your application on to a computer that is connected to the Internet with a stable IP address. In the bad old days of the Web, this was done by renting rack space in a data center and installing your own gear. Since you were buying your own computers, you had to guess how much computing power, memory, and disk storage you might need. If you got it wrong, your computers would either sit idle most of the time, or struggle to keep up with the load. And even if you got it right, you had to buy enough equipment to handle your peak load, even if that occurred for only a few minutes each day.
 
-Starting in the 2000s, several hosting companies developed more flexible alternatives based on **virtual machines (VMs)**. One physical machine could host several VMs, sharing its CPU, memory, storage, and I/O devices via a [hypervisor](https://en.wikipedia.org/wiki/Hypervisor). 
-
-A virtual machine is like a computer running within another computer. To the developer, each VM feels like a real independent computer; it has a full copy of the operating system, application software, and any other supporting files your server needs. It's also isolated from the other VMs running on the same physical machine.
-
-But since virtual machines are virtual and not physical, you can remotely spin-up a new VM within a minute or two, and spin it back down again when it is no longer needed. New VMs can be allocated to any physical machine, so hosting companies are able to more fully utilize their expensive hardware.
+Starting in the 2000s, several hosting companies developed more flexible alternatives based on **virtual machines (VMs)**. One physical machine could host several VMs, sharing its CPU, memory, storage, and I/O devices via a [hypervisor](https://en.wikipedia.org/wiki/Hypervisor). A virtual machine is like a computer running within another computer. To the developer, each VM feels like a real independent computer; it has a full copy of the operating system, application software, and any other supporting files your server needs. It's also isolated from the other VMs running on the same physical machine. But since virtual machines are virtual and not physical, you can remotely spin-up a new VM within a minute or two, and spin it back down again when it is no longer needed. New VMs can be allocated to any physical machine, so hosting companies are able to more fully utilize their expensive hardware.
 
 As desktop and laptop machines became more powerful, developers realized they could use this same technique to create consistent, isolated development environments on their own computers. Tools like [Vagrant](https://www.vagrantup.com/) made it easy for every developer on the team to spin-up the same Linux VM, with the same versions of the language compiler and database engine, regardless of which host OS they happened to use. VMs also made it easy to work on multiple projects that had conflicting dependencies, as the VMs provided separate isolated environments. For example, if one project required version 1 of some database engine, but another required version 2, you could easily switch between them by spinning down one VM and spinning up another. And since the developers were now working in the same environment as their target production servers, there were less unexpected failures when rolling out new versions to the Web.
 
@@ -144,7 +140,7 @@ After downloading the image, Docker will run the container and put you into an i
 We used two new flags when we ran that container:
 
 - **-it** means you want an **i**nteractive **t**erminal inside the container. Since the default executable for the `ubuntu` image is `bash`, this connects your terminal to a new interactive bash shell within the container.
-- **--rm** means that you want Docker to automatically remove the container when you exit. This is equivalent to immediately running `docker rm` after exiting the container, but avoid the need to figure out the container ID or name.
+- **--rm** means that you want Docker to automatically remove the container when you exit. This is equivalent to immediately running `docker rm` after exiting the container, but avoids the need to figure out the container ID or name.
 
 The `ubuntu` image includes only the core operating system, so many of the commonly-used Unix commands are not already installed. This image is designed to act as a base for your own container images, so it is purposely lean and mean. You can use the `apt` command to install other commands, but there is another container image that already has all the commands you probably need, plus a really cool name: BusyBox.
 
@@ -217,7 +213,7 @@ As before, we use the `-d` flag to run the container detached, `-p` to publish p
 
 The first part of the value is the absolute path of the directory on your host that you want to expose inside the container. The second part (after the `:`) is the path inside the container's file system where you want that directory tree to appear. The `:ro` on the end stands for "read-only." Using this ensures that code running inside the container can't make changes to the files on the host.
 
-For example, the value `/Users/dave/mywebsite:/usr/share/nginx/html:ro` will make the host directory `/Users/dave/mywebsite` available inside the container at the path `/usr/share/nginx/html`. So the host file `/Users/dave/mywebsite/index.html` will appear inside the container at `/usr/share/nginx/html/index.html`. That is the path where NGINX looks for the site's home page.
+For example, the value `/Users/dave/mywebsite:/usr/share/nginx/html:ro` will make the host directory `/Users/dave/mywebsite` available inside the container at the path `/usr/share/nginx/html`. So the host file `/Users/dave/mywebsite/index.html` will appear inside the container at `/usr/share/nginx/html/index.html`. That is [the path where NGINX looks for the site's home page](https://hub.docker.com/_/nginx/).
 
 When you mount a volume, the path inside the container can be an existing path or a new one. If it's an existing path, Docker effectively replaces the files that were already in the container at that path with the files from your mounted directory.
 
@@ -232,13 +228,170 @@ The host path must be an absolute path, but if you're on a Mac or Unix system, o
 -v $(pwd):/usr/share/nginx/html:ro
 ```
 
+## Building Your Own Container Images
 
-## Building Containers
+A mounted volume is useful whenever you need code running inside a container to read files on the host's file system, but if those files won't be changing once they are in production, it makes more sense to just build a new container image and copy the files into it. For example, you can build a new container image based on the NGINX container image, and just copy your web site's files into the `/usr/share/nginx/html` directory. That way, your web site files are already in the container image, and you can deploy the site to any server using a simple `docker run` command.
 
+Follow along by creating a directory containing a simple HTML page, with perhaps some images and CSS. We will build a new container image, based on the NGINX image, and copy these files into it. Before proceeding, [create a free DockerHub account](https://hub.docker.com/) if you haven't done so already.
 
+### The Dockerfile
 
-## A Docker Clean Up Script
+To describe your new container image, you need to create a file literally named `Dockerfile` (no extension) in the directory containing your web site files, or above it. The Docker CLI will compress the entire directory tree under this `Dockerfile` and send it to the Docker daemon process for building, so any files you want to include in the new image must be in the same directory or below the `Dockerfile`.
 
+A `Dockerfile` is a plain text file that describes a recipe for the new container image. Each line of the file specifies another step in the recipe. The first step is always a `FROM` instruction:
 
+```docker
+FROM nginx
+```
 
+The `FROM` instruction specifies which container image you want to build upon. Here we are using `nginx` because we want everything that was in the `nginx` container image, plus our web site files. You can build upon any container image on your system or Docker Hub. If you want to start from scratch instead, use the `scratch` image, which contains nothing.
+
+The next step in our container image recipe is to copy our web site files into the container, at the directory where NGINX looks for the web site files (`/usr/share/nginx/html`). This is done using the `COPY` instruction:
+
+```docker
+COPY . /usr/share/nginx/html
+```
+
+This is just like the `cp` command in bash: the first argument is a relative source file path on the host file system, and the second is an absolute target file path in the container's file system. Here we use `.` for the relative source path, which means "the current directory." If your web site files are stored in a sub-directory, you would name that subdirectory instead:
+
+```docker
+# e.g., if your production files are in a `build` sub-directory...
+COPY build /usr/share/nginx/html
+```
+
+Those two recipe steps are all we need for this example. After you save this file, you can build the container image using this command, replacing `your-dockerhub-name` with your Docker Hub user name:
+
+```bash
+# note the `.` on the end, which specifies the current
+# directory as the location of the Dockerfile
+docker build -t your-dockerhub-name/examplewebsite .
+```
+
+The `-t` flag specifies the name you want to give this new image. Like GitHub repos, this should be in the form `your-dockerhub-username/your-image-name`.
+
+The `.` on the end tells Docker that the `Dockerfile`, as well as all other files it references, are in the current directory or below. The `docker build` command actually compresses this entire directory tree and sends it to the Docker daemon for building, so you can only refer to files in this directory tree.
+
+Docker will show several messages as it builds your new container image. Docker container images are actually comprised of one or more layers, and each line in your `Dockerfile` defines a new layer. Docker will reuse the existing layers from the NGINX image, but create a new one corresponding to your `COPY` command. When you rebuild the container image, it will only rebuild this new layer, and only if the source files you are copying have changed. This makes Docker image rebuilds very fast.
+
+If all went well, you should be able to run your new image using this command, replacing `your-dockerhub-name` with your Docker Hub user name:
+
+```bash
+docker run -d -p 80:80 --name exsite your-dockerhub-name/examplewebsite
+```
+
+After it starts, use `docker ps` to ensure that it's running, and request <http://localhost> to see your web site in the browser. If you see the default NGINX home page instead of the home page you copied into the container image, you may need to do a hard refresh (Cmd+Shift+R on Mac, Ctrl+F5 on Windows) to force your browser fetch the home page from the server instead of its local cache.
+
+To stop and remove this container, use this command:
+
+```bash
+docker rm -f exsite
+```
+
+### Pushing Containers to Docker Hub
+
+If you want to share this container with others, or deploy it to a VM in a cloud infrastructure like AWS or DigitalOcean, you can now push this new container image to your DockerHub account.
+
+Before you can push new images to Docker Hub, you must authenticate. You only need to do this once on any given machine:
+
+```bash
+docker login
+```
+
+After you successfully authenticate, you can now push a new container image using the `docker push` command. This command takes the name of the image you want to push, which we specified in the previous section. Remember to replace `your-dockerhub-name` with your Docker Hub user name.
+
+```bash
+docker push your-dockerhub-name/examplewebsite
+```
+
+After it successfully pushes, you should be able to visit <https://hub.docker.com/> and see your new container image listed there. Since it's public, you can now easily pull that image and run it on any other machine, including a VM running in a cloud infrastructure, using the same `docker run` command you used to run the container on your development machine. Docker will automatically pull the image from Docker Hub if it doesn't already exist on the target machine, or if the version on Docker Hub is newer.
+
+### Containers for Go Web Servers
+
+In the previous example, we built a container image that uses the NGINX web server to serve static files. A Go web application is its own web server, so we don't need NGINX. In fact, we really don't need anything beyond the built Go executable, unless that executable needs other files to run.
+
+But Docker containers run on Linux, and Go fully compiles programs down to machine code for a particular chip architecture and operating system, so our Go executable needs to be compiled for Linux before it goes into a new container image. Thankfully, Go support cross-compilation, meaning it can build a Linux executable from a Mac or Windows machine.
+
+To make a Linux build of your Go executable, set the `GOOS` environment variable while executing the `go build` command in your project directory. You can do this in one line, like so:
+
+```bash
+GOOS=linux go build
+```
+
+This sets the `GOOS` environment variable only for this one `go build` command. After that command completes, the environment variable will no longer be set.
+
+This build will take a bit more time than normal because it has to re-compile and statically link all off the standard library packages your application uses so that they will work properly on Linux. After it's done, there will be a new executable in the current directory that is built to run on Linux.
+
+If your Go web application doesn't need any additional Unix commands or files, you can use the `scratch` image as the base:
+
+```docker
+FROM scratch
+COPY mygoapp /mygoapp
+```
+
+This `Dockerfile` starts a recipe using the `scratch` container as the base (which is empty) and then copies the built Linux executable into the container. To complete this recipe, we need to add two more steps:
+
+```docker
+EXPOSE 80
+ENTRYPOINT ["/mygoapp"]
+```
+
+The `EXPOSE` instruction tells Docker that your Go web application will try to listen on port 80 when it runs. This is just informational: you still need to use the `-p` flag to publish this port when running the container, as Docker won't publish ports automatically for security reasons. But Docker will refer to this `EXPOSE` information if you use the `-P` flag instead. The capital `-P` flag will publish all ports mentioned in `EXPOSE` commands, but map them to randomly-selected unused port numbers on the host. To discover which port number Docker chose, you have to run the `docker ps` command. The `-P` flag is useful when running many containers that all expose the same port number, and you want Docker to find an open port on the host to map each of them to. 
+
+The `ENTRYPOINT` instruction tells Docker what program to execute when the container runs. Since the `scratch` image is empty it has no defined entry point, so we need to tell Docker which program to run when the container starts. That should be the Go application we copied into the container image.
+
+You might be wondering why we didn't need to include the `EXPOSE` and `ENTRYPOINT` instructions in the previous `Dockerfile` based on NGINX. Because we used the `nginx` image as the base, we effectively inherited the `EXPOSE` and `ENTRYPOINT` instructions from that image. We could override those in our image if we needed to, but there was no need to in this case.
+
+The `scratch` image is fine if your Go web application doesn't need to reference any standard Unix commands or files, but sometimes you will need those. For example, if your Go web application needs to fetch `https://` URLs, it needs access to the system root CA certificates in order to verify the site's TLS certificate. Or if it needs to invoke other standard Unix commands, those need to be present on the system.
+
+In this case, a good base image to use is `alpine`, which is the official image for the minimal [Alpine Linux](https://alpinelinux.org/). Alpine is based on BusyBox, but adds a package manager so we can install any additional commands and files we need. For example, to install the root CA certificates, we can use this sort of Dockerfile:
+
+```docker
+FROM alpine
+RUN apk add --no-cache ca-certificates
+COPY mygoapp /mygoapp
+EXPOSE 80
+ENTRYPOINT ["/mygoapp"]
+```
+
+Here we add the `RUN` instruction, which will cause the Docker daemon to run the command that follows inside the new container as it builds the image. The `apk` command is the [package manager for Alpine](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management), and here we use it to add the `ca-certificates` package to the container image. The `--no-cache` flag tells the package manager [not to cache the entire index of available packages](https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md#disabling-cache), as that would just consume a lot of unnecessary space in the container image.
+
+The `apk add` command can install many packages at the same time. If you need multiple packages, just add them to the end with a space in between each package name (e.g., `ca-certificates git curl`). But install only those packages you will actually need: each package increases the size of your Docker container image.
+
+### The .dockerignore File
+
+As noted earlier, the `docker build` command actually compresses the entire directory tree and sends that to the Docker daemon for building. If you want to omit files or directories from this compressed tree, add a `.dockerignore` file to the directory, and list all paths you want the `docker build` command to ignore. The [format of this file](https://docs.docker.com/engine/reference/builder/#dockerignore-file) is just like the `.gitignore` file.
+
+You will commonly want to use this when creating a Docker container image for a Node.js application, as the contents of the `node_modules` directory on your host OS should be ignored.
+
+## A Docker Clean-Up Script
+
+One thing you will notice quickly is that Docker doesn't delete previous versions of your container images when you rebuild the image. Instead it leaves them on your disk in an "untagged" state. These untagged images consume disk space, so you will eventually want to delete them.
+
+The `docker rmi` command will delete images, but it requires a list of image IDs. If you have several untagged images, it can be very time-consuming to copy/paste all of them into the `docker rmi` command. Thankfully we can use a little bash completion magic to do this all in one step:
+
+```bash
+docker rmi $(docker images -q -f dangling=true)
+```
+
+Anytime bash sees the `$(...)` syntax, it will expand that into the output of the command inside the parentheses. The command we use here is `docker images -q -f dangling=true`, which will return just the list of image IDs that are currently "dangling" (i.e., untagged). We feed that into `docker rmi`, which will delete all of those images at once.
+
+If you have no untagged images, the `docker rmi` command will return an error since it received no image IDs. If this annoys you, create a bash script that tests the list of returned IDs before executing `docker rmi`:
+
+```bash
+iids=$(docker images -q -f dangling=true)
+if [ "$iids" ]; then
+    docker rmi $iids
+fi
+```
+
+You can use the same trick to remove all stopped containers:
+
+```bash
+cids=$(docker ps -aq -f status=exited)
+if [ "$cids" ]; then
+    docker rm $cids
+fi
+```
+
+If you put these together into a script named `docker-clean` you can very quickly clean-up all stopped containers and all untagged images with just one command!
 
