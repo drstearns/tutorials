@@ -5,3 +5,7 @@
 .is-funky .subtitle {
     color: #FFF;
 }    	
+.screenshot {
+	border: 1px dotted #CCC;
+	padding: 10px;
+}
