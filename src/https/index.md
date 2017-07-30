@@ -181,7 +181,7 @@ your-dockerhub-name/your-container-name    #name of container image
 
 ## Self-Signed Certs
 
-Your production servers will need real certs signed by a CA like Let's Encrypt, but on your development machine, one typically uses self-signed certs. These are valid but untrusted certs, as they are not signed by a CA your computer trusts. They are the equivalent of a Passport written in crayon, signed by Elmo.
+Your production servers will need real certs signed by a CA like Let's Encrypt, but on your development machine, one typically uses self-signed certs. These are valid but untrusted certs, as they are not signed by a CA your computer trusts. They are the equivalent of a Passport written in crayon, signed by Elmo. Or to use a more recent cultural reference, they are about as valid as [McLovin's fake ID](https://youtu.be/D9IK3pBdwPg).
 
 To create a self-signed cert and key, use this command:
 
