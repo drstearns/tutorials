@@ -42,9 +42,9 @@ To build or run containers, you first need to install Docker on your machine. Li
 
 Mac and Windows users should install the Docker CE Desktop App for their respective platform:
 
-- **Mac:** <https://store.docker.com/editions/community/docker-ce-desktop-mac>
-- **Windows 10 Professional or Enterprise:** <https://store.docker.com/editions/community/docker-ce-desktop-windows>.
-- **Windows 10 Home:** <https://www.docker.com/products/docker-toolbox>
+- [Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
+- [Windows 10 Professional or Enterprise](https://store.docker.com/editions/community/docker-ce-desktop-windows)
+- [Windows 10 Home](https://www.docker.com/products/docker-toolbox)
 
 These desktop apps install a minimal Linux VM for the Docker daemon process, and use your OSs native hypervisor to run it. You communicate with the daemon process using the command line tools, which run on your host OS, and can be used from your normal terminal application.
 

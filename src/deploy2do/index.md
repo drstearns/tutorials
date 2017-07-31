@@ -32,7 +32,7 @@ You'll see some output telling you where the new "identification" (private key) 
 
 ### Register your Public Key
 
-After signing up for an account (or signing in to an existing one), click on your Avatar in the top right corner and choose "Settings" from the drop-down menu. Then click on the "Security" link in the left-side navigation area. To jump to this screen directly, use the URL <https://cloud.digitalocean.com/settings/security>.
+After signing up for an account (or signing in to an existing one), click on your Avatar in the top right corner and choose "Settings" from the drop-down menu. Then click on the "Security" link in the left-side navigation area. Or you can [jump to this screen directly](https://cloud.digitalocean.com/settings/security).
 
 Under the "SSH keys" section, choose the "Add SSH Key" button. You'll see a dialog that looks like this:
 
@@ -44,7 +44,7 @@ You need to copy the contents of your **public key** (not your private key) into
 cat ~/.ssh/id_rsa.pub
 ```
 
-Copy the contents of that file to your clipboard and paste it into the large box labeled "SSH key content." If you're on a Mac, you can do copy it to the clipboard from the terminal using this command
+Copy the contents of that file to your clipboard and paste it into the large box labeled "SSH key content." If you're on a Mac, you can copy it to the clipboard from the terminal using this command
 
 ```bash
 # MacOS only
