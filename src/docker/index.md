@@ -28,7 +28,7 @@ Since the daemon process requires Linux or Windows Server, using Docker on your 
 
 ## Container Images
 
-In addition to leveraging the underlying operating system's containerization features, Docker also defines a standard format for container images. A **container image** encapsulates all the software and files your application needs to run into one easily-managed unit. A container image is like one of those [Meals Read to Eat](https://en.wikipedia.org/wiki/Meal,_Ready-to-Eat) that the military gives their troops: everything you need for a given meal, including the fuel to cook it, is all included in one easy-to-carry package.
+In addition to leveraging the underlying operating system's containerization features, Docker also defines a standard format for container images. A **container image** encapsulates all the software and files your application needs to run into one easily-managed unit. A container image is like one of those [Meals Ready to Eat](https://en.wikipedia.org/wiki/Meal,_Ready-to-Eat) that the military gives their troops: everything you need for a given meal, including the fuel to cook it, is all included in one easy-to-carry package.
 
 Docker makes it easy to [build your own container images](#secbuildingcontainers) that include whatever executables, libraries, and files your application needs at runtime. Once built, you can run these images with one simple `docker run` command, and upload them to Docker's central registry known as [Docker Hub](https://hub.docker.com/).
 
