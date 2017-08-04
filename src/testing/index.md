@@ -57,7 +57,35 @@ One you build a stress test infrastructure, you can run several tests with diffe
 
 ## Writing Tests in Go
 
-Now that you know the distinctions between automated tests, let's see how we can write unit tests in Go.
+Now that you know the distinctions between automated tests, let's see how we write unit tests in Go. Follow along in your own code editor. Start by creating a new directory and creating a file named `reverse.go` within that directory. Then copy this function into it:
+
+```go
+package main
+
+//Reverse returns the reverse of the string passed as `s`
+func Reverse(s string) string {
+	//convert string to a slice so we can manipulate it
+	//since strings are immutable, this creates a copy of
+	//the string so we won't be modifying the original
+	chars := []byte(s)
+
+	//starting from each end, swap the values in the slice
+	//elements, stopping when we get to the middle
+	for i, j := 0, len(chars)-1; i < j; i, j = i+1, j-1 {
+		chars[i], chars[j] = chars[j], chars[i]
+	}
+
+	//return the reversed slice as a string
+	return string(chars)
+}
+```
+
+If you were paying attention during the [Go language tutorial](../golang/#secsimpletypes), you'll probably spot a bug in the code above. If not, don't worry: our automated tests will soon uncover it.
+
+Create another file named `reverse_test.go` in the same directory. Go's testing framework treats files that end with `_test` as automated test files, so it won't compile these into your built executable, but it will run the tests within them when you invoke the `go test` tool.
+
+Since we are writing unit tests, we will make the test data-driven. We will specify several test cases of an input string with its expected output string, and test them all.
+
 
 
 
@@ -66,3 +94,20 @@ Now that you know the distinctions between automated tests, let's see how we can
 TDD and BDD
 
 ## Continuous Integration Testing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
