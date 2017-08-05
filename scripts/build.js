@@ -19,6 +19,7 @@ require('prismjs/components/prism-bash.js');
 require('prismjs/components/prism-json.js');
 require('prismjs/components/prism-go.js');
 require('prismjs/components/prism-docker.js');
+require('prismjs/components/prism-yaml.js');
 
 const codeRegExp = /<pre>\s*<code\s*class="([^"]+)">([^<]*)<\/code>\s*<\/pre>/g;
 
