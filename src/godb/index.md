@@ -93,6 +93,9 @@ func main() {
 		fmt.Printf("error opening database: %v\n", err)
 	}
 
+	//ensure that the database gets closed when we are done
+	defer db.Close()
+
 	//for now, just ping the server to ensure we have
 	//a live connection to it
 	if err := db.Ping(); err != nil {
