@@ -76,7 +76,7 @@ If it worked, you won't see any output: no news is good news!
 
 ### Connecting From a Go Program
 
-Now let's see how to connect to our MySQL server instance from a Go program. Create a new directory within your `$GOPATH/src` directory, and in that directory create a new file named `main.go`. Add this code to that file:
+Now let's see how to connect to our MySQL server instance from a Go program. Create a new directory at `$GOPATH/src/mysqldemo`, and in that directory create a new file named `main.go`. Add this code to that file:
 
 ```go
 package main
@@ -113,6 +113,12 @@ func main() {
 		fmt.Printf("successfully connected!\n")
 	}
 }
+```
+
+To run this program, execute this at the command line:
+
+```bash
+go run main.go
 ```
 
 The `_ "github.com/go-sql-driver/mysql"` import line might look strange, but it is essentially importing the MySQL driver without creating a local name for the package in our code. Since we will be using only the common functions and structs in the `database/sql` package, we will never need to call the MySQL driver directly. As you might have noticed before, Go requires that you actually use all variables you declare, and package names are just like variables, so if you import a package but never use anything from it, the Go compiler will generate an error, and the `goimports` tool will simply remove the import. But if we don't import the package, its code won't be in our built executable, which will cause an error at runtime. To import a package that you never call, you can assign the blank identifier (`_`) to the imported package. This ensures the package gets into your built executable, but avoids the compile error you'd normally get from not calling any functions within that package.
