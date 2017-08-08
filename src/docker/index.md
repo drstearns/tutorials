@@ -228,6 +228,30 @@ The host path must be an absolute path, but if you're on a Mac or Unix system, o
 -v $(pwd):/usr/share/nginx/html:ro
 ```
 
+### Setting Environment Variables
+
+Docker containers are isolated not only from the host's file system, but also from the host's [environment variables](../env/). A newly-run container can't see any environment variables defined in your host shell, but you can use the `-e` flag on the `docker run` command to set environment variables that the container can see.
+
+For example, to set the variable `MY_ENV` inside the container, the commadn would look like this:
+
+```bash
+docker run \
+-e MY_ENV='some value' \
+... rest of flags and image name ...
+```
+
+The code running inside the container will then be able to read the environment variable `MY_ENV` to get its value.
+
+If you want to forward an environment variable that you've already declared in your shell into the container, you can use the `-e` flag and use bash completion to set the value. For example:
+
+```bash
+docker run \
+-e ADDR=$ADDR \
+... rest of flags and image name ...
+```
+
+Here we add an environment variable named `ADDR` inside the container, and set its value to the current value of the `ADDR` environment variable in our host shell. Remember that adding a `$` in front will cause bash to replace that expression with the current value of the environment variable.
+
 ## Building Your Own Container Images
 
 A mounted volume is useful whenever you need code running inside a container to read files on the host's file system, but if those files won't be changing once they are in production, it makes more sense to just build a new container image and copy the files into it. For example, you can build a new container image based on the NGINX container image, and just copy your web site's files into the `/usr/share/nginx/html` directory. That way, your web site files are already in the container image, and you can deploy the site to any server using a simple `docker run` command.
