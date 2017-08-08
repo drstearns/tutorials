@@ -290,14 +290,143 @@ To stop and remove your MySQL container, use this command, but note that this wi
 docker rm -f mysqldemo
 ```
 
-If you want to keep the actual data files between container runs, you need to mount a volume when running the server. See the [Where to Store Data section of the MySQL Docker image documentation](https://hub.docker.com/_/mysql/) for more details.
+If you want to keep the actual data files between container runs, you need to mount a volume when running the server. See the [Where to Store Data section](https://hub.docker.com/_/mysql/) of the MySQL Docker image documentation, as well as the [Managing Data in Containers](https://docs.docker.com/engine/tutorials/dockervolumes/) article in the Docker documentation for more details.
 
 
 ## Interacting with MongoDB
 
-Distributed document-oriented databases became very popular with the rise of social-media giants like Twitter, Facebook, and Google. These companies found the existing open-source relational databases to be too confining, and not scalable enough, so they developed document-oriented DBMSs with flexible schema.
+Distributed document-oriented DBMSs have become a popular alternative to relational DBMSs, as they allow you to shift your schema easily over time, and distribute your data amongst multiple machines in a cluster. Instead of storing data in tables with rows and columns, these DBMSs store flexible "documents" that contain whatever data you want. The most popular of these in the open-source world is [MongoDB](https://www.mongodb.com/).
 
+A MongoDB server can have one or more databases, each of which contains one or more **collections** of JSON documents. These collections are sort of like tables in a relational database, but they don't enforce any sort of schema on those documents (though recent versions of MongoDB now support [simple document validation](https://docs.mongodb.com/manual/core/document-validation/)). Instead collections are just groups of documents that you want to organize together, and they are commonly used to group documents by type (e.g., all user profile documents are saved in a "users" collection).
 
+Since collections don't really establish schema, they are created automatically as you insert documents into them. Databases are created automatically as well the first time you reference them. This means that a MongoDB server requires no bootstrapping: you can just run it and start inserting documents.
 
+This lack of schema enforcement is handy in the early days of a system, when requirements and data models are rapidly shifting, but it's also one of the significant drawbacks of document-oriented database like MongoDB. If you want to avoid putting crap into your database, you have to validate the data somewhere, and if the DBMS doesn't do it, your application has to. The burden of validation is still there: it just shifts from the DBMS to your own code.
 
+The other significant drawback of MongoDB is that it can't join related data in the server. MongoDB does offer some powerful query operations on collections, but it doesn't join related data across collections like the SQL `JOIN` operator can. Instead, MongoDB encourages you to denormailze your data, duplicating information on the assumption that it changes far less frequently than you will have to read it. Denormalizing definitely increases read performance, but the burden of updating data that has been added to multiple documents falls upon the application developer, and it's easy to forget.
+
+### Running the MongoDB Docker Container
+
+Just like MySQL, MongoDB releases an official Docker container image with the name `mongo`. Although you can setup a root user password for the MongoDB server, you don't have to. If you run both your MongoDB and application container in a Docker private network, only your application will be allowed to connect to it, so there's not really any need to setup a root password unless you don't trust your system engineers (which is a much bigger problem).
+
+Just as before, we are going to publish the server's default port (27017 for MongoDB) for this tutorial so that a Go programming running on our host will be able to connect to it. In production, use a private Docker network instead.
+
+```bash
+docker run -d \
+-p 27017:27017 \
+--name mongodemo \
+mongo
+```
+
+Use `docker ps` to ensure that it's running. If you want to connect to it via the MongoDB CLI use the same container but override the default entry point, just as we did with MySQL:
+
+```bash
+docker run -it \
+--rm \
+--network host \
+mongo sh -c 'exec mongo 127.0.0.1/demo'
+```
+
+If all goes well, the MongoDB CLI will connect to the server instance you ran, and leave you at the CLI prompt inside a new database named `demo`. Execute `help` to see a list of commands or refer to the [Mongo Shell Quick Reference](https://docs.mongodb.com/manual/reference/mongo-shell/). To insert a new test document, use this command:
+
+```javascript
+db.contacts.insertOne({"email": "test@test.com", "firstName": "Test", "lastName": "Tester"})
+```
+
+The `db` variable refers to the current database, and `.contacts` refers to a collection named "contacts." Since this collection doesn't exist yet, MongoDB just creates it for you automatically. The `.insertOne()` method of the collection inserts one new JSON document, which is supplied as the first parameter.
+
+MongoDB automatically assigns an `_id` property to every new document by default, set to a new `ObjectId` value. This is a globally-unique value that won't collide with other document IDs in this database or anywhere else.
+
+To see this new property, use the following command to find all the documents in the "contacts" collection:
+
+```javascript
+db.contacts.find()
+```
+
+To clean up, drop the "contacts" collection with this command:
+
+```javascript
+db.contacts.drop()
+```
+
+Enter the `exit` command to exit the CLI and return to your host's shell prompt. Just as in the MySQL example, the server container will continue running in the background, but the CLI container will be stopped and removed automatically because we used the `--rm` flag when running it.
+
+### Installing the MongoDB Client Package
+
+Since MongoDB is not a relational database, it doesn't implement a driver for the `database/sql` package. Instead you use the [mgo package](https://labix.org/mgo) (pronounced "mango"). To install it, use this command:
+
+```bash
+go get gopkg.in/mgo.v2
+```
+
+Remember, no news is good news!
+
+### Connecting from a Go Program
+
+Create a new directory at `$GOPATH/src/mongodemo` and create a `main.go` file within that directory with the following code:
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"gopkg.in/mgo.v2"
+)
+
+func main() {
+	sess, err := mgo.Dial("127.0.0.1")
+	if err != nil {
+		fmt.Printf("error dialing mongo: %v\n", err)
+	} else {
+		fmt.Printf("connected successfully!")
+	}
+}
+```
+
+Here we use the `mgo.Dial()` function to connect to the MongoDB server running on the localhost (127.0.0.1). As opposed to the `database/sql` package, this function does actually attempt a network connection, so if it succeeds, your Go application is able to connect to your server. The `sess` variable is a reference to an `mgo.Session` object, which has several methods for manipulating the database.
+
+### Inserting Data
+
+The `mgo` package can save any Go struct as a MongoDB document, and read any document back into that struct. This makes it super easy to save and read data, but there's one trick to it. Recall that MongoDB uses a field named `_id` for the unique document ID, but unexported Go struct fields can't be read by the `mgo` package, so we can't name our field `_id`. Thankfully, we can use a struct field tag, just like we did with JSON encoding, to override the name of the field as its saved/read from MongoDB:
+
+```go
+	type Contact struct {
+		ID        bson.ObjectId `bson:"_id"` //saved to mongo as `_id`
+		Email     string
+		FirstName string
+		LastName  string
+	}
+```
+
+This declares a struct for a Contact, but unlike the MySQL example, we add a `bson` tag to the `ID` field that renames the field to `_id`. The name `bson` refers to "binary JSON," which is the format used when storing documents in MongoDB.
+
+When creating an instance of this Contact struct, use `bson.NewObjectId()` to generate a new ObjectId for the `ID` struct field:
+
+```go
+	c := &Contact{
+		ID:        bson.NewObjectId(),
+		Email:     "test@test.com",
+		FirstName: "Test",
+		LastName:  "Tester",
+	}
+```
+
+If you have a Go extension installed in your editor, it should add an import for "gopkg.in/mgo.v2/bson" automatically, but if not, add that to your list of imports. The `bson` package provides an implementation of these globally unique ObjectIds used by MongoDB, and doesn't depend upon anything in the `mgo` package, so you can actually use the `bson` package on its own, with DBMSs other than MongoDB.
+
+To insert this new struct instance into the database, use this relatively simple code:
+
+```go
+	if err := sess.DB("demo").C("contacts").Insert(c); err != nil {
+		fmt.Printf("error inserting document: %v\n", err)
+	} else {
+		fmt.Printf("new ID = %s\n", c.ID.Hex())
+	}
+```
+
+The `sess.DB("demo")` part selects the "demo" database in the server (creating it automatically if necessary), and the `.C("contacts")` part selects the "contacts" collection (creating it automatically if necessary). The `.Insert()` method inserts the struct instance as a new document, and returns an error if something went wrong.
+
+### Finding Data
+
+### Updating Data
 
