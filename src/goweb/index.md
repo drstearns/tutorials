@@ -1,8 +1,8 @@
-As I mentioned in the [HTTP tutorial](../http/), a web server is just a program that listens on a port for HTTP requests and responds accordingly. You can write a web server in any language that gives you access to the computer's network interface, but some languages include code in their standard library that handles all the low-level details for you. Go is one of those languages, so building a simple web server in Go is quite easy. The standard library takes care of most of the work, allowing you to focus on the server's logic and functionality.
+As I mentioned in the [HTTP tutorial](../http/), a web server is just a program that listens on a port for HTTP requests and responds accordingly. You can write a web server in any language that gives you access to the computer's network interface, but some languages include code in their standard library that handles all the low-level details for you. Go is one of those languages, so building a simple web server in Go is quite easy. The standard library takes care of most of the common HTTP work, allowing you to focus on the server's logic and functionality.
 
 ## Hello Web in Go
 
-When we [learned the Go language](../golang/), we started with the traditional ["Hello, World!" program](../golang/#sechelloworldingo). To learn Go web servers, we should start with a "Hello, Web!" program:
+When we [learned the Go language](../golang/), we started with the traditional ["Hello, World!" program](../golang/#sechelloworldingo). To learn Go web servers, we should start with a similar "Hello, Web!" server:
 
 ```go
 package main
@@ -56,7 +56,7 @@ cd $GOPATH/src/hellosvr
 touch main.go
 ```
 
-Open that main.go file in your favorite editor and copy the code above into it. Then run these commands to set the `ADDR` environment variable, compile/install the server, and start it:
+Open that main.go file in your favorite editor and copy the code above into it. Then run these commands to set the `ADDR` [environment variable](../env/), compile/install the server, and start it:
 
 ```bash
 export ADDR=localhost:4000
