@@ -1,4 +1,4 @@
 {
-	"title": "Sharing Globals with Go Handlers",
+	"title": "Sharing Values with Go Handlers",
 	"subtitle": "How to make global values available to your HTTP handler functions"
 }
