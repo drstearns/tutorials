@@ -1,0 +1,4 @@
+{
+	"title": "Middleware Patterns in Go",
+	"subtitle": "How to do pre and post-processing on all requests"
+}
