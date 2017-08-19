@@ -387,35 +387,32 @@ As noted earlier, the `docker build` command actually compresses the entire dire
 
 You will commonly want to use this when creating a Docker container image for a Node.js application, as the contents of the `node_modules` directory on your host OS should be ignored.
 
-## A Docker Clean-Up Script
+## Cleaning Up
 
-One thing you will notice quickly is that Docker doesn't delete previous versions of your container images when you rebuild the image. Instead it leaves them on your disk in an "untagged" state. These untagged images consume disk space, so you will eventually want to delete them.
+One thing you will notice quickly is that Docker doesn't delete previous versions of your container images when you rebuild the image. Instead it leaves them on your disk in an "untagged" state. These are often referred to as "dangling images," and they consume disk space, so you will eventually want to delete them.
 
-The `docker rmi` command will delete images, but it requires a list of image IDs. If you have several untagged images, it can be very time-consuming to copy/paste all of them into the `docker rmi` command. Thankfully we can use a little bash completion magic to do this all in one step:
-
-```bash
-docker rmi $(docker images -q -f dangling=true)
-```
-
-Anytime bash sees the `$(...)` syntax, it will expand that into the output of the command inside the parentheses. The command we use here is `docker images -q -f dangling=true`, which will return just the list of image IDs that are currently "dangling" (i.e., untagged). We feed that into `docker rmi`, which will delete all of those images at once.
-
-If you have no untagged images, the `docker rmi` command will return an error since it received no image IDs. If this annoys you, create a bash script that tests the list of returned IDs before executing `docker rmi`:
+The `docker rmi` command will delete images, but it requires a list of image IDs to delete. If you don't know what those IDs are, or have several you need to delete, you can use a relatively new command to delete all of them at once:
 
 ```bash
-iids=$(docker images -q -f dangling=true)
-if [ "$iids" ]; then
-    docker rmi $iids
-fi
+docker image prune
 ```
 
-You can use the same trick to remove all stopped containers:
+This will prompt you to confirm that you want to delete them. If you want to bypass the prompt and just delete them, add the `-f` or `--force` flag:
 
 ```bash
-cids=$(docker ps -aq -f status=exited)
-if [ "$cids" ]; then
-    docker rm $cids
-fi
+docker image prune -f
 ```
 
-If you put these together into a script named `docker-clean` you can very quickly clean-up all stopped containers and all untagged images with just one command!
+You can use a similar command to remove all stopped containers:
 
+```bash
+docker container prune -f 
+```
+
+If you want to just cleanup everything that is not currently in-use, use this command:
+
+```bash
+docker system prune -f
+```
+
+For more details on these pruning commands, see [Prune unused Docker objects](https://docs.docker.com/engine/admin/pruning/) in the Docker documentation.
