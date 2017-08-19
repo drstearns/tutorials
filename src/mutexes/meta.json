@@ -1,4 +1,4 @@
 {
-	"title": "Concurrency with Go Mutexes",
-	"subtitle": "Protecting shared data structures from concurrent access"
+	"title": "Protecting Data Structures with Mutexes",
+	"subtitle": "How to make a complex data structure safe for concurrent use"
 }
