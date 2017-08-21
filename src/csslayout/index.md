@@ -1,4 +1,4 @@
-By default, the elements in a web page flow from left-to-right, top-to-bottom. The browser will ensure that all content is visible and if the content is longer than a single line, it just wraps to the next line. 
+By default, the elements in a web page flow from left-to-right, top-to-bottom. The browser will ensure that all content is visible and if the content is longer than a single line, it wraps to the next line. 
 
 In many cases, this default layout is exactly what you want, but in some cases you may want to break a few elements out of the normal flow. CSS allows us to do this in a number of interesting ways.
 

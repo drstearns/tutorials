@@ -271,13 +271,18 @@ To change the font, use the `font-family` property:
 ```css
 /* font-family is inhered, so setting it on body sets it for the whole page */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 
+        "Segoe UI", "Roboto", "Oxygen", "Ubuntu", 
+        "Cantarell", "Fira Sans", "Droid Sans", 
+        "Helvetica Neue", sans-serif;
 }
 ```
 
 The value for `font-family` can be a comma-delimited list of font names. If the font name has a space in it, you must wrap the name in quotes, but quotes are optional if the name doesn't contain a space. The browser will attempt to use the first font in the list, but fall back to using those later in the last if the requested font can't be found on the system. At the very end of the list is `sans-serif`, which is a CSS-specific keyword meaning "the default sans-serif font on the system, whatever that happens to be."
 
-Relying on particular font names that may or may not be installed on the system is, of course, not ideal. Thankfully browsers support the ability to dynamically download particular font files and use those when rendering your web page.
+A list of fonts like this is known as a **font stack**, and this particular list comes from the article [Using UI System Fonts In Web Design: A Quick Practical Guide](https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/). These are all the default system fonts that ship with recent versions of the major desktop and mobile operating systems.
+
+System fonts are great, but often times you want to use your own font. Thankfully browsers support the ability to dynamically download particular font files and use those when rendering your web page.
 
 The easiest way to use custom fonts is to use one from the [Google Fonts](https://fonts.google.com/) collection. Select the fonts you want to use, and Google Fonts will generate the appropriate `<link>` element for your HTML page.
 

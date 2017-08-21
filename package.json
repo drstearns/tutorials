@@ -20,10 +20,10 @@
   },
   "homepage": "https://github.com/drstearns/tutorials#readme",
   "dependencies": {
-    "browser-sync": "^2.18.12",
     "clean-css": "^4.1.5",
     "handlebars": "^4.0.10",
     "html-minifier": "^3.5.2",
+    "live-server": "^1.2.0",
     "moment": "^2.18.1",
     "prismjs": "^1.6.0",
     "showdown": "^1.7.1"

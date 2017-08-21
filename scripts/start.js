@@ -5,7 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const {spawn, spawnSync} = require("child_process");
-const browserSync = require("browser-sync").create();
+const liveServer = require("live-server");
 
 const srcDir = path.join(__dirname, "../src");
 const docsDir = path.join(__dirname, "../docs");
@@ -19,7 +19,6 @@ let buildProc = spawnSync(buildScript, [], spawnOpts);
 console.log("watching %s...", srcDir);
 fs.watch(srcDir, {recursive: true}, () => spawn(buildScript, [], spawnOpts));
 
-browserSync.init({
-    server: docsDir,
-    files: docsDir
+liveServer.start({
+	root: docsDir
 });
