@@ -1,6 +1,6 @@
 By default, the elements in a web page flow from left-to-right, top-to-bottom. The browser will ensure that all content is visible and if the content is longer than a single line, it wraps to the next line. 
 
-In many cases, this default layout is exactly what you want, but in some cases you may want to break a few elements out of the normal flow. CSS allows us to do this in a number of interesting ways.
+In many cases, this default layout is exactly what you want, but in some cases you may want to break a few elements out of the normal flow. CSS allows us to do this in a number of interesting ways. In this tutorial, I will describe three commonly-used techniques: floated, fixed, and absolute positioning.
 
 ## Floated Elements
 
@@ -136,6 +136,8 @@ Here's a working example:
 Floated, fixed, and absolutely-positioned elements are powerful tools in your toolbox, but use them sparingly. They can create troubles on small mobile screens, and they may not always behave correctly on obscure platforms. If possible, work with the browser's default layout and not against it.
 
 
+## More Information
 
-
+- [float reference](https://developer.mozilla.org/en-US/docs/Web/CSS/float)
+- [position reference](https://developer.mozilla.org/en-US/docs/Web/CSS/position)
 
