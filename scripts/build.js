@@ -182,9 +182,9 @@ ensureDir(docsDir);
 //process the table of contents page
 processIndex(path.join(srcDir, "index.html"), path.join(docsDir, "index.html"));
 
-//process the global img and lib dirs
-copyTree(path.join(srcDir, "img"), path.join(docsDir, "img"));
-copyTree(path.join(srcDir, "lib"), path.join(docsDir, "lib"));
+//process the global _img and _lib dirs
+copyTree(path.join(srcDir, "_img"), path.join(docsDir, "_img"));
+copyTree(path.join(srcDir, "_lib"), path.join(docsDir, "_lib"));
 
 //process each tutorial directory
 fs.readdirSync(srcDir)
