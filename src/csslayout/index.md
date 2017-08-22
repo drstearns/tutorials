@@ -76,4 +76,66 @@ Fixed elements are taken out of the layout flow, so they will overlay the elemen
 
 ## Absolutely Positioned Elements
 
-By default, an element's left and top coordinates are determined by the position of its containing element and any sibling elements that proceed it. But with CSS we can absolutely position an element within a containing element, giving it an exact `left` and `top` offset. This is especially useful when building games, as you typically need to position game elements precisely in an X/Y coordinate system. But it can also be useful when overlaying a badge on top of another element.
+By default, an element's left and top coordinates are determined by the position of its containing element and any sibling elements that proceed it. But with CSS we can absolutely position an element within some containing element, giving it an exact `left` and `top` offset. This is especially useful when building games, as you typically need to position elements precisely in an X/Y coordinate system.
+
+Absolute positioning can also be handy when adding overlay images, such as badges. For example, say we wanted to dynamically overlay a "new" badge on the top-left corner of our cute bunny picture. We could do that using this markup and CSS:
+
+```html
+<div class="new-item">
+	<img src="img/bunny.jpg" alt="cute bunny">
+	<img class="badge" src="img/new.png" alt="new badge">
+</div>
+```
+
+```css
+/* coordinates of elements positioned absolutely 
+within `class="new-item"` elements will be relative
+to those `class="new-item"` elements */
+.new-item {
+	position: relative;	
+}
+/* position the badge absolutely in the top-left corner */
+.new-item .badge {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+```
+
+<div class="screenshot"><div style="position:relative"><img src="img/bunny.jpg" alt="cute bunny"><img src="img/new.png" alt="new badge" style="position:absolute;top:0;left:0"></div></div>
+
+When you absolutely-position an element, you provide explicit top/left coordinates, but those coordinates need to be relative to some other element. By default, they will be relative to the entire body of the page, but you can change this by setting `position: relative` on any ancestor element of the absolutely-positioned element. Here we set that on a `<div>` that contains both the bunny image and the new badge. The new badge is then positioned absolutely within that `<div>`, so it overlays the bunny image.
+
+We could make this even more automatic by using the [::after CSS pseudo selector](https://www.w3schools.com/cssref/sel_after.asp) to inject the new badge image automatically:
+
+```html
+<div class="new-item">
+	<img src="img/bunny.jpg" alt="cute bunny">
+</div>
+```
+
+```css
+.new-item {
+	position: relative;
+}
+.new-item::after {
+	content: url(img/new.png);
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+```
+
+Here's a working example:
+
+<p data-height="384" data-theme-id="19831" data-slug-hash="ZJoOjr" data-default-tab="css,result" data-user="drstearns" data-embed-version="2" data-pen-title="Absolute Positioning with Auto Badge Injection" class="codepen">See the Pen <a href="https://codepen.io/drstearns/pen/ZJoOjr/">Absolute Positioning with Auto Badge Injection</a> by Dave Stearns (<a href="https://codepen.io/drstearns">@drstearns</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+## Use Sparingly
+
+Floated, fixed, and absolutely-positioned elements are powerful tools in your toolbox, but use them sparingly. They can create troubles on small mobile screens, and they may not always behave correctly on obscure platforms. If possible, work with the browser's default layout and not against it.
+
+
+
+
+
