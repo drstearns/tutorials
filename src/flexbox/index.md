@@ -64,6 +64,32 @@ You'll notice that the columns are now only as wide as the headings, and are scr
 
 This tells the browser to grow all of your `<div class="col">` elements equally so that they consume the entire width of the containing flexbox, regardless of their content. If you want the content to be centered instead of left-aligned, just add `text-align: center;` to the `.col` rule.
 
+The number you assign to the `flex-grow` property establishes a ratio between the columns that determines how much of the remaining row width each column should get. In the example above, the `flex-grow` property on all of the columns is set to `1`, so they all get an equal amount of the remaining width. But you can adjust this on a per-column basis to give some columns more of the remaining width than others. For example, say you had a three-column layout where you wanted the middle column to get twice as much of the remaining row width as the outside columns. You'd start with HTML like this:
+
+```html
+<div class="row">
+	<div class="col-left">...</div>
+	<div class="col-middle">...</div>
+	<div class="col-right">...</div>
+</div>
+```
+
+And use CSS like this to set `flex-grow` differently for the middle column:
+
+```css
+.row {
+	display: flex;
+}
+.col-left, .col-right {
+	flex-grow: 1;
+}
+.col-middle {
+	flex-grow: 2;
+}
+```
+
+<p><a href="https://codepen.io/drstearns/pen/ayKYRY" class="button is-primary">Open In CodePen</a></p>
+
 Flexbox also makes it easy to grow some columns while letting others size only to match their content. For example, say you want to show an icon or two on the far right, but have the content in the first column grow to consume the rest of the available row width. Change your HTML content to this (requires [Font Awesome](http://fontawesome.io/) for the icon):
 
 ```html
@@ -189,6 +215,58 @@ section {
 <p><a href="https://codepen.io/drstearns/pen/zdjXGm?editors=1100" class="button is-primary">Open in CodePen</a></p>
 
 When you open this page, you see only the first section consuming the entire browser viewport, regardless of how large the browser window is. Try resizing your window and you'll notice how the first section grows to fill it. When you scroll down, you then see the second section, and any other elements you might add after it.
+
+## Nesting
+
+The last thing to mention about flexboxes is that they can be nested. That is, a column within a flexbox can contain another flexbox with its own columns. This can be handy when you need to sub-divide a column.
+
+If you define a single set of style classes for rows and columns, you can reuse them at several levels:
+
+```html
+<div class="row">
+	<div class="col">
+		<!-- nest another flexbox with 2 columns inside this column -->
+		<div class="row">
+			<div class="col">...</div>
+			<div class="col">...</div>
+		</div>
+	</div>
+	<div class="col">...</div>
+	<div class="col">...</div>
+</div>
+```
+
+If you need to style the nested flexbox differently from the parent flexbox, just add a different style class name to the nested flexbox:
+
+```html
+<div class="row">
+	<div class="col">
+		<!-- nest another flexbox with 2 columns inside this column -->
+		<div class="row nested">
+			<div class="col">...</div>
+			<div class="col">...</div>
+		</div>
+	</div>
+	<div class="col">...</div>
+	<div class="col">...</div>
+</div>
+```
+
+You can then use [descendant selectors](../css/#secdescendantselectors) to target just the columns within the nested flexbox:
+
+```css
+.row {
+	/* style properties that apply to all rows */
+}
+.row .col {
+	/* style properties that apply to all columns */
+}
+.row.nested > .col {
+	/* style properties that apply only to the columns
+	inside the nested flexbox */
+}
+```
+
 
 ## More Information and Practice
 
