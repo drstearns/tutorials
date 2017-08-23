@@ -260,11 +260,13 @@ There are three kinds of lists in HTML: unordered, ordered, and dictionary lists
 </ul>
 ```
 
-> <ul>
-	<li>1 tablespoon of oil</li>
-	<li>1 onion diced</li>
-	<li>2 cloves of garlic</li>
-</ul>
+<div class="screenshot">
+	<ul>
+		<li>1 tablespoon of oil</li>
+		<li>1 onion diced</li>
+		<li>2 cloves of garlic</li>
+	</ul>
+</div>
 
 The `<ul>` element defines an unordered list, and the `<li>` element is used for a list item.
 
@@ -278,12 +280,13 @@ Ordered lists are for things that have a specific logical order: for example, st
 </ol>
 ```
 
-> <ol>
-	<li>Heat the oil in the pan until smoking</li>
-	<li>Fry the onions until golden</li>
-	<li>Add the garlic and cook until fragrant, about 30 seconds</li>
-</ol>
-
+<div class="screenshot">
+	<ol>
+		<li>Heat the oil in the pan until smoking</li>
+		<li>Fry the onions until golden</li>
+		<li>Add the garlic and cook until fragrant, about 30 seconds</li>
+	</ol>
+</div>
 
 Dictionary lists are for sets of terms with related definitions. This is obviously useful for encoding words and their meanings, but it can also be used for other name and definition pairs, such as dishes on a restaurant menu:
 
@@ -296,13 +299,15 @@ Dictionary lists are for sets of terms with related definitions. This is obvious
 	<dd>Romaine leaves tossed with a zesty Caesar-style dressing</dd>
 </dl>
 ```
-> <dl>
-	<dt>Baguette with Butter</dt>
-	<dd>A toasted Grand Central baguette with salted butter</dd>
-	<dt>Caesar Salad</dt>
-	<dd>Romaine leaves tossed with a zesty Caesar-style dressing</dd>
-</dl>
 
+<div class="screenshot">
+	<dl>
+		<dt>Baguette with Butter</dt>
+		<dd>A toasted Grand Central baguette with salted butter</dd>
+		<dt>Caesar Salad</dt>
+		<dd>Romaine leaves tossed with a zesty Caesar-style dressing</dd>
+	</dl>
+</div>
 
 The `<dl>` element contains the entire list, which should be comprised of `<dt>` (dictionary term) and `<dd>` (dictionary definition) pairs.
 
@@ -315,7 +320,9 @@ The "H" in HTML standard for "Hypertext," which means that page should link to e
 ```html
 <a href="https://google.com">Search on Google</a>
 ```
-> <a href="https://google.com">Search on Google</a>
+<div class="screenshot">
+	<a href="https://google.com">Search on Google</a>
+</div>
 
 The `href` attribute should contain the URL for the page you want to navigate to. This can be absolute, as in the example above, or relative to the current page. For example, if I wanted to link to a page named `other-page.html` in the same directory as the current page, the `href` attribute would simply be `other-page.html`.
 
@@ -342,7 +349,9 @@ Instead of pointing to another page or another section of the same page, hyperli
 <p>For more information <a href="mailto:informatics@uw.edu">contact us by email</a>.</p>
 ```
 
-> <p>For more information <a href="mailto:informatics@uw.edu">contact us by email</a>.</p>
+<div class="screenshot">
+	<p>For more information <a href="mailto:informatics@uw.edu">contact us by email</a>.</p>
+</div>
 
 You can also preset the subject line and carbon-copy addresses. See the [mailto syntax reference](https://en.wikipedia.org/wiki/Mailto) for more details.
 
@@ -352,7 +361,9 @@ A handy variant for mobile phones is the `tel:some-phone-number` syntax. When ac
 <p>For more information <a href="tel:+12065551212">give us a call!</a>.</p>
 ```
 
-> <p>For more information <a href="tel:+12065551212">give us a call!</a>.</p>
+<div class="screenshot">
+	<p>For more information <a href="tel:+12065551212">give us a call!</a>.</p>
+</div>
 
 On tablets and desktop browsers, these links may offer to launch various audio/video chat applications, such as Facetime or Skype.
 
