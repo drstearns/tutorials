@@ -7,6 +7,9 @@
 
 
 	<link rel="stylesheet" href="lib/bulma.min.css">
+    <link rel="stylesheet" href="lib/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.css" />
+	
 	<link rel="icon" href="img/page-icon.png">
 
     <meta property="og:type" content="website">
@@ -28,8 +31,22 @@
     	<div class="hero is-funky">
 			<div class="hero-body">
 				<div class="container">
-					<h1 class="title">Table of Contents</h1>
-					<h2 class="subtitle">Full list of tutorials</h2>
+					<div class="columns">
+						<div class="column">
+							<h1 class="title">Table of Contents</h1>
+							<h2 class="subtitle">Full list of tutorials</h2>							
+						</div>
+						<div class="column is-narrow">
+							<div class="field">
+								<div class="control has-icons-left">
+									<input id="search-input" type="text" class="input" placeholder="search">
+									<span class="icon is-left is-small">
+										<i class="fa fa-search"></i>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
     	</div>
@@ -140,6 +157,15 @@
 	  ga('create', 'UA-102177301-1', 'auto');
 	  ga('send', 'pageview');
 
+	</script>
+
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+	<script type="text/javascript"> docsearch({
+		apiKey: '0df3da262f01ef55f87c815dc5a5f769',
+		indexName: 'drstearns',
+		inputSelector: '#search-input',
+		debug: false
+		});
 	</script>
 </body>
 </html>
