@@ -21,6 +21,14 @@ The common template is in `src/template.html`. This is a simple [Handlebars](htt
 
 The table of contents is in `src/index.html`, and it will be minimized into `docs/index.html`. This will be the home page of the GitHub Pages site, so it can be whatever you want it to be.
 
+# Installing Dependencies
+
+After cloning for the first time, run this command from the project root directory to install all dependencies (required Node.js):
+
+```bash
+npm install
+```
+
 # Building
 
 To rebuild any tutorials that have changed since the last build, run this command:
@@ -41,6 +49,4 @@ Use this command while working on a tutorial:
 npm start
 ```
 
-This will build the tutorials and run `browser-sync` on the `docs/` directory. It will also watch the `src/` directory and automatically trigger a build if anything changes. This script is in `scripts/start.js`.
-
->**Note**: watching an entire directory is not supported by Node.js on Linux, so for now this script doesn't auto-rebuild on Linux. I will fix this at some point.
+This will build the tutorials and run `live-server` on the `docs/` directory. It will also watch the `src/` directory and automatically trigger a build if anything changes. This script is in `scripts/start.js`.

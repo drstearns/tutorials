@@ -2,9 +2,9 @@
 
 "use strict";
 
-const fs = require("fs");
 const path = require("path");
 const {spawn, spawnSync} = require("child_process");
+const chokidar = require("chokidar");
 const liveServer = require("live-server");
 
 const srcDir = path.join(__dirname, "../src");
@@ -14,10 +14,18 @@ const buildScript = path.join(__dirname, "build.js");
 const spawnOpts = {stdio: "inherit"};
 
 console.log("building tutorials...");
-let buildProc = spawnSync(buildScript, [], spawnOpts);
+spawnSync(buildScript, [], spawnOpts);
 
-console.log("watching %s...", srcDir);
-fs.watch(srcDir, {recursive: true}, () => spawn(buildScript, [], spawnOpts));
+let watcher = chokidar.watch(srcDir, {
+	ignored: /(^|[\/\\])\../
+});
+
+watcher.on("ready", () => {
+	console.log("watching sources...")
+	watcher.on("all", (eventName, filePath) => {
+		spawnSync(buildScript, [], spawnOpts);
+	});
+})
 
 liveServer.start({
 	root: docsDir
