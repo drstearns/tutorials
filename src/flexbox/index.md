@@ -46,7 +46,7 @@ Open the page, and note that the columns are all stacked on top of each other by
 
 Setting `display: flex;` on the `.row` element tells the browser to make it a flexbox. The immediate child elements will then become columns on the same line. 
 
-By default the browser will adjust the width of these columns based on their content. In this case, the columns have a bunch of text in them, so the browser grows their width up to 25% of the row width, and then wraps the text within the column. It stops at 25% because there are four columns in the row, and each column gets an equal share of the row width by default.
+By default the browser will adjust the width of these columns based on their content. In this case, all of the columns have the same text in them, so the browser grows their width equally, and then wraps the text within the column.
 
 ## Growing Columns
 
@@ -56,13 +56,19 @@ You'll notice that the columns are now only as wide as the headings, and are scr
 
 ```css
 .col {
-	flex-grow: 1;
+	flex: 1;
 }
 ```
 
 <p><a href="https://codepen.io/drstearns/pen/LjmqpR?editors=1100" class="button is-primary">Open in CodePen</a></p>
 
-This tells the browser to grow all of your `<div class="col">` elements equally so that they consume the entire width of the containing flexbox, regardless of their content. If you want the content to be centered instead of left-aligned, just add `text-align: center;` to the `.col` rule.
+This tells the browser to grow all of your `<div class="col">` elements equally. The `flex` property can adjust up to three settings at once: `flex-grow`, `flex-shrink`, and `flex-basis`. It's recommended that you use this shorthand property, especially when adjusting only one or two of those values, so that the browser can reset the properties you don't mention to a sensible default.
+
+Here we are setting `flex` to only one number, so this sets `flex-grow` to `1`. The `flex-grow` property controls how much of the remaining row width the column should get relative to other columns. If all columns have a setting of `1`, they all grow by an equal amount, and thus end up exactly the same size.
+
+Setting `flex` to just one number also defaults `flex-shrink` to `1` and `flex-basis` to `0`. The `flex-shrink` property controls how much a column will shrink in width relative to other columns when the row isn't long enough to hold all of the column content on one line (e.g., the example above). If all columns have a `flex-shrink` of `1`, they all shrink by the same amount, and thus end up the same width.
+
+The `flex-basis` property sets the base size of the column, and here it is being set to `0`, which tells the browser to size it according to the `flex-grow` and `flex-shrink` settings regardless of the content within the column.
 
 The number you assign to the `flex-grow` property establishes a ratio between the columns that determines how much of the remaining row width each column should get. In the example above, the `flex-grow` property on all of the columns is set to `1`, so they all get an equal amount of the remaining width. But you can adjust this on a per-column basis to give some columns more of the remaining width than others. For example, say you had a three-column layout where you wanted the middle column to get twice as much of the remaining row width as the outside columns. You'd start with HTML like this:
 
@@ -74,17 +80,17 @@ The number you assign to the `flex-grow` property establishes a ratio between th
 </div>
 ```
 
-And use CSS like this to set `flex-grow` differently for the middle column:
+And use CSS like this to set `flex` differently for the middle column:
 
 ```css
 .row {
 	display: flex;
 }
 .col-left, .col-right {
-	flex-grow: 1;
+	flex: 1;
 }
 .col-middle {
-	flex-grow: 2;
+	flex: 2;
 }
 ```
 
@@ -103,13 +109,15 @@ Flexbox also makes it easy to grow some columns while letting others size only t
 </div>
 ```
 
-<p><a href="https://codepen.io/drstearns/pen/xLjMRO?editors=1100" class="button is-primary">Open in CodePen</a></p>
+<p><a href="https://codepen.io/drstearns/pen/xLjMRO" class="button is-primary">Open in CodePen</a></p>
 
-Because we use `class="col-icons"` on the second column, that element will no longer be selected by our `.col` style rule, so it won't get the `flex-grow: 1` property setting. The other column will, so it will grow to consume the rest of the available row width. This will continue to work even if we add more icons to the right side: that column will grow only as large as it needs to be to show its content, but the first column will grow to consume the remaining row width.
+Because we use `class="col-icons"` on the second column, that element will no longer be selected by our `.col` style rule, so it won't get the `flex: 1` property setting. The other column will, so it will grow to consume the rest of the available row width. This will continue to work even if we add more icons to the right side: that column will grow only as large as it needs to be to show its content, but the first column will grow to consume the remaining row width.
 
 ## Specifying Widths Explicitly
 
 So far we've seen how to make columns just wide enough to fit their content, or grow to consume the available row width, but what if you want to specify an exact column width, like 20% or 300 pixels? You can do this using the `flex-basis` property.
+
+### Box Sizing
 
 When you start setting widths explicitly, it's a good idea to also tell the browser that you want the element's padding and borders to be included in the element's width. By default, browsers consider an element's width to be only the width of the content area: padding and borders are then added on top of that. So if you set the width of an element to be `300px` but then add `10px` of padding to the left and right sides, the overall width of the element will actually be `320px` by default.
 
@@ -122,6 +130,8 @@ To make the browser include padding and borders when setting the widths of all e
 	box-sizing: border-box;
 }
 ```
+
+### Flex Basis
 
 Once you specify this, you can now set explicit widths on your columns. For example, say you want a two column layout where the first column (your navigation area) is exactly 200 pixels, and the second (the main content area) grows to fill the remaining row width. Start with HTML like this:
 
@@ -147,19 +157,19 @@ Then use this CSS in your stylesheet:
 }
 nav {
 	/* set column width to exactly 200 pixels with 1rem of padding */
-	flex-basis: 200px;
+	flex: 0 0 200px;
 	padding: 1rem;
 	background-color: #CFD8DC; /* just to highlight the area */
 }
 main {
 	/* grow the main content area to consume the rest of the row width */
-	flex-grow: 1;
+	flex: 1;
 	padding: 1rem;
 	background-color: #BBDEFB; /* just to highlight the area */
 }
 ```
 
-<p><a href="https://codepen.io/drstearns/pen/wqjOPa?editors=1100" class="button is-primary">Open in CodePen</a></p>
+<p><a href="https://codepen.io/drstearns/pen/wqjOPa" class="button is-primary">Open in CodePen</a></p>
 
 ## Vertical Centering
 
@@ -212,7 +222,7 @@ section {
 }
 ```
 
-<p><a href="https://codepen.io/drstearns/pen/zdjXGm?editors=1100" class="button is-primary">Open in CodePen</a></p>
+<p><a href="https://codepen.io/drstearns/pen/zdjXGm" class="button is-primary">Open in CodePen</a></p>
 
 When you open this page, you see only the first section consuming the entire browser viewport, regardless of how large the browser window is. Try resizing your window and you'll notice how the first section grows to fill it. When you scroll down, you then see the second section, and any other elements you might add after it.
 
@@ -261,12 +271,11 @@ You can then use [descendant selectors](../css/#secdescendantselectors) to targe
 .row .col {
 	/* style properties that apply to all columns */
 }
-.row.nested > .col {
+.row.nested .col {
 	/* style properties that apply only to the columns
 	inside the nested flexbox */
 }
 ```
-
 
 ## More Information and Practice
 
@@ -274,14 +283,4 @@ THe Flexbox standard defines several other properties you can use to precisely c
 
 - [The Complete Guide to Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)
 - Test your Flexbox skills by playing [Flexbox Froggy!](http://flexboxfroggy.com/)
-
-
-
-
-
-
-
-
-
-
 
