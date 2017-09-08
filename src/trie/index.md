@@ -1,6 +1,6 @@
 On many social media systems, you can refer to other users in your posts. As soon as you start typing a name, you often get a list of possible matches. The system might have millions of users, but it's able to show you suggestions as quickly as you can type.
 
-Enabling this sort of suggest-as-you-type feature requires a fast, in-memory index. These indexes can use several different kinds of data structures depending on what kind of queries they need to answer. The data structure we commonly use when we need to find entries that match a prefix string is known as a **trie** (pronounced "try"). The name comes from the word re**trie**val, which indicates that this structure is designed for search and retrieval operations, specifically searching for things that match a prefix string.
+Enabling this sort of suggest-as-you-type feature requires a fast, in-memory index. These indexes can use several different kinds of data structures depending on what kind of queries they need to answer. The data structure we commonly use when we need to find entries that match a prefix string is known as a **trie** (pronounced "tree" or "try"). The name comes from the word re**trie**val, which indicates that this structure is designed for search and retrieval operations, specifically searching for things that match a prefix string.
 
 ## What is a Trie?
 
