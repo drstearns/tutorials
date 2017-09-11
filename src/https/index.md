@@ -55,16 +55,20 @@ Once you have your domain name, you can [host that domain name with DigitalOcean
 
 ### Run the Let's Encrypt Command
 
-After you register and host your domain name, you need to `ssh` in to your droplets and run the `letsencrypt` command. If you created your droplets using DigitalOcean's "Docker x.x.x-ce on Ubuntu 16.04" One-Click app configuration, then the `letsencrypt` command is already installed and ready for use.
-
-The command will start a web server listening on ports 80 and 443, so you need to open those ports on the firewall. To do that, use these commands while connected to your droplet via `ssh`:
+After you register and host your domain name, you need to `ssh` in to your droplets and run the `letsencrypt` command. This command will start a web server listening on ports 80 and 443, so you need to open those ports on the firewall. To do that, use these commands while connected to your droplet via `ssh`:
 
 ```bash
 sudo ufw allow 80
 sudo ufw allow 443
 ```
 
-After the ports are open, you can run the Let's Encrypt command using this command, replacing `your-domain.com` with your domain name:
+After the ports are open, you can run the `letsencrypt` command. DigitalOcean used to include this command in the "Docker x.x.x-ce on Ubuntu 16.04" One-Click app image, but they seem to have removed it in more recent versions. You can verify whether it's already installed by trying to execute `letsnecrypt -h`. If you get an error saying that the command is not found or is not yet installed, you can install it easily using this command:
+
+```bash
+apt update && apt install -y letsencrypt
+```
+
+Then run the command like this, replacing `your-domain.com` with your domain name:
 
 ```bash
 sudo letsencrypt certonly --standalone -d your-domain.com
@@ -77,7 +81,14 @@ The command will prompt you for an email address (for expiry notifications) and 
 
 Note that these files are actually symbolic links to files in the `/etc/letsencrypt/archive` directory. This will matter when we start trying to read them using a Docker mapped volume. More details in the sections that follow.
 
-> **Pro Tip:** if you want to script the letsencrypt command, you can agree to the terms of service and supply your email address via command-line flags. Use this command, replacing `your-email-address` with your email address: `sudo letsencrypt certonly --standalone -n --agree-tos --email your-email-address -d your-domain.com`
+> **Pro Tip:** if you want to script the letsencrypt command, you can agree to the terms of service and supply your email address via command-line flags. Use this command, replacing `your-email-address` with your email address:
+> ```bash
+> sudo letsencrypt certonly --standalone 
+>	-n 								# non-interative mode
+>	--agree-tos 					# agree to TOS
+>	--email your-email-address 		# provide email address
+>	-d your-domain.com 				# domain name
+> ```
 
 ## Supporting HTTPS in Go
 
