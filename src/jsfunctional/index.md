@@ -19,7 +19,7 @@ Advocates of functional programming note that pure functions are easier to test 
 
 These advocates also argue that functional programs are easier to read and reason about because they end up looking more [declarative than imperative](../javascript/#secimperativevsdeclarative). A functional program reads like a series of data transformations, the output of each flowing into the next as input. This will become easier to see as I show examples in the next section.
 
-Although some functional programming zealots would argue that all programs should be written in a functional style, it's better to think of functional programming as another tool in your toolbox that is appropriate for some jobs, and not so much for others. Object-oriented programming is often the better choice for long-running, highly-interactive client programs, while functional is a better choice for short-lived programs or servers that handle discrete transactions. It's also possible to combine the two styles: React components can be either object-oriented or functional, and you can use some functional techniques within an object-oriented component.
+Although some functional programming zealots would argue that all programs should be written in a functional style, it's better to think of functional programming as another tool in your toolbox that is appropriate for some jobs, and not so much for others. Object-oriented programming is often the better choice for long-running, highly-interactive client programs, while functional is a better choice for short-lived programs or servers that handle discrete transactions. It's also possible to combine the two styles: for example, React components can be either object-oriented or functional, and you often use some functional techniques within object-oriented components.
 
 ## Functional Programming in JavaScript
 
@@ -31,7 +31,7 @@ The data includes counts for all distinct [baby names registered with the Social
 
 - `name`: a first name
 - `sex`: a reported sex (the SSA allows only `M` or `F` for this field)
-- `count`: the number of baby's registered in 2016 with that name and reported sex
+- `count`: the number of babies registered in 2016 with that name and reported sex
 
 For privacy reasons, baby names with fewer than 5 registrations are omitted from this set. Also note that `sex` refers to biological sex, not gender, and the SSA limits responses to only male or female.
 
@@ -85,9 +85,9 @@ return output;
 
 As you can see, the `.filter()` method separates the task of iterating over the array from the task of testing whether each element should be included in the output array. The `.filter()` method supplies the first, but delegates the second to the predicate function you pass to it. That predicate function can be as complex as it needs to be, and the `.filter()` method doesn't have to care about its details.
 
-Note that the `.filter()` method is also a pure function: it doesn't modify the array upon which it was called. Instead, it returns a new array containing only the objects that passed the test function.
+Note that the `.filter()` method is also a pure function: it doesn't modify the array upon which it was called. Instead, it returns a new array containing only the objects that passed the predicate function.
 
-You may have noticed that the two filter predicate functions above (`isMale()` and `isFemale()`) are very similar: the only real difference is what value they compare the `.sex` property to. Whenever you see something like this, you should ask yourself, "is there a way I can do this with just one function?" Indeed there is. Remember that if you declare a function inside another function, it creates a [closure](../javascript/#secclosures), which allows the inner function to reference parameters and local variables defined in the outer function. So we could write one function that takes the value to compare against as a parameter, and returns a new comparison function one could use with the `.filter()` method.
+You may have noticed that the two filter predicate functions above (`isMale()` and `isFemale()`) are very similar: the only real difference is what value they compare the `.sex` property to. Whenever you see something like this, you should ask yourself, "is there a way I can do this with just one function?" Indeed there is. Remember that if you declare a function inside another function, it creates a [closure](../javascript/#secclosures), which allows the inner function to reference parameters and local variables defined in the outer function. So we could write one function that takes the value to compare against as a parameter, and returns a new predicate function one could use with the `.filter()` method.
 
 ```javascript
 //returns a filter predicate function that 
@@ -130,6 +130,8 @@ function isSex(sex) {
 }
 ```
 
+And if the SSA ever started allowing a value of `"U"` for unknown or unspecified, we could easily create a new filter predicate function without having to duplicate code.
+
 ### Combining Functions
 
 So far we are filtering on only one property, but what if wanted to filter for male baby names that have a count under 100? We could write a filter predicate function specifically for that, but if we then want to the same thing for female baby names, we'd have to duplicate that with only a small change. Or we could embrace functional programming and realize that this predicate is a combination of two simpler predicates that are useful on their own: `isMale()` and `countUnder100()`. We could write one function that combines two existing predicate functions, regardless of what those predicate functions happen to test, using AND logic.
@@ -141,7 +143,7 @@ function countUnder100(record) {
 }
 
 //returns a new filter predicate that combines
-//the two predicate function parameter using &&
+//the two predicate function parameters using &&
 function and(predicate1, predicate2) {
 	return function(record) {
 		return predicate1(record) && predicate2(record);
@@ -205,7 +207,7 @@ let sortedFemales = BABYNAMES.filter(isFemale).sort(byCount);
 
 > **WARNING:** the `.sort()` method isn't pure—it actually sorts the array in place and returns a reference to the original array. This is why you'll often see developers filter or map the array first to create a copy of the original array before sorting it. See the [Mapping section](#secmapping) below for an explanation of mapping.
 
-But what if want these sorted descending by count instead of ascending? You might be tempted to write more comparator functions, but the combinations would start to explode. Instead, let's embrace functional programming and realize that a descending sort requires a comparator that simply negates the return value of the ascending comparator: if the ascending comparator returns a negative number, our descending comparator needs to flip that to a positive number, and vice-versa. Thankfully `-0 === 0` in JavaScript, so negating a zero won't hurt anything. We can write this descending comparator as a function that takes another comparator as a parameter and returns a new comparator that negates the result:
+But what if we want these sorted descending by count instead of ascending? You might be tempted to write more comparator functions, but the combinations would start to explode. Instead, let's embrace functional programming and realize that a descending sort requires a comparator that simply negates the return value of the ascending comparator: if the ascending comparator returns a negative number, our descending comparator needs to flip that to a positive number, and vice-versa. Thankfully `-0 === 0` in JavaScript, so negating a zero won't hurt anything. We can write this descending comparator as a function that takes another comparator as a parameter and returns a new comparator that negates the result:
 
 ```javascript
 //`comparator` is a sort comparator function
@@ -221,8 +223,10 @@ function descending(comparator) {
 Now we can wrap any existing comparator with `descending()` to get a descending rather than ascending sort:
 
 ```javascript
-//extract all the male names and sort by count ascending
-let sortedMales = BABYNAMES.filter(isMale).sort(descending(byCount));
+//create a descending version of our byCount comparator
+let byCountDescending = descending(byCount);
+//extract all the male names and sort by count descending
+let sortedMales = BABYNAMES.filter(isMale).sort(byCountDescending);
 ```
 
 Notice how our program is starting to look more like a declarative series of high-level operations rather than an imperative series of low-level commands. The data flow through these high-level operations and the output of the last one becomes the output of our program.
@@ -248,7 +252,7 @@ function multiKey(comparator1, comparator2) {
 
 Like the `and()` function earlier, this function returns a new comparator that combines two existing comparators. It runs the first comparator and if the result is `0` (i.e., the two records are considered equal to each other), it returns the results of the second comparator instead. This will cause the array to be sorted by the first comparator overall, but then by the second comparator within common values for the first.
 
-To sort males names by name ascending within count descending, the code would look like this:
+To sort males by name ascending _within_ count descending, the code would look like this:
 
 ```javascript
 let byCountDescending = descending(byCount);
@@ -312,7 +316,7 @@ let values = ["John","Mary","Peter"];
 values.map(toLower); // => ["john","mary","peter"]
 ```
 
-But we can also use this to transform elements in more substantial ways. For example, say we have an array of those baby name objects and we want to extra just the `name` property from each. In other words, we want to end up with an array of strings instead of an array of objects. We can do that with `.map()` as well.
+But we can also use this to transform elements in more substantial ways. For example, say we have an array of those baby name objects and we want to extract just the `name` property from each. In other words, we want to end up with an array of strings instead of an array of objects. We can do that with `.map()` as well.
 
 ```javascript
 //returns just the `name` property
@@ -326,7 +330,7 @@ let top10FemaleNames = BABYNAMES.filter(isFemale)
 	.map(pluckName);
 ```
 
-Because we ran each element of the filtered, sorted, and slices array through the `pluckName()` function, the `top10FemaleNames` variable will be set to an _array of strings_ containing just the top 10 female baby names. We transformed entire objects into just strings using the `pluckName()` function. If you print `top10FemaleNames` to the console, you'll get this:
+Because we ran each element of the filtered, sorted, and sliced array through the `pluckName()` function, the `top10FemaleNames` variable will be set to an _array of strings_ containing just the top 10 female baby names. We transformed entire objects into just strings using the `pluckName()` function. If you print `top10FemaleNames` to the console, you'll get this:
 
 ```json
 ["Emma", "Olivia", "Ava", "Sophia", "Isabella", "Mia", "Charlotte", "Abigail", "Emily", "Harper"]
@@ -388,32 +392,55 @@ return accumulator;
 
 Note how simple, yet elegant this is. Your reducer gets the current accumulator value and the current element. Whatever your reducer returns becomes the new accumulator value. At the end, it returns the final accumulator.
 
+Summing numbers is only one example of how you might use `.reduce()`. Finding the minimum or maximum value in the array is another classic application of this method. We could sort the array and then slice off the first or last element, but it would be much more efficient to use reduce to do only one pass through the array:
 
+```javascript
+function max(n1, n2) {
+	if (n2 > n1) {
+		return n2
+	}
+	return n1;
+}
 
+nums.reduce(max, nums[0]);
+```
 
+Here we use our `max()` function as the reducer, and the first element in the array as the starting accumulator. Each time `.reduce()` calls our `max()` function, it passes the current accumulator value and the current element. Our function returns the greater of the two, which becomes the current accumulator. When it's all done, the accumulator is set to the maximum value.
 
+The term "accumulator" is intentionally vague. This value can be of any type, and you can use it however you want in your reducer functions. For example, the accumulator could be a JavaScript object where the keys are all the distinct strings in an array, and the values associated with those keys are the number of times that distinct string appears in the array. For example:
+
+```javascript
+//`nameMap` is a JavaScript object
+//`name` is a string array element
+function countDistinct(nameMap, name) {
+	//if the object doesn't have a key for
+	//the name yet, add one with a value of 0
+    if (!nameMap.hasOwnProperty(name)) {
+        nameMap[name] = 0;
+    }
+    //increment the count associated with this name
+    nameMap[name]++;
+    //return the map
+    return nameMap;
+}
+
+let names = ["Dave", "Mary", "John", "Dave", "Mary"];
+names.reduce(countDistinct, {}); // => {Dave: 2, Mary: 2, John: 1}
+```
+
+The initial accumulator value we pass here is an empty object `{}`. This gets passed into our `countDistinct()` method as the first parameter, which we called `nameMap` (you can call it whatever you want, it's your parameter after all). If the name map doesn't contain a key matching the current array element, we add it with the value of `0`. We then increment the value associated with that key and return the map as the next accumulator. By the end, we get a JavaScript object with a key for each distinct string in the array, and the value associated with each of those keys is the number of times that string was in the array.
 
 ## Functional Programming Libraries
 
-- [Lodash](https://lodash.com/)
+This tutorial has introduced you to a few of the functional programming methods that are built-in to all JavaScript arrays, but these methods only scratch the surface of what a full functional programming library provides. If you're interested in doing more serious functional programming, check out these libraries.
+
+- [Lodash](https://lodash.com/) and the more pure variant [lodash/fp](https://github.com/lodash/lodash/wiki/FP-Guide)
+- [Ramda](http://ramdajs.com/)
 - [Lazy.js](http://danieltao.com/lazy.js/)
 
+Finally, I would remiss if I didn't acknowledge that [not everyone thinks functional programming in JavaScript is a good idea](https://hackernoon.com/functional-programming-in-javascript-is-an-antipattern-58526819f21e). Although JavaScript was based more on Scheme than Java, there are a lot of elements in the language where they break the functional paradigm (e.g., `.sort()` not being pure). Many client-side developers who have gotten serious about functional programming have turned to other languages that were designed as functional languages from the start, but can still compile to JavaScript. Here are some of the currently-popular choices:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- [Clojure](https://clojure.org/) and the [ClojureScript compiler for JavaScript](https://github.com/clojure/clojurescript)
+- [Haskell](https://www.haskell.org/) and one of the several [Haskell to JS compilers](https://wiki.haskell.org/The_JavaScript_Problem)
+- [Elm](http://elm-lang.org/), which has a built-in compiler to JavaScript
+ 
