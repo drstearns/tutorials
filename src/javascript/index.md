@@ -352,6 +352,34 @@ player.ranking = player.ranking || Number.MAX_VALUE;
 
 The JavaScript interpreter will evaluate that last line by first evaluating the Boolean `||` (OR) condition on the right. JavaScript, like many languages, does short-circuiting Boolean OR comparisons, so if the left side of the `||` operator is "truthy," it will use that value and not even consider the right side. But if the left is side is "falsy," it will ignore the left side and use the "truthy" value on the right. Since the `ranking` property was never set when we created the `player` object, `player.ranking` evaluates to `undefined`, which is falsy. Thus the `ranking` property gets set to `Number.MAX_VALUE` (the maximum numeric value). If the `ranking` property had been set, then `player.ranking` would be truthy and the interpreter would just reset the `ranking` property to its current value and ignore the right side. This allows us to set default values using a very simple and compact syntax.
 
+
+### Ternary Condition Operator
+
+JavaScript also has a ternary condition operator that comes in very handy. This is essentially an `if/else` expression. Instead of writing this:
+
+```javascript
+let y;
+if (x) {
+	y = "foo"
+} else {
+	y = "bar"
+}
+```
+
+You can do that all in one ternary condition expression, like this:
+
+```javascript
+let y = x ? "foo" : "bar";
+```
+
+The general syntax is:
+
+```
+expression ? value-expression-if-true : value-expression-if-false;
+```
+
+Each element can be a complex expression, and the value expressions after the `?` and `:` can be another ternary condition operator, though that can get very confusing very quickly, so it's not encouraged.
+
 ## Functions
 
 Like most other languages, JavaScript allows you to organize your code into functions that can be called from other functions or global statements. Unlike Java, however, JavaScript functions don't have to be attached to a class; they are just declared with a name, and you can call that function by referencing its name.
