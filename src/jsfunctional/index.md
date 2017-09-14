@@ -25,9 +25,9 @@ Although some functional programming zealots would argue that all programs shoul
 
 This is all a bit abstract so far, so let's see what this really looks like in practice. Functional programs operate on data, so we will use the following data file as input to our program. 
 
-<https://faculty.washington.edu/dlsinfo/data/babynames_2016.js>
+> <https://faculty.washington.edu/dlsinfo/data/babynames_2016.js>
 
-The data in counts for all distinct [baby names registered with the Social Security Administration (SSA) during 2016](https://www.ssa.gov/oact/babynames/limits.html). The file defines one constant named `BABYNAMES`, which is set to an array of 32,868 objects. Each object in the array has the following properties:
+The data includes counts for all distinct [baby names registered with the Social Security Administration (SSA) during 2016](https://www.ssa.gov/oact/babynames/limits.html). The file defines one constant named `BABYNAMES`, which is set to an array of 32,868 objects. Each object in the array has the following properties:
 
 - `name`: a first name
 - `sex`: a reported sex (the SSA allows only `M` or `F` for this field)
@@ -159,6 +159,8 @@ let malesWithLowCounts = BABYNAMES.filter(isMaleUnder100);
 
 Now you can create filter predicates that are combinations of _any_ two existing predicate functions, including predicates returned from the `and()` function. You could of course implement an `or()` function as well that used `||` instead of `&&`. You could also extend these to handle more than just two predicates at a time, but we need to learn a few other techniques before we can do that.
 
+> **NOTE:** Although you can implement functions like this yourself, there are several functional programming JavaScript libraries that already implement generic function combiners like these. See the [Functional Programming Libraries section](#secfunctionalprogramminglibraries) at the end for links to these libraries.
+
 Lastly, you might already be thinking that the `countUnder100()` function is too specific, and could easily be converted to a more generic `countUnder()` function that takes the upper threshold number as a parameter, and returns a new predicate function. You'd be right:
 
 ```javascript
@@ -246,27 +248,155 @@ function multiKey(comparator1, comparator2) {
 
 Like the `and()` function earlier, this function returns a new comparator that combines two existing comparators. It runs the first comparator and if the result is `0` (i.e., the two records are considered equal to each other), it returns the results of the second comparator instead. This will cause the array to be sorted by the first comparator overall, but then by the second comparator within common values for the first.
 
-To sort males names by name ascending within count descending, the function chain would look like this:
+To sort males names by name ascending within count descending, the code would look like this:
 
 ```javascript
-let malesByNameWithinCount = BABYNAMES.filter(isMale)
-	.sort(multiKey(descending(byCount), byName));
+let byCountDescending = descending(byCount);
+let byNameWithinCount = multiKey(byCountDescending, byName);
+let malesByNameWithinCount = BABYNAMES.filter(isMale).sort(byNameWithinCount);
 ```
 
-Note that JavaScript doesn't care if you break that long expression on to multiple lines, and it's typical to do so in functional programing, as the function chains will often get quite long.
+Of course, you could make this all one line without creating intermediate variables, but the readability would start to suffer. Remember that one of the goals of functional programming is to create code that is easier to read and reason about. If each statement solves only one piece of the overall puzzle, it's easy to see how the whole puzzle comes together.
 
 ### Slicing
 
+After filtering and sorting, it's common to slice off only the top or bottom elements from the array. Every JavaScript array has a built-in [slice() method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice) that does exactly this. For example, say we want just the top 10 female baby names. We already have all the filtering and sorting functions we need, so we just need to add a final `.slice()`:
+
+```javascript
+let top10Females = BABYNAMES.filter(isFemale)
+	.sort(byCountDescending)
+	.slice(0,10);
+```
+
+The `.slice()` method takes two parameters: the array index to start at, and the array index to go up to but not include. So `.slice(0,10)` will return a new array containing elements `0` through `9`, which are the first 10 elements in the array. Since we filtered for only female names and then sorted by count descending, those first 10 elements are the female names with the highest counts.
 
 ### Mapping
 
+Another common operation that you will want to do on arrays of data is mapping. A mapping operation transforms each element of the array by passing that array element through a function you provide (known as a **transformer**). This is best explained through some concrete examples.
+
+```javascript
+function addOne(value) {
+	return value + 1;
+}
+
+var evens = [0,2,4,6,8,10];
+evens.map(addOne); // => [1,3,5,7,9,11]
+```
+
+The `.map()` method in this example will create a new array for the outputs that is the same size as the input array, call the `addOne()` function once for each element in the `events` array, and put the returned value into the output array at the same position. After mapping all of the elements, it returns the output array. The body of the `.map()` method looks something like this:
+
+```javascript
+//assume `this` is the array upon which .map() is called
+//and `transform` is the function passed to .map()
+
+//create an output array of the same length
+let output = new Array(this.length);
+for (let i = 0; i < this.length; i++) {
+	//send each element through the transform
+	//function and put the result into the output 
+	//array at the same position
+	output[i] = transform(this[i]);
+}
+return output;
+```
+
+It's actually pretty simple and straightforward. Each element is passed through the transformer function you pass to `.map()` and whatever that function returns is put into the output array at the same index.
+
+This can be used to transform elements in all sorts of ways. For example, say we have an array of strings and we want to make them all lower-case:
+
+```javascript
+function toLower(str) {
+	return str.toLowerCase();
+}
+let values = ["John","Mary","Peter"];
+values.map(toLower); // => ["john","mary","peter"]
+```
+
+But we can also use this to transform elements in more substantial ways. For example, say we have an array of those baby name objects and we want to extra just the `name` property from each. In other words, we want to end up with an array of strings instead of an array of objects. We can do that with `.map()` as well.
+
+```javascript
+//returns just the `name` property
+function pluckName(record) {
+	return record.name;
+}
+
+let top10FemaleNames = BABYNAMES.filter(isFemale)
+	.sort(byCountDescending)
+	.slice(0,10)
+	.map(pluckName);
+```
+
+Because we ran each element of the filtered, sorted, and slices array through the `pluckName()` function, the `top10FemaleNames` variable will be set to an _array of strings_ containing just the top 10 female baby names. We transformed entire objects into just strings using the `pluckName()` function. If you print `top10FemaleNames` to the console, you'll get this:
+
+```json
+["Emma", "Olivia", "Ava", "Sophia", "Isabella", "Mia", "Charlotte", "Abigail", "Emily", "Harper"]
+```
+
+Those were the top 10 female baby names registered with the SSA during 2016!
+
+As you might expect, we can make `pluckName()` more generic by creating a function that returns a transformer that plucks _any_ property from an object given a property name.
+
+```javascript
+//`propName` is a string
+function pluck(propName) {
+	//return a transformer that...
+	return function(record) {
+		//...returns just the requested property
+		return record[propName];
+	}
+}
+
+//now we can pluck any property by name!
+let pluckName = pluck("name");
+let pluckCount = pluck("count");
+```
+
+Transformer functions can transform their inputs in any way they want. In fact, a transformer could return an entirely new object, or even a function that makes use of the input. This makes mapping a very powerful technique.
 
 ### Reducing
 
+The last functional technique I will discuss in this tutorial is also the hardest to understand: [reducing](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce). While mapping transforms each element into an array of the same size as the input array, reducing reduces the elements of an array to a single value. This value could be a primitive value (number, string, boolean) or it could be a complex type like an object, a smaller array, or even a function.
+
+A simple example will illustrate what I mean:
+
+```javascript
+//returns the sum of `accumulator` and `num`
+function sum(accumulator, num) {
+	return accumulator + num;
+}
+
+//create an array of a few numbers
+let nums = [1,2,3,4,5];
+
+//calculate the sum of all the numbers
+nums.reduce(sum, 0); // => 15
+```
+
+The `.reduce()` method takes two parameters: a function, known as a **reducer**, and a starting value, known as the **accumulator**. The `.reduce()` method calls the reducer once for each element in the array, passing the current value of the accumulator as the first parameter, and the current array element as the second parameter. It resets the accumulator to whatever the reducer function returns, an continues processing the next element in the array.
+
+The body of `.reduce()` would look something like this:
+
+```javascript
+//assume `this` is the array upon which .reduce() is called
+//and `reducer` is the function passed to .reduce() as the first parameter
+//and `accumulator` is the initial value passed as the second parameter
+for (let i = 0; i < this.length; i++) {
+	accumulator = reducer(accumulator, this[i]);
+}
+return accumulator;
+```
+
+Note how simple, yet elegant this is. Your reducer gets the current accumulator value and the current element. Whatever your reducer returns becomes the new accumulator value. At the end, it returns the final accumulator.
 
 
 
 
+
+
+## Functional Programming Libraries
+
+- [Lodash](https://lodash.com/)
+- [Lazy.js](http://danieltao.com/lazy.js/)
 
 
 
