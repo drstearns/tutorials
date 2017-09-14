@@ -396,10 +396,8 @@ Summing numbers is only one example of how you might use `.reduce()`. Finding th
 
 ```javascript
 function max(n1, n2) {
-	if (n2 > n1) {
-		return n2
-	}
-	return n1;
+	//ternary conditional--see Intro to JavaScript tutorial for details
+	return n2 > n1 ? n2 : n1;
 }
 
 nums.reduce(max, nums[0]);
