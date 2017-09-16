@@ -26,7 +26,7 @@ To understand how git works, you need to understand its core concepts. Read this
 - **staging area:** A set of new changes that are ready to be committed to the repository. All changes to all files in the staging area will be included in the next commit, but not changes made to other files. Git doesn't automatically add new files to the staging area, nor does it add new versions of existing files. Instead, you tell git explicitly which files you want to include in the next commit via the `git add` command. This allows you to commit some changes while leaving others for a latter commit.
 - **branch:** All git repositories start with one branch named `master`, but you can create other branches if you wish. Changes committed to one branch are kept separate from those committed to other branches, allowing you to work on new features or crazy ideas, but still quickly switch back to the main `master` branch to make bug fixes. Once a feature is complete, you can merge committed changes from the new feature branch into the `master` branch with one quick command.
 - **remote:** A link to a copy of this same repository on a different machine. Typically this will be a central version of the repository that all local copies on your various development machines point to. You can push commits to, and pull commits from, a remote repository to keep everything in sync. You can also add more than one remote link if you are working with multiple remote repositories.
-- **merge conflict:** A condition that occurs when you merge commits pulled from another branch or repository that include changes to the same lines that you've already changed locally. In this case, git doesn't which version is correct, so you must resolve the conflict by choosing a winner, or manually combining the changes.
+- **merge conflict:** A condition that occurs when you merge commits pulled from another branch or repository that include changes to the same lines that you've already changed locally. In this case, git doesn't know which version is correct, so you must resolve the conflict by choosing a winner, or manually combining the changes.
 - **.gitignore file:** A file in your project's root directory that contains file paths that git should ignore. This is very useful for keeping things out of the repository that should never be in there, such as current workspace settings saved by an Integrated Development Environment (IDE), or files containing login information or secret keys.
 
 ### Git Core Commands
@@ -186,7 +186,7 @@ The previous step recorded a set of changes to your local repository on your loc
 Git already knows where this repository originally came from, so to push your changes back to it, enter this command:
 
 ```bash
-$ git push
+git push
 ```
 
 This will push all commits made since the last push to your GitHub repository. After pushing these changes, go back to your repository on GitHub, refresh the web page, and you should see all the new files, along with your commit message. If you click on the message, GitHub will show you exactly which lines changed and how.
