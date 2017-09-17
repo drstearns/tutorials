@@ -43,10 +43,17 @@ _Sample Output_
 
 
 ```
-ischool.uw.edu has address 128.208.201.29
+ischool.uw.edu has address 128.208.60.39
+ischool.uw.edu has address 128.208.203.143
 ```
 
-The iSchool host name resolves to only one address, but other domain names might resolve to several possible addresses. For example, try `uw.edu` instead. It should return multiple IP addresses, any of which can be used by a web client.
+The iSchool host name resolves to two addresses, but other domain names might resolve to even more possible addresses. For example, try `uw.edu` instead. It should return several IP addresses, any of which can be used by a web client.
+
+Mac and Linux users can also use the more powerful `dig` command to see details about the query sent to the DNS and its reply:
+
+```bash
+dig ischool.uw.edu
+```
 
 These commands talk to the DNS, but they also consult a hosts file on your local computer that contains well-known host names and their associated IP addresses. On Mac and Linux, this file is at `/etc/hosts`, and on Windows it's at `c:\Windows\System32\Drivers\etc\hosts`. To see the contents of this file use this command:
 
