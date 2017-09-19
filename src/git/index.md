@@ -276,7 +276,7 @@ Look at your `index.html` file again and notice that the change you made is now 
 git checkout feature-1
 ```
 
->**Note**: some editors (like Sublime Text) may not automatically refresh to show changes to the underlying file until you activate the window. If you don't see the file change in your editor as you checkout the various branches, try activating the editor window by clicking on it.
+> **NOTE:** some editors (like Sublime Text) may not automatically refresh to show changes to the underlying file until you activate the window. If you don't see the file change in your editor as you checkout the various branches, try activating the editor window by clicking on it.
 
 To merge the changes you committed to `feature-1` into `master`, use these commands:
 
@@ -287,11 +287,15 @@ git merge --no-ff feature-1
 
 Unless there's a conflict, git should just merge all the commits made to `feature-1` into `master` without any errors, and your `master` branch should now contain the changes you made over in the `feature-1` branch.
 
+> **NOTE:** The `--no-ff` flag above forces git to explicitly record the merge from `feature-1` into `master`, as opposed to simply applying the commits you made in the `feature-1` branch to `master` with no record of the merge. Since we didn't make any new commits to `master` since we created the `feature-1` branch off of it, git could merge the commits you made to `feature-1` by simply replaying them on top of the `master` branch, an operation known as a "fast-forward" merge. This makes it look like all of the `feature-1` commits were made directly to `master`, which obviously hides what really happened. For a graphical explanation see Atlassian's [git merge](https://www.atlassian.com/git/tutorials/git-merge) tutorial. Some developers prefer the cleaner history of a fast-forward merge, while others prefer the more accurate history recorded by a non-fast-forward merge. Your development lead will likely dictate which approach you must use for a project.
+
 To see a complete log of what you've done, use this command:
 
 ```bash
 git log --graph
 ```
+
+The `--graph` flag adds a little ASCII art to the log output, showing you the branching and merging. Note that if you don't include the `--no-ff` flag, it will appear as if all the commits made to `feature-1` were actually made directly on `master` (see note above).
 
 ## GitHub Pull Requests
 
