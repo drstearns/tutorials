@@ -4,8 +4,10 @@ If you are taking INFO 344, or just want to learn Server-Side Web Development by
 
 Building a web server means wrangling a lot of files. If you work with others, coordinating changes to those files is almost impossible without a good version control system (VCS). The most popular VCS these days is git, which is often paired with the repository hosting service GitHub.
 
-- [Install git](https://git-scm.com/downloads). If you're on a Mac and have [Homebrew](https://brew.sh/) installed, you can install git using `brew install git`.
+- [Install git](https://git-scm.com/downloads).
 - [Sign-up for a free GitHub account](https://github.com/join). If you are a student, also sign up for the [GitHub Student Developer Pack](https://education.github.com/) to get free private repositories, and lots of other discounts.
+
+> **Mac Users:** If you're on a Mac, you might want to [install Homebrew](https://brew.sh/) and then use that to install git and other command-line tools. After you install Homebrew, execute `brew install git` to install git. Whenever git releases a new version, you can upgrade using the command `brew upgrade git`.
 
 ## Code Editing
 
@@ -25,7 +27,11 @@ Install the Go tools and configure a Go workspace. See the [Introduction to Go](
 
 ## Node.js and Related Utilities
 
-[Install Node.js and NPM](https://nodejs.org/en/download/) so that you can build web servers in Node, and run various Node-based utilities. After installing Node (which includes NPM), also install these other handy utilities that run on top of Node:
+[Install Node.js and NPM](https://nodejs.org/en/download/) so that you can build web servers in Node, and run various Node-based utilities. 
+
+> **Mac Users:** If you're on a Mac, you might want to [install Homebrew](https://brew.sh/) and then use that to install Node.js. After you install Homebrew, execute `brew install node` to install Node.js. Whenever Node releases a new version, you can upgrade using the command `brew upgrade node`.
+
+After installing Node (which includes NPM), also install these other handy utilities that run on top of Node:
 
 - [Live Server](https://github.com/tapio/live-server): starts a local development server for your web clients and automatically refreshes the page whenever the source files change. Install using the command `npm install -g live-server`
 
