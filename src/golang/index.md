@@ -125,6 +125,7 @@ func main() {
 This function has no arguments, and no return value, so it's pretty simple to declare. The `func` keyword starts a function declaration, the function name follows, and inside the parenthesis are the parameters. To declare a function that takes a single string parameter, the syntax looks like this:
 
 ```go
+//sayHello takes a name (string) and prints a greeting to std out
 func sayHello(name string) {
 	fmt.Printf("Hello %s!\n", name)
 }
@@ -133,6 +134,8 @@ func sayHello(name string) {
 Note how the data type `string` _follows_ the parameter name rather than proceeding it. This is [becoming common](https://golang.org/doc/faq#declarations_backwards) in newer languages such as Go and Swift (for more details on why Go does this, see their [Go Declaration Syntax](https://blog.golang.org/gos-declaration-syntax) article). If you have multiple parameters of the same type, you can omit the type on all but the last one:
 
 ```go
+//sayHello takes a title and name (both strings)
+//and prints a greeting to std out
 func sayHello(title, name string) {
 	fmt.Printf("Hello %s %s!\n", title, name)
 }
@@ -141,6 +144,8 @@ func sayHello(title, name string) {
 If your function returns a value, you must also declare what type it returns. Just like the parameters, the return type of a function _follows_ the function declaration rather than proceeding it:
 
 ```go
+//getGreeting takes a title and name (both strings)
+//and returns a greeting string
 func getGreeting(title, name string) string {
 	return fmt.Sprintf("Hello %s %s!", title, name)
 }
@@ -149,8 +154,8 @@ func getGreeting(title, name string) string {
 One of the nice features of Go is that we can also [return _multiple_ values](https://golang.org/doc/effective_go.html#multiple-returns) from a single function, and this is commonly used for error handling. When returning multiple values, wrap the return type list in parentheses.
 
 ```go
-//getGretting returns a greeting for a name, or an error
-//if `name` is zero-length
+//getGretting returns a greeting for a title and name, 
+//or an error if `name` is zero-length
 func getGreeting(title, name string) (string, error) {
 	if len(name) == 0 {
 		return "", fmt.Errorf("the 'name' parameter is required")
@@ -162,7 +167,10 @@ func getGreeting(title, name string) (string, error) {
 Unlike Java and JavaScript, [Go doesn't support exceptions](https://golang.org/doc/faq#exceptions) with `try/catch` handling. Instead, any function that might generate an error returns that error as the last return value. If an error occurs, the error is returned, but if no error occurs, the function returns `nil` for the error (similar to `null` in other languages). The calling function then checks whether the returned error is non-nil, and handles the error accordingly. For example:
 
 ```go
+//call getGreeting() and assign the return values
+//to new variables
 greeting, err := getGreeting("Mr", "Anderson")
+//check for errors
 if err != nil {
 	//handle error
 }
@@ -200,7 +208,11 @@ greeting, err := getGreeting(title, name)
 Variables are block-scoped in Go, just as they are in Java: variables declared within a block are visible only within that block. When combined with Go's `if` statement initializers, this comes in handy when checking for errors:
 
 ```go
+//initialize `err` to the value returned from
+//doSomethingThatCouldFail(), and then then check
+//whether it is non-nil
 if err := doSomethingThatCouldFail(); err != nil {
+	//this code runs only if err != nil
 	//the `err` variable is visible only within this if block
 }
 ```
@@ -220,7 +232,7 @@ Go offers the usual set of simple types:
 - `byte`: an alias for `uint8`
 - `rune`: an alias for `int32`, and is used for UTF-8 encoded characters
 
-Note that Go strings are [UTF-8 encoded](https://en.wikipedia.org/wiki/UTF-8), which means that individual characters may be anywhere between one and four bytes long depending on their Unicode number.s UTF-8 encoding can save significant space if most of your characters are in the ASCII range, but the variable byte length makes working with strings a bit precarious. For example, if you use a typical `for` loop to iterate over a string, you are actually iterating over the _bytes_ in the string buffer, not necessarily the characters:
+Note that Go strings are [UTF-8 encoded](https://en.wikipedia.org/wiki/UTF-8), which means that individual characters may be anywhere between one and four bytes long depending on their Unicode numbers. UTF-8 encoding can save significant space if most of your characters are in the ASCII range, but the variable byte length makes working with strings a bit precarious. For example, if you use a typical `for` loop to iterate over a string, you are actually iterating over the _bytes_ in the string buffer, not necessarily the characters:
 
 ```go
 s := "Hello, 世界"
@@ -337,7 +349,10 @@ func Area(r *Rectangle) int {
 }
 
 func main() {
+	//create a Rectangle instance
 	r := Rectangle{10, 20, 30, 40}
+	//pass a pointer to that instance to 
+	//the Area() function
 	fmt.Printf("area is %d\n", Area(&r))
 }
 ```
@@ -354,7 +369,10 @@ func Area(r *Rectangle) int {
 }
 
 func main() {
+	//create a Rectangle and initialize `r`
+	//to a pointer to that Rectangle
 	r := &Rectangle{10, 20, 30, 40}
+	//pass the pointer to the Area() function
 	fmt.Printf("area is %d\n", Area(r))
 }
 ```
