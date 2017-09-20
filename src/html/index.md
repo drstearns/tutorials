@@ -242,9 +242,9 @@ As noted above, adding an image to your page is done using the `<img>` element:
 <img src="path/to/my/image.png" alt="descriptive text for screen readers and indexers">
 ```
 
-The `src` attribute should be an absolute or relative path to the image file. If the path begins with a protocol like `http://` or `https://`, the browser will treat that as a full URL and fetch it just as if you had typed it into the browser's address bar. If the path begins with just a `/` character, it will request it from the same domain as the current page came from. And if it starts with any other character, it assumes the path is relative to the current page. So if the path was `img/some-image.png` it would look for a sub-folder named `img` and then look for a file named `some-image.png` within that sub-folder.
+The `src` attribute should be an absolute or relative path to the image file. If the path begins with a protocol like `http://` or `https://`, the browser will treat that as a full URL and fetch it just as if you had typed it into the browser's address bar. If the path starts with `//`, it will add your page's current protocol (`http` or `https`) to the front and then fetch it. If the path begins with a single `/` character, it will request it from the same domain as the current page came from. And if it starts with any other character, it assumes the path is relative to the current page. So if the path was `img/some-image.png` it would look for a sub-folder named `img` and then look for a file named `some-image.png` within that sub-folder.
 
-<div class="alert alert-warning">The web was created by people who love Unix, so these are Unix-style paths, not Windows-style paths. Specifically, the names in these paths are <strong>case-sensitive</strong> and the separator between path parts must be a <code>/</code> character. On windows path name are case-insensitive and the separator is <code>\</code>, but on the web, it's the exact opposite!</div>
+> **NOTE:** The web was created by people who love Unix, so these are Unix-style paths, not Windows-style paths. Specifically, the names in these paths are <strong>case-sensitive</strong> and the separator between path parts must be a <code>/</code> character. On windows path names are case-insensitive and the separator is <code>\</code>, but on the web, it's the exact opposite!
 
 The `alt` attribute should contain some text that describes the image. This is primarily used by assistive technologies such as screen readers for the blind, but it is also used by indexers like Google to power their image search feature.
 
@@ -315,7 +315,7 @@ Using the correct list type helps programs that read the page know how to interp
 
 ### Hyperlinks
 
-The "H" in HTML standard for "Hypertext," which means that page should link to each other. Encoding a link is done using the `<a>` element:
+The "H" in HTML standard for "Hypertext," which means that pages can link to each other. Encoding a link is done using the `<a>` element:
 
 ```html
 <a href="https://google.com">Search on Google</a>
@@ -375,3 +375,18 @@ The last elements to mention are `<div>` and `<span>`. These elements stand for 
 
 You will see `<div>` and `<span>` used quite a bit as we get into building more complex HTML pages.
 
+## Summary
+
+That's all there is to it. An HTML page:
+
+- Starts with a doctype declaration: `<!DOCTYPE html>`
+- Which is followed by a tree of elements, the root element being `<html>...</html>`
+- That root contains two elements, `<head>` and `<body>`
+- The `<head>` element contains meta-data about the page
+- The `<body>` element contains the content you see in the browser window
+- Elements can have attributes, which add extra information about the element
+- Elements can contain content, which can be plain text, other elements, or a mix of both
+- Elements connote the _function_ the content plays in the document, not the formatting you want; you can change the appearance of any element using CSS, so the point of an element is to provide _semantic_ meaning, not formatting.
+
+
+Now that you know the basics of HTML, it's time to see how you can [style your pages using CSS](../css/).
