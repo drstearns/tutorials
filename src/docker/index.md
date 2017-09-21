@@ -270,6 +270,8 @@ FROM nginx
 
 The `FROM` instruction specifies which container image you want to build upon. Here we are using `nginx` because we want everything that was in the `nginx` container image, plus our web site files. You can build upon any container image on your system or Docker Hub. If you want to start from scratch instead, use the `scratch` image, which contains nothing.
 
+> **NOTE:** Always double-check the spelling of the `FROM` image. There is nothing preventing an attacker from creating a new container image named `nginex` or `enginex` that builds upon the legitimate `nginx` image, but adds some malicious code that is executed when the container runs. If you build upon one of these malicious containers, your container will be compromised from the start. This style of attack is essentially a form of "[typosquatting](https://securingtomorrow.mcafee.com/consumer/family-safety/what-is-typosquatting/)" and it has become increasingly common on public code registries like [NPM](http://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry).
+
 The next step in our container image recipe is to copy our web site files into the container, at the directory where NGINX looks for the web site files (`/usr/share/nginx/html`). This is done using the `COPY` instruction:
 
 ```docker
