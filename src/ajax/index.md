@@ -158,9 +158,11 @@ fetch("/my/data/url")
 	});
 ```
 
-The function we pass to the Promise's `.then()` method will be called once the server begins to respond. The `response` object passed to this function as the first parameter allows us to do several things, but most commonly, you will want to parse the response body as JSON-encoded data. To do that, simply `return response.json()`.
+The function we pass to the Promise's `.then()` method will be called once the server begins to respond. The `response` object passed to this function as the first parameter allows us to do several things, but most commonly, you will want to parse the response body as JSON-encoded data. To do that, simply `return response.json()`. 
 
-The `response.json()` method is another asynchronous operation, so it actually returns a new Promise as well. But the neat thing about promises is that if you return a new Promise from a `.then()` callback function, the outer Promise will take on the state of the new returned Promise. That allows us to add another `.then()` callback function, which will be called once the JSON parsing has completed:
+Some APIs you might call return plain text instead of JSON-encoded data. In that case, use `return response.text()` instead. This method reads the response body, but doesn't try to parse it as JSON. Instead, it simply reads the response body into a string and passes that to the next `.then()` callback function.
+
+Both the `response.json()` and `response.text()` methods are asynchronous operations, so they actually return a new Promise as well. But the neat thing about promises is that if you return a new Promise from a `.then()` callback function, the outer Promise will take on the state of the new returned Promise. That allows us to add another `.then()` callback function, which will be called once the reading/JSON-parsing has completed:
 
 ```javascript
 fetch("/my/data/url")
@@ -187,6 +189,7 @@ fetch("/my/data/url")
 		return response.json();
 	})
 	.then(function(data) {
+		//data is the parsed JSON object/array
 		console.log(data)
 	})
 	.catch(function(err) {
@@ -201,6 +204,52 @@ fetch("/my/data/url")
 ```
 
 The really nice thing about Promises is that the function we pass to `.catch()` will be called if any error occurs either during the fetch, or in the JSON parsing. If any of the functions passed to `.then()` cause an error to occur, execution will automatically jump to your `.catch()` function, skipping any intermediary `.then()` functions. This allows you to centralize your error handling in one place, and avoid calling code that depends upon the previous code executing without errors.
+
+## Checking the Response Status Code
+
+The promise returned by `fetch()` will be rejected **only if there was a problem communicating with the server** (e.g., invalid domain name, network error, etc.). But if you are able to communicate with the server, it still might respond with an error if omit something that is required, or if the server experiences some sort of internal error. In these cases, the server responds with a [status code](../http/#secstatuscodes) that is >= 400. The important thing to remember is that these error responses do not cause the Promise to be rejected: as far as `fetch()` is concerned, the request was successfully transmitted and the response was successfully received. It's up to you to check for these error status codes, and handle them appropriately.
+
+Thankfully it's pretty easy to do this. The `response` object passed to your first callback function has a property named `ok` that is set to `false` if the response status code is >= 400. If that property is `false`, you can read the response body (which should contain some sort of error message) and throw a new JavaScript `Error`, using the response body text as the error message:
+
+```javascript
+fetch("/my/data/url")
+	.then(function(response) {
+		//check for an error response
+		if (response.ok) {
+			//response status code was in the 200
+			//range, so all is OK
+			return response.json();
+		} else {
+			//response status code was in the error
+			//range (>= 400), so read the error 
+			//message in the response body and throw
+			//a new JavaScript error; this will cause
+			//the promise to be rejected, causing
+			//code execution to jump to your .catch()
+			//handler function
+			return response.text()
+				.then(function(errorMessage) {
+					throw new Error(errorMessage)
+				});
+		}
+	})
+	.then(function(data) {
+		//data is the parsed JSON object/array
+		console.log(data)
+	})
+	.catch(function(err) {
+		//write the full error object to the console
+		console.error(err);
+
+		//show the error message to the user
+		//you could instead set the `.textContent` of some
+		//DOM element you use to show errors
+		alert(err.message);
+	});
+```
+
+As noted above, if any of your `.then()` callback functions throws an error, the Promise will become rejected, and thus call your next `.catch()` callback function, passing the error that was thrown. In the example above, if `response.ok` is `false`, the second `.then()` callback function is never invoked because the first one throws a new JavaScript `Error`. Instead, execution jumps to the `.catch()` callback function, where the error is handled.
+
 
 ## Trying it Out
 
