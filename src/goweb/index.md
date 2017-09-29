@@ -136,7 +136,7 @@ mux := http.NewServeMux()
 mux.HandleFunc("/hello", HelloHandler)
 ```
 
-The term **mux** is short for "multiplexer," meaning that it can handle requests for multiple resource paths while routing the request to the appropriate handler function. This mux is passed to the `http.ListenAndServe()` function as the second parameter, so all requests are passed to this mux. The mux then determines which function to call based on requested resource path.
+The term **mux** is short for "multiplexer," meaning that it can handle requests for multiple resource paths while routing the request to the appropriate handler function. This mux is passed to the `http.ListenAndServe()` function as the second parameter, so all requests are passed to this mux. The mux then determines which function to call based on the requested resource path.
 
 The `.HandleFunc()` method adds a new resource path and associated handler function to the mux. When the mux receives a request for the resource path `/hello`, it will call our `HelloHandler()` function to handle the request.
 
