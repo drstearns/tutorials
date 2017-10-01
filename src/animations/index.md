@@ -165,13 +165,13 @@ For a fun example of how you can combine multiple elements into a 3D cube with a
 
 # Triggering Animations from JavaScript
 
-Triggering an animation on mouse allows us to play around with animations, but more commonly you will want to trigger an animation in response to some event, such as a click/tap. Catching these events requires [a JavaScript event listener](../dom/#seclisteningforevents). That listener function can then alter the element's `animation` style property directly, or add/remove a particular style class that applies a particular `animation` property value. 
+Triggering an animation on mouse hover allows us to play around with animations, but more commonly you will want to trigger an animation in response to some event, such as a click/tap, scroll, or during an HTTP request. Catching these events requires [a JavaScript event listener](../dom/#seclisteningforevents). That listener function can then alter the element's `animation` style property directly, or add/remove a particular style class that applies a particular `animation` property value. 
 
-After we learn JavaScript and the DOM, we will come back to CSS animations, showing you how to trigger them in response to events, or during an asynchronous HTTP request.
+After we learn JavaScript and the DOM, we will come back to CSS animations, showing you how to trigger them in response to events, or during asynchronous HTTP requests.
 
 # CSS Animation Libraries
 
-Basic animations are easy to define yourself, but more complex ones can get tricky. Thankfully there are several CSS Animation libraries available that define a bunch of these tricky ones for you. The most popular is [Animate.css](https://daneden.github.io/animate.css/). This project defines a stylesheet that currently offers 75 different animations. To one of these animation to your element, simply [include their stylesheet to your page and add the appropriate style class to your element](https://github.com/daneden/animate.css#basic-usage). You can add this class in the HTML to make the animation happen on page load, or you can [dynamically add the class via JavaScript](../dom/#secaddingremovingstyleclasses) at the appropriate moment.
+Basic animations are easy to define yourself, but more complex ones can get tricky. Thankfully there are several CSS Animation libraries available that define a bunch of these tricky ones for you. The most popular is [Animate.css](https://daneden.github.io/animate.css/). This project defines a stylesheet that currently offers 75 different animations. To apply one of these animations to your element, simply [include their stylesheet in your page and add the appropriate style class to your element](https://github.com/daneden/animate.css#basic-usage). You can add this class in the HTML to make the animation happen on page load, or you can [dynamically add the class via JavaScript](../dom/#secaddingremovingstyleclasses) at the appropriate moment.
 
 Since this is an open-source library, you can also simply find the `@keyframes` definition for the particular animation you want, and copy/paste it into your own stylesheet. That will eliminate the extra network round trip to download their stylesheet, and reduce the number of style rules your browser must parse before styling the page.
 
