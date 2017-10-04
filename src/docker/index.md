@@ -232,7 +232,7 @@ The host path must be an absolute path, but if you're on a Mac or Unix system, o
 
 Docker containers are isolated not only from the host's file system, but also from the host's [environment variables](../env/). A newly-run container can't see any environment variables defined in your host shell, but you can use the `-e` flag on the `docker run` command to set environment variables that the container can see.
 
-For example, to set the variable `MY_ENV` inside the container, the commadn would look like this:
+For example, to set the variable `MY_ENV` inside the container, the command would look like this:
 
 ```bash
 docker run \
