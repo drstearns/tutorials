@@ -185,7 +185,7 @@ range | meaning
 
 Most HTTP client libraries will handle 100 and 300-range status codes automatically, so your client-side code only has to deal with 200, 400, and 500-range codes. In general, you should treat any code >= 400 as an error, but note that these error-range codes are distinct from a network error: if the host is unreachable you will get a network error and no response at all.
 
-The message that follows the status code is mostly redundant, but it's helpful in cases where a service defines new non-standard status codes, such as those defined in the now famous [HyperText Coffee Pot Control Protocol](hhttps://en.wikipedia.org/wiki/Hyper_Text_Coffee_Pot_Control_Protocol) (check out the meaning of [status code 418](https://tools.ietf.org/html/rfc2324#section-2.3.2)).
+The message that follows the status code is mostly redundant, but it's helpful in cases where a service defines new non-standard status codes, such as those defined in the now famous [HyperText Coffee Pot Control Protocol](https://en.wikipedia.org/wiki/Hyper_Text_Coffee_Pot_Control_Protocol) (check out the meaning of [status code 418](https://tools.ietf.org/html/rfc2324#section-2.3.2)).
 
 ### Response Headers
 

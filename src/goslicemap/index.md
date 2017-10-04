@@ -100,6 +100,30 @@ names = append(names, "Chang")
 
 Note that we re-assign the `names` variable to the return value of `append()`. The underlying array naturally has a fixed length, and it may be full, so the `append()` function might need to allocate a new larger array to hold the new value. If so, the `append()` function will allocate a new larger array, copy the elements from the original array to the new array, and return a new slice pointing to the new underlying array. The old array and slice then fall out of scope and are eventually garbage collected. If the underlying array has a enough capacity to hold the new value, `append()` will simply put the value into the next available element and return the original slice.
 
+Note that the `append()` function is smart enough to handle the first parameter being `nil`. For example, say you had a struct field that was typed as `[]string` (a slice of strings), and you create an instance of that struct without providing any field initializers. That field will have the value of `nil`, but it's OK to pass that as the first argument to `append()`. When you do, `append()` will simply create a new underlying array, put the value in the first position, and return a slice over that new underlying array.
+
+```go
+type SharedLink struct {
+	PageURL string
+	Keywords []string
+}
+
+func main() {
+	//create an instance of SharedLink,
+	//setting only the PageURL field.
+	//the PageURL field remains nil
+	sl := &SharedLink{
+		PageURL: "https://ischool.uw.edu",
+	}
+
+	//append a keyword to the slice of string
+	//append() will see that sl.Keywords is nil, 
+	//and just allocate a new array, returning a 
+	//slice over that newly allocated array
+	sl.Keywords = append(sl.Keywords, "iSchool")
+}
+```
+
 ## Iterating Slices
 
 Since you can access an element using an index, you can iterate over a slice using a traditional `for` loop, but go also offers a more convenient `for...range` loop that works with slices and arrays:
