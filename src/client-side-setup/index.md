@@ -34,7 +34,7 @@ The various web browsers have become increasingly standards-compliant over the l
 
 ## Other Helpful Tools
 
-As web development has gotten more complicated, developers have created new tools to handle the complexity. Most of these run under Node.js, which is an engine for running JavaScript at the command-line.
+As web development has gotten more complicated, developers have created new tools to handle the complexity. Most of these run under Node.js, which is an engine for running JavaScript at the command-line. These tools will be especially helpful while doing client-side development:
 
 - [Node.js](https://nodejs.org/en/): if you are on a Mac and have [Homebrew](https://brew.sh/) installed, you can use it to install node with the command: `brew install node`. Otherwise, just [download and run their installer](https://nodejs.org/en/).
-- [Live Server](https://github.com/tapio/live-server) or [Browser Sync](https://www.browsersync.io/): These are little command-line tools that will auto-reload your browser whenever your source files change. These are insanely handy when doing client-side development, and they will save you a ton of time. Both require [Node.js](https://nodejs.org/en/) to run, and you can install both using `npm`, which comes with [Node.js](https://nodejs.org/en/). Run `npm install -g browser-sync` and `npm install -g live-server` at the command line.
+- [Live Server](https://github.com/tapio/live-server): This little command-line tool will auto-reload your browser whenever your source files change. This is insanely handy when doing client-side development, and will save you a ton of time. It requires [Node.js](https://nodejs.org/en/) to run, and you can install it using `npm`, which comes with [Node.js](https://nodejs.org/en/). Run `npm install -g live-server` at the command line. If you are on a Mac and this command reports an error about not having permission, use `sudo npm install -g live-server` instead.
