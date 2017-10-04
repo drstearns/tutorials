@@ -34,7 +34,7 @@ Docker makes it easy to [build your own container images](#secbuildingcontainers
 
 Docker Hub is like GitHub, but for Docker container images instead of git repos (you'll probably notice a lot of similarities between the Docker and git commands—they purposely emulated git). Like GitHub, the free accounts give you unlimited public container images, but only one private container image. You can upgrade your account to get more private image storage.
 
-Also like GitHub, anyone can download and run any public container image on Docker Hub. This makes it easy to not only deploy your own containers to the Web, but also run any of the popular open-source server software that is already on Docker Hub: relational databases engines like MySQL and PostgreSQL; no-SQL distributed data stores like redis, CouchDB, or Cassandra; message queues like RabbitMQ; or full Linux distros like Ubuntu or CentOS.
+Also like GitHub, anyone can download and run any public container image on Docker Hub. This makes it easy to not only deploy your own containers to the Web, but also run any of the popular open-source server software that is already on Docker Hub: relational databases engines like MySQL and PostgreSQL; no-SQL distributed data stores like redis, MongoDB, or Cassandra; message queues like RabbitMQ; or full Linux distros like Ubuntu or CentOS.
 
 ## Installing Docker
 
@@ -58,7 +58,7 @@ After installing and launching the Docker Desktop App, you can test it by runnin
 docker run hello-world
 ```
 
-This command tells Docker to run and instance of the container image named `hello-world`, which is a container image the Docker developers already built and uploaded to Docker Hub. If you've never run this container image before, or if a newer version of the  image is available, the Docker daemon process will automatically download the image from Docker Hub before running it. 
+This command tells Docker to run an instance of the container image named `hello-world`, which is a container image the Docker developers already built and uploaded to Docker Hub. If you've never run this container image before, or if a newer version of the  image is available, the Docker daemon process will automatically download the image from Docker Hub before running it. 
 
 After downloading the image, the Docker daemon process then runs a new **instance** of that container image. You can think of the container image as being like a Java class, while the container instance is like an instance of that class you create in memory. Each container instance is separate from all other instances, but all of them run the same code from the container image.
 
