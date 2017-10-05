@@ -250,7 +250,7 @@ docker run \
 ... rest of flags and image name ...
 ```
 
-Here we add an environment variable named `ADDR` inside the container, and set its value to the current value of the `ADDR` environment variable in our host shell. Remember that adding a `$` in front will cause bash to replace that expression with the current value of the environment variable.
+Here we add an environment variable named `ADDR` inside the container, and set its value to the current value of the `ADDR` environment variable in our host shell. Remember that adding a `$` in front will cause bash to [replace that expression with the current value of the environment variable](../env/).
 
 ## Building Your Own Container Images
 
