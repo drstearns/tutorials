@@ -154,7 +154,7 @@ func getGreeting(title, name string) string {
 One of the nice features of Go is that we can also [return _multiple_ values](https://golang.org/doc/effective_go.html#multiple-returns) from a single function, and this is commonly used for error handling. When returning multiple values, wrap the return type list in parentheses.
 
 ```go
-//getGretting returns a greeting for a title and name, 
+//getGreeting returns a greeting for a title and name, 
 //or an error if `name` is zero-length
 func getGreeting(title, name string) (string, error) {
 	if len(name) == 0 {
