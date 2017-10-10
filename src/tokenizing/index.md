@@ -107,7 +107,6 @@ To use this package in our project, we need to import it. Add the package's impo
 ```go
 import (
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
