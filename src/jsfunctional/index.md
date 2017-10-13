@@ -134,7 +134,7 @@ And if the SSA ever started allowing a value of `"U"` for unknown or unspecified
 
 ### Combining Functions
 
-So far we are filtering on only one property, but what if wanted to filter for male baby names that have a count under 100? We could write a filter predicate function specifically for that, but if we then want to the same thing for female baby names, we'd have to duplicate that with only a small change. Or we could embrace functional programming and realize that this predicate is a combination of two simpler predicates that are useful on their own: `isMale()` and `countUnder100()`. We could write one function that combines two existing predicate functions, regardless of what those predicate functions happen to test, using AND logic.
+So far we are filtering on only one property, but what if we wanted to filter for male baby names that have a count under 100? We could write a filter predicate function specifically for that, but if we then want to the same thing for female baby names, we'd have to duplicate that with only a small change. Or we could embrace functional programming and realize that this predicate is a combination of two simpler predicates that are useful on their own: `isMale()` and `countUnder100()`. We could write one function that combines two existing predicate functions, regardless of what those predicate functions happen to test, using AND logic.
 
 ```javascript
 //returns true if count is less than 100
