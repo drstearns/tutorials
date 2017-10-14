@@ -329,7 +329,20 @@ After you successfully authenticate, you can now push a new container image usin
 docker push your-dockerhub-name/examplewebsite
 ```
 
-After it successfully pushes, you should be able to visit <https://hub.docker.com/> and see your new container image listed there. Since it's public, you can now easily pull that image and run it on any other machine, including a VM running in a cloud infrastructure, using the same `docker run` command you used to run the container on your development machine. Docker will automatically pull the image from Docker Hub if it doesn't already exist on the target machine, or if the version on Docker Hub is newer.
+After it successfully pushes, you should be able to visit <https://hub.docker.com/> and see your new container image listed there. Since it's public, you can now easily pull that image and run it on any other machine, including a VM running in a cloud infrastructure, using the same `docker run` command you used to run the container on your development machine. Docker will automatically pull the image from Docker Hub if it doesn't already exist on the target machine.
+
+Just as with GitHub, if you update a container image on Docker Hub from your development machine, you must pull that newly-updated image to any other machine that may want to run it. Use the `docker pull` command to pull the updated image:
+
+```bash
+docker pull your-dockerhub-name/examplewebsite
+```
+
+### Container Image Versioning
+
+When you build your container the `-t` flag assigns a name (formally known as a "tag", hence the `-t`) to your container image. That name can be any string, but by convention we use the creator's Docker Hub name and the container image name, separated by a slash. That way multiple Docker Hub users can all create images named `examplewebsite` and they won't conflict, because they are prefixed with the creator's Docker Hub name (which must be unique).
+
+But each time you rebuild and push `your-dockerhub-name/examplewebsite`, it overwrites the previous container image on Docker Hub. If you want to keep older versions around, just add a version number to the end of the tag. By convention, we use `:` to separate the container name from a version number. For example, version 1.0 of our container would be tagged as `your-dockerhub-name/examplewebsite:1.0` while version 2.0 would be tagged as `your-dockerhub-name/examplewebsite:2.0`. Developer can then choose which version to run by specifying the different tag names in the `docker run` command. By convention, developers tag the most recent version of the container image with the base name (`your-dockerhub-name/examplewebsite`) so that those who just want the most recent version, whatever that happens to be, have a stable name to use.
+
 
 ### Containers for Go Web Servers
 
