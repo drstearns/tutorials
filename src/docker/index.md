@@ -331,7 +331,7 @@ docker push your-dockerhub-name/examplewebsite
 
 After it successfully pushes, you should be able to visit <https://hub.docker.com/> and see your new container image listed there. Since it's public, you can now easily pull that image and run it on any other machine, including a VM running in a cloud infrastructure, using the same `docker run` command you used to run the container on your development machine. Docker will automatically pull the image from Docker Hub if it doesn't already exist on the target machine.
 
-Just as with GitHub, if you update a container image on Docker Hub from your development machine, you must pull that newly-updated image to any other machine that may want to run it. Use the `docker pull` command to pull the updated image:
+Just as with GitHub, if you update a container image on Docker Hub from your development machine, you must pull that newly-updated image to any other machine that previously pulled the image. Use the `docker pull` command to pull the updated image:
 
 ```bash
 docker pull your-dockerhub-name/examplewebsite
