@@ -62,7 +62,7 @@ sudo ufw allow 80
 sudo ufw allow 443
 ```
 
-After the ports are open, you can run the `letsencrypt` command. DigitalOcean used to include this command in the "Docker x.x.x-ce on Ubuntu 16.04" One-Click app image, but they seem to have removed it in more recent versions. You can verify whether it's already installed by trying to execute `letsnecrypt -h`. If you get an error saying that the command is not found or is not yet installed, you can install it easily using this command:
+After the ports are open, you can run the `letsencrypt` command. DigitalOcean used to include this command in the "Docker x.x.x-ce on Ubuntu 16.04" One-Click app image, but they seem to have removed it in more recent versions. You can verify whether it's already installed by trying to execute `letsencrypt -h`. If you get an error saying that the command is not found or is not yet installed, you can install it easily using this command:
 
 ```bash
 apt update && apt install -y letsencrypt
