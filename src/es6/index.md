@@ -1,25 +1,21 @@
-The official name of the JavaScript language is actually ECMAScript, as the standard that governs the language is now controlled by the European Computer Manufacturers Association (ECMA). In 2015 they released a new version of that standard, officially known as ECMAScript 2015, but many developers refer to it by the working name "ES6," as it was considered the sixth version of the language.
+The official name of the JavaScript language is actually "ECMAScript" because the committee that defines the language specification is part of the European Computer Manufacturers Association (ECMA). In 2015 they released a new version of that specification, officially known as "ECMAScript 2015," but many developers refer to it by the working name "ES6," as it was considered the sixth version of the language.
 
-This version introduced several new features that were sorely missing from the language, but it also included entirely new syntax that makes particular styles of programming easier. One framework in particular has eagerly embraced these new syntax features: React. This tutorial will familiarize your with the key ES6 features that React utilizes heavily so that you're better prepared to develop React applications.
+This version introduced several new features that were sorely missing from the language, but it also included entirely new syntax that makes particular styles of programming easier. One framework in particular has eagerly embraced these new syntax features: React. This tutorial will familiarize your with the key ES6 features that React utilizes heavily so that you're better prepared to learn the React framework.
 
 Even if you don't use React, these new ES6 features might be useful to you. But remember, older browsers with older JavaScript interpreters won't be able to recognize these new syntax features unless you compile them to their ES5 equivalents. The easiest way to do that is to use the [Babel compiler](https://babeljs.io/), which can translate all of the new ES6 syntax and features into equivalent ES5 code that older JavaScript interpreters can understand. The React build process invokes Babel automatically, but if you're not using React, you can still [install and invoke the Babel compiler yourself](https://babeljs.io/docs/setup/#installation). 
 
 ## Modules
 
-As you've no doubt noticed by now, all JavaScript files added to a web page share the same global namespace. In some ways this is good: library scripts can define new global functions that your scripts can call. But in other ways this can cause lots of problems: if a new library script defines global functions or variables that happen to have the same name as those defined by another script, you second one added to the page will silently overwrite the values associated with those globals, causing all kinds of errors.
+As you've no doubt noticed by now, all JavaScript files added to a web page share the same global namespace. In some ways this is good: library scripts can define new global functions that your scripts can call. But in other ways this can cause lots of problems: if a new library script defines global functions or variables that happen to have the same name as those defined by another script, the second one added to the page will silently overwrite the values associated with those globals, causing all kinds of errors.
 
-To fix this, ES6 defined new syntax for organizing code into modules, each of which has its own global namespace. Anything you want to share with other modules can be explicitly exported, and when you import those shared things into another module, their names can prefixed with the module name, or adjusted to avoid naming conflicts.
+To fix this, ES6 defined new syntax for organizing code into modules, each of which has its own namespace. Anything you want to share with other modules can be explicitly exported, and when you import those shared things into another module, their names can prefixed with the module name, or adjusted to avoid naming conflicts.
 
 > **NOTE: Browsers don't yet support support this module syntax natively,** but the React framework includes a module loader named [webpack](https://webpack.github.io/) that provides support for this feature. The ECMAScript committee is currently working on [a specification for browser-native module loaders](https://whatwg.github.io/loader/), but until that is ratified and implemented by all the browser vendors, third-party loaders in tools like webpack will be necessary.
 
-For example, say we wanted to create a reusable library of functions, and we wanted to use the new ES6 syntax to avoid name collisions. Also say we want to have some private helper functions or variables that are not available to other modules. Our code would use the `export` keyword on only the functions we want to export:
+For example, say we wanted to create a reusable library of functions, and we wanted to use the new ES6 syntax to avoid name collisions. Also say we want to have some private helper functions or variables that are not available to other modules. We can do this by creating a script where all of our exported identifiers are prefixed with the keyword `export`.
 
 ```javascript
 //file: fibonacci.js
-
-//put interpreter into strict mode
-//affects this module only
-"use strict";
 
 //since these variables are not exported
 //they are private to the module. Code
@@ -50,6 +46,8 @@ export function reset() {
 To use the exported function in another module, we use the new `import` syntax:
 
 ```javascript
+//file: index.js
+
 //use relative file path to module
 //you are importing from
 import * as fibonacci from "./fibonacci.js";
@@ -66,7 +64,7 @@ If you only need a subset of the exported functions, you can import just those y
 ```javascript
 //syntax for importing one or more specific identifiers
 //use comma to separate multiple specific identifiers
-import {next, reset} from "./fibonacci.js"
+import {next} from "./fibonacci.js"
 
 let n = next();
 ```
@@ -74,16 +72,18 @@ let n = next();
 Each module may also export one identifier as its "default" export, and other modules can then import that default export using a slightly different `import` syntax:
 
 ```javascript
+//file: fibonacci.js
 export default function next() {
 	//...
 }
 ```
 ```javascript
+//file: index.js
 import next from "./fibonacci.js"
 let n = next();
 ```
 
-This `export default` technique is commonly used in object-oriented frameworks like React, where each JavaScript module file contains the code for just one React component class/function. The component is marked as the default export, so that other modules can import it using the syntax `import MyComponent from "./MyComponent.js"`.
+This `export default` technique is commonly used in object-oriented frameworks like React, where each JavaScript module file contains the code for just one React component. The component's class or function declaration is marked as the default export, so that other modules can import it using the syntax `import MyComponent from "./MyComponent.js"`.
 
 ## Classes
 
@@ -123,11 +123,15 @@ let c2 = new Circle(10,10,10)
 let distance = c.distanceTo(c2);
 ```
 
-If you already know Java, the code above will likely make perfect sense to you. The first class defines a `Point` that tracks an x/y coordinate. It has a `distanceTo()` method that returns the length of a line between this point and another point. Since parameters in JavaScript don't have a defined type, the `otherPoint` parameter doesn't get explicitly typed as `Point`. Instead, you can pass any object as that parameter, as long as that object has `x` and `y` properties that are set to numbers.
+If you already know Java, the code above will likely make perfect sense to you. The first class defines a `Point` that tracks an x/y coordinate. It has a `distanceTo()` method that returns the length of a line between this point and another point. But because parameters in JavaScript don't have a defined type, the `otherPoint` parameter doesn't get explicitly typed as `Point`. Instead, the interpreter allows callers to pass any value as that parameter. As long as the caller passes some sort of object with `x` and `y` properties set to numbers, it will work.
 
-The `Circle` class extends the `Point` class, adding a radius. Since a `Circle` is a `Point`, you can still call the `distanceTo()` method on a `Circle` and it will measure the distance between the circle's center and another point. We can also add more method to `Cicle`, like the `area()` method shown here. Just as with other OOP languages, the `area()` method will be available only on instances of `Circle` and not on instances of `Point`.
+> This is where VisualStudio Code's type checking can really come in handy. If you use jsdoc comments to declare that the `otherPoint` parameter must be a `Point` object, vscode will flag any code that tries to pass something different. But this type-checking only occurs at coding time: the runtime interpreter will still allow any value to be passed.
 
-Unlike Java classes, JavaScript classes don't have any access control keywords on the members: essentially everything is `public`. There are [various techniques for creating private data members](http://2ality.com/2016/01/private-data-classes.html), but there's no built-in `private` or `protected` keywords like there are in Java.
+The `Circle` class extends the `Point` class, adding a radius. Since a `Circle` is a `Point`, you can still call the `distanceTo()` method on a `Circle` and it will measure the distance between the circle's center and another point. We can also add more methods to `Circle`, like the `area()` method shown here. Just as with other OOP languages, the `area()` method will be available only on instances of `Circle` and not on instances of `Point`.
+
+> **NOTE:** although the syntax above looks like Java, it's important to remember that **JavaScript class instances are still just maps, just like any other JavaScript object**. For example, calling code can always add properties to an instance of your `Point` class, because that instance is really still just a map. Calling code can also overwrite the value of any property, or even delete properties from an instance. Although it looks like a Java class, it doesn't really behave like one.
+
+Unlike Java classes, JavaScript classes also don't have any access control keywords on the members: essentially everything is `public`. There are [various techniques for creating private data members](http://2ality.com/2016/01/private-data-classes.html), but there's no built-in `private` or `protected` keywords like there are in Java.
 
 Like functions, classes can be exported from modules. If you have only one class per-module, then use `export default` so that other modules can more easily import and use it:
 
@@ -167,7 +171,7 @@ let nums = [1,10,2,20,3,30];
 nums.sort((n1, n2) => n1 - n2);
 ```
 
-These are officially known as **lambda functions**, though some developers refer to them as "arrow functions." Essentially, you leave off the `function` keyword, and if your function returns the result of an expression, you can omit the `{ }` as well and just include the expression you want evaluated and returned. 
+These are officially known as **lambda functions**, though some developers refer to them as "arrow functions." Essentially, you leave off the `function` keyword, and if your function returns the result of an expression, you can omit the `{ }` around the function body, as well as the `return` keyword. Just put the expression you want evaluated and returned on the right side of the `=>` (as shown above). 
 
 If your function takes only one parameter, you can also leave off the `()` around the parameters:
 
@@ -184,7 +188,7 @@ document.querySelector("button")
 	});
 ```
 
-Here we used `()` because our lambda function required no parameters, and we used `{}` because our lambda function needed to execute code and not simply return the result of an expression.
+Here we used `()` because our lambda function required no parameters, and we used `{}` because we don't want to just return the result of an expression. Instead, we want to perform an action: writing a message to the console. If you want to perform actions, use `{}` around the function body. If you just want to return the result of an expression, omit the `{}`.
 
 Besides a simpler and more-compact syntax, lambda functions also treat the `this` keyword differently. By default, when a function passed to another function is called, the `this` keyword is actually bound to the global object, not to any object instance to which that function might be attached. In the case of JavaScript running in the web browser, the global object is the `window` object. So any expression involving `this` will actually be referring to the global `window` object, _even if the function being invoked is a method of an object_. For example, this code won't work like you'd expect it to:
 
@@ -209,7 +213,7 @@ class Point {
 
 When the click event occurs on the button, the browser calls the `shiftRight()` function, but the `this` keyword will be bound the `window` object, and not the current instance of `Point`. Sadly, the code above will run without a runtime error, but it also won't affect the `x` property of your `Point` object. Instead, it will create a new property on the global `window` object named `x` and increment its value. But since no other code ever looks at that property, incrementing it will have no effect.
 
-You might thing you could provide an in-line anonymous function that turns around and calls `this.shiftRight()`, but that won't work either. Since the `this` keyword refers to the global `window` object, it will try to invoke `window.shiftRight()`, which doesn't exist. You'll get a cryptic runtime error saying something like "cannot call undefined."
+You might think you could provide an in-line anonymous function that turns around and calls `this.shiftRight()`, but that won't work either. Since the `this` keyword refers to the global `window` object, it will try to invoke `window.shiftRight()`, which doesn't exist. You'll get a cryptic runtime error saying something like "cannot call undefined."
 
 If you use a lambda function instead, it will work, because lambda functions evaluate the `this` keyword within the lexical scope in which the lambda function is created. For example, if we change the code to this, it will work as expected:
 
@@ -232,17 +236,146 @@ class Point {
 }
 ```
 
-When our lambda function is invoked, the interpreter resolves the `this` keyword within the `constructor()` function's scope, so `this` will still refer to the current instance of the `Point` object, just like it did when we did `this.x = x` to set the `x` property.
+When our lambda function is invoked, the interpreter resolves the `this` keyword within the `constructor()` function's scope, so `this` will still refer to the current instance of the `Point` object, similar to how `this.x` referred to the `x` property of our current `Point` object.
 
 Because `this` is lexically-scoped in lambda functions, they are commonly used in React for DOM event listeners. React components render their data as a sub-tree of HTML elements, and if the component wants to add an event listener on one of those elements, we use a lambda function to call one of our component's methods. That way we have access to the component's current data, which are stored as properties of the object.
 
-## Enhanced Object Literals
+> If the scoping rules for lambda functions seem confusing, just remember it this way: if your callback function needs `this` to refer to the current instance of your object, use a lambda function. If you don't need to refer to `this` at all, you can use either a lambda or a traditional in-line anonymous function.
 
+## Default Values for Function Parameters
 
+Many languages let you define a default value for a function parameter, and if the caller doesn't supply that parameter, the compiler sets the parameter to the default value. We can now do this in JavaScript as well:
+
+```javascript
+function getGreeting(name = "World") {
+	return "Hello, " + name + "!";
+}
+
+console.log(getGreeting());           // => "Hello, World!"
+console.log(getGreeting("Gorgeous")); // => "Hello, Gorgeous!"
+```
 
 ## Template Strings
 
+Several programming languages allow you to embed expressions within strings that are evaluated and replaced with the resulting value as the string is created. ES6 added these to JavaScript using the back-tick quote characters instead of the single or double-quote characters:
+
+```javascript
+function getGretting(name) {
+	return `Hello, ${name}!`;
+}
+
+getGretting("Gorgeous"); // => "Hello, Gorgeous!"
+```
+
+Each `${...}` token within a back-tick-quoted string is replaced by the result of evaluating the expression between the `{...}`. This expression can refer to anything in the current scope: variables, parameters, functions, methods, etc. Here we just use the value of the `name` parameter that was passed to our function. But we can also use more complex expressions:
+
+```javascript
+function getGretting(name) {
+	return `Hello, ${name.substr(0,1).toUpperCase() + name.substr(1)}!`;
+}
+
+getGretting("gorgeous"); // => "Hello, Gorgeous!"
+```
+
+In general, the expressions in these token strings should be kept relatively short and simple so that the string remains readable. If your expression get too long or complicated, simply move them to the line above and declare a temporary variable if necessary.
+
+```javascript
+function getGretting(name) {
+	name = name.substr(0,1).toUpperCase() + name.substr(1);
+	return `Hello, ${name}!`;
+}
+```
 
 ## Destructuring and Spreading
+
+ES6 also introduced destructing assignments, which make it easy to separate the elements of arrays, or the properties of objects, into different variables. For example, say you want to `.split()` a string by some separator and deal with each piece as an independent variable. In ES5, you'd have to do something like this:
+
+```javascript
+let size = "10x20";
+//split size into two-element array
+let sizeSegments = size.split("x"); //returns ["10", "20"]
+
+//extract each element into separate variable
+let width = sizeSegments[0];
+let height = sizeSegments[1];
+
+console.log(width);  // => 10
+console.log(height); // => 20
+```
+
+With a destructuring assignment, you can do all of this in one step:
+
+```javascript
+let size = "10x20";
+
+//destructure array returned by .split()
+//into two different variables, width & height
+let [width, height] = size.split("x");
+
+console.log(width);  // => 10
+console.log(height); // => 20
+```
+
+If the array contains more than two elements, the code above will ignore those extra elements. But you can capture the remaining elements using the spread operator (a literal `...`):
+
+```javascript
+let size = "10x20x30x40";
+let [width, height, ...rest] = size.split("x");
+console.log(width);  // => 10
+console.log(height); // => 20
+console.log(rest);   // => ["30", "40"];
+```
+
+Destructuring works on objects as well:
+
+```javascript
+let shape = {x: 10, y: 20, width: 30, height: 40};
+
+//extract just the x and y properties
+//into separate variables
+let {x, y} = shape;
+console.log(x); // => 10
+console.log(y); // => 20
+```
+
+Most browser don't yet support using `...rest` in an object destructuring assignment, but the Babel compiler will let you use it, and translate it into the equivalent ES5 code:
+
+```javascript
+let shape = {x: 10, y: 20, width: 30, height: 40};
+
+//extract just the x and y properties
+//into separate variables, and put
+//any remaining properties into rest
+let {x, y, ...rest} = shape;
+console.log(x);    // => 10
+console.log(y);    // => 20
+console.log(rest); // => {width: 30, height; 40}
+```
+
+Finally, you can use the spread operator to spread the elements of an array into separate parameters when you call a function. For example, say we had a function that took two parameters. Let's also say we have an array with two elements. We can use the spread operator to spread those two array elements into two separate parameters when we call the function:
+
+```javascript
+function sum(n1, n2) {
+	return n1 + n2;
+}
+
+let nums = [10,20];
+//spread array elements into separate parameters
+console.log(sum(...nums)); // => 30
+```
+
+All of this gets really fun when we use the spread operator to define functions that can accept a variable number of arguments (known as **variadic functions**). For example, we could augment our `sum()` function to take a variable number of inputs by declaring the parameter as `...nums`. That parameter will be an array containing one element for each parameter passed to the function. Since it's an array, we can use the `.reduce()` method to calculate the sum of all the inputs, regardless of how many there were:
+
+<script src="//repl.it/embed/NPB2/1.js"></script>
+
+
+## Further Reading
+
+This tutorial has introduced you to a few of the ES6 features that are especially useful when building web applications in React, but there are lots more to explore. The following sources describe all of the new ES6 features:
+
+- [ECMAScript 6](https://github.com/lukehoban/es6features/blob/master/README.md)
+- [ES6 Features](http://es6-features.org/#Constants) (also shows equivalent ES5 syntax where possible)
+
+
 
 
