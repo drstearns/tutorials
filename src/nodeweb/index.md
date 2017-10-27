@@ -45,12 +45,12 @@ This `package.json` file will also track all the other packages your package dep
 
 ```bash
 # installs packages and records dependencies in package.json
-npm install --save express body-parser morgan
+npm install --save express morgan
 ```
 
 The `install` sub-command will download the packages you name from the [central npm package repository](https://www.npmjs.com/) and install them into a `node_modules` sub-directory. These packages are just a bunch of JavaScript that someone else wrote, so you can look inside that directory and read all the code.
 
-Since anyone can publish packages to this repository, be careful how you spell the names of the packages you want to install. There have already been several [typosquatting attacks](https://www.theregister.co.uk/2017/08/02/typosquatting_npm/) where developers published packages with names very similar to the most popular packages, but containing malicious code.
+> Since anyone can publish packages to this repository, be careful how you spell the names of the packages you want to install. There have already been several [typosquatting attacks](https://www.theregister.co.uk/2017/08/02/typosquatting_npm/) where developers published packages with names very similar to the most popular packages, but containing malicious code.
 
 The `--save` option not only downloads and installs the packages, but also adds them to the `dependencies` key in your `package.json` file. After you add/commit the updated `package.json` file to your repo, other developers will be able to know which packages this project depends upon. Those other developers will also be able to install all dependencies with the one simple command:
 
@@ -61,10 +61,9 @@ npm install
 
 ## Building an HTTP Server
 
-The three packages we installed above are as follows:
+The two packages we installed above are as follows:
 
 - `express`: a popular web server framework that makes it easy to build HTTP servers
-- `body-parser`: express middleware that automatically decodes JSON in request bodies
 - `morgan`: express middleware that logs all requests
 
 As described in the [Middleware Patterns in Go](../gomiddleware) tutorial, middleware is code that can do pre- and post-processing of every request. The Express.js framework has [built-in support for middleware](http://expressjs.com/en/guide/using-middleware.html), and there are [many middleware packages](http://expressjs.com/en/resources/middleware.html) already in existence that do just about everything you'll ever need to do.
@@ -75,9 +74,8 @@ To see how you can use the Express.js framework and these middleware packages, l
 //put interpreter into strict mode
 "use strict";
 
-//require the express, body-parser, and morgan packages
+//require the express and morgan packages
 const express = require("express");
-const bodyParser = require("body-parser");
 const morgan = require("morgan");
 
 //create a new express application
@@ -113,13 +111,15 @@ It's safe to use this new destructuring assignment because we control the versio
 Next add the JSON body-parsing and request-logging middleware to your express application:
 
 ```javascript
-//add the JSON request body parsing middleware
-app.use(bodyParser.json());
+//add JSON request body parsing middleware
+app.use(express.json());
 //add the request logging middleware
 app.use(morgan("dev"));
 ```
 
-Global middleware that should be invoked on every request are added using `app.use()`. The `body-parser` package's [API](https://github.com/expressjs/body-parser#api) is an object with several methods, and here we invoke the `.json()` method to get a reference to the JSON-parser middleware handler. This middleware function will automatically parse any JSON in the request body, making it available to our handlers as a `body` property on the request object.
+Global middleware that should be invoked on every request are added using `app.use()`. The first one we add here is a middleware handler function that automatically parses any JSON that might be in the request body. The parsed JSON data will be available on the `.body` property of the request object, which all other handler functions can read. This particular middleware handler function is built-in to the express package since version 4.16.0.
+
+> **NOTE:** if you are using a version of express prior to 4.16.0, you must install the `body-parser` package and use the `bodyParser.json()` method to get this JSON-parsing middleware handler instead. For details on this package, see their [API documentation](https://github.com/expressjs/body-parser).
 
 The `morgan` package's [API](https://github.com/expressjs/morgan#api) is a single function that takes a request logging format string, or a function that does custom formatting. In this case we use the predefined `"dev"` logging format, which provides colorful output that is helpful when doing development. The middleware handler function returned from `morgan("dev")` will log each request to standard out (i.e., your terminal, or wherever you've redirected standard out).
 
