@@ -190,7 +190,7 @@ document.querySelector("button")
 
 Here we used `()` because our lambda function required no parameters, and we used `{}` because we don't want to just return the result of an expression. Instead, we want to perform an action: writing a message to the console. If you want to perform actions, use `{}` around the function body. If you just want to return the result of an expression, omit the `{}`.
 
-Besides a simpler and more-compact syntax, lambda functions also treat the `this` keyword differently. By default, when a function passed to another function is called, the `this` keyword is actually bound to the global object, not to any object instance to which that function might be attached. In the case of JavaScript running in the web browser, the global object is the `window` object. So any expression involving `this` will actually be referring to the global `window` object, _even if the function being invoked is a method of an object_. For example, this code won't work like you'd expect it to:
+Besides a simpler and more-compact syntax, lambda functions also treat the `this` keyword differently. This is best explained with an example. By default, when an event listener function is invoked by the browser, the `this` keyword is bound to the _HTML Element_ that raised the event, not the object instance the event listener function might be attached to as a method. For example, this code won't work like you'd expect:
 
 ```javascript
 class Point {
@@ -211,9 +211,9 @@ class Point {
 }
 ```
 
-When the click event occurs on the button, the browser calls the `shiftRight()` function, but the `this` keyword will be bound the `window` object, and not the current instance of `Point`. Sadly, the code above will run without a runtime error, but it also won't affect the `x` property of your `Point` object. Instead, it will create a new property on the global `window` object named `x` and increment its value. But since no other code ever looks at that property, incrementing it will have no effect.
+When the click event occurs on the button, the browser calls the `shiftRight()` function, but the `this` keyword will be bound the `<button id="shift-right-button">` element, and not the current instance of `Point` to which the `shiftRight()` method belongs. Sadly, the code above will run without a runtime error, but it also won't affect the `x` property of your `Point` object. Instead, it will create a new property on the HTML Button element named `x` and increment its value. But since no other code ever looks at that property, incrementing it will have no effect.
 
-You might think you could provide an in-line anonymous function that turns around and calls `this.shiftRight()`, but that won't work either. Since the `this` keyword refers to the global `window` object, it will try to invoke `window.shiftRight()`, which doesn't exist. You'll get a cryptic runtime error saying something like "cannot call undefined."
+You might think you could provide an in-line anonymous function that turns around and calls `this.shiftRight()`, but that won't work either. Since the `this` keyword still refers to the HTML button element, it will try to invoke the `.shiftRight()` method on the button element, which doesn't exist. You'll get a cryptic runtime error saying something like "cannot call undefined."
 
 If you use a lambda function instead, it will work, because lambda functions evaluate the `this` keyword within the lexical scope in which the lambda function is created. For example, if we change the code to this, it will work as expected:
 
