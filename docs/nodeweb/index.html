@@ -88,7 +88,7 @@ myModule<span class="token punctuation">.</span><span class="token function">ano
 <span class="token comment" spellcheck="true"># set the current working directory to /app</span>
 <span class="token keyword">WORKDIR</span> /app
 <span class="token comment" spellcheck="true"># copy the package.json and package-lock.json files to the work directory</span>
-<span class="token keyword">COPY</span> package*.json ./
+<span class="token keyword">COPY</span> package.json package<span class="token punctuation">-</span>lock.json ./
 <span class="token comment" spellcheck="true"># run npm install to install all dependent packages</span>
 <span class="token keyword">RUN</span> npm install
 <span class="token comment" spellcheck="true"># copy your JavaScript source files</span>

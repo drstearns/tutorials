@@ -325,7 +325,7 @@ FROM node
 # set the current working directory to /app
 WORKDIR /app
 # copy the package.json and package-lock.json files to the work directory
-COPY package*.json ./
+COPY package.json package-lock.json ./
 # run npm install to install all dependent packages
 RUN npm install
 # copy your JavaScript source files
