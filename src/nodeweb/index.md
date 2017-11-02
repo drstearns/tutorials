@@ -324,8 +324,8 @@ To create a Docker container image for your Node.js web server, create a `Docker
 FROM node
 # set the current working directory to /app
 WORKDIR /app
-# copy the package.json file to the work directory
-COPY package.json .
+# copy the package.json and package-lock.json files to the work directory
+COPY package*.json ./
 # run npm install to install all dependent packages
 RUN npm install
 # copy your JavaScript source files
@@ -338,7 +338,7 @@ ENTRYPOINT ["node", "index.js"]
 
 The `WORKDIR` command creates a directory within the new container image and sets that as the current working directory. All other paths within the container image are then evaluated as relative to that working directory.
 
-We next `COPY` the package.json file to the working directory and `RUN` the command `npm install` to install all of our dependent packages. We run this command within the container so that any packages that include native code will be compiled for Linux rather than our host OS. Most NPM packages contain only JavaScript, which doesn't require compilation, but some packages include a bit of native C code to do things that aren't yet possible through the Node.js API. By running `npm install` within the new container image, we ensure that any native code is compiled for the container's OS, which is Linux.
+We next `COPY` the package.json and package-lock.json files to the working directory and `RUN` the command `npm install` to install all of our dependent packages. We run this command within the container so that any packages that include native code will be compiled for Linux rather than our host OS. Most NPM packages contain only JavaScript, which doesn't require compilation, but some packages include a bit of native C code to do things that aren't yet possible through the Node.js API. By running `npm install` within the new container image, we ensure that any native code is compiled for the container's OS, which is Linux.
 
 Lastly, we copy our own JavaScript source files into the container image, declare our port number, and set the entrypoint command to be `node index.js`.
 
