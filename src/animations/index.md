@@ -32,15 +32,15 @@ You can define as many stages in the animation as you want. If multiple stages i
 ```css
 @keyframes fadeOutIn {
     from, to {
-    	opacity: 1;
+    	opacity: 0;
     }
     50% {
-    	opacity: 0;
+    	opacity: 1;
     }
 }
 ```
 
-Here we say that `opacity` should be `1` at both the start and end of the animation, but should be `0` at the mid-point of the animation.
+Here we say that `opacity` should be `0` at both the start and end of the animation, but should be `1` at the mid-point of the animation. Thus the element will fade-in and then fade-out again.
 
 ## Which Properties Can Be Animated?
 
