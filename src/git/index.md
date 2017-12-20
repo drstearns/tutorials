@@ -361,4 +361,4 @@ Note three important things about all of this:
 
 ## Keep Learning
 
-This tutorial gets you started with git, but there is a lot more to learn. Keep learning by reading the free online book [_Pro Git_](https://git-scm.com/book/en/v2) by Scott Chacon and Ben Straub. Or check out the very approachable and affordable book [_Git for Humans_](https://abookapart.com/products/git-for-humans) by David Demaree.
+This tutorial gets you started with git, but there is a lot more to learn. Keep learning by reading the free online book [_Pro Git_](https://git-scm.com/book/en/v2) by Scott Chacon and Ben Straub. Or check out the very approachable and affordable book [_Git for Humans_](https://abookapart.com/products/git-for-humans) by David Demaree. And the always entertaining [O Sh*t, Git!](http://ohshitgit.com) page will help you remember how to undo mistakes you might make while using git!
