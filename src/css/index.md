@@ -416,7 +416,7 @@ In addition to these absolute units, you can also use these relative units:
 Unit | Meaning
 ---- | -------
 em | the height of the current element's font
-rem | the height of the root element's font (i.e., the font used on the root `html` or `body` element)
+rem | the height of the root element's font (i.e., the font used on the root `html` element)
 % | a percentage of the parent element dimensions or parent element's font
 vw | one percent of the viewport width (i.e., the width of the browser window)
 vh | one percent of the viewport height (i.e., the height of the browser window)
