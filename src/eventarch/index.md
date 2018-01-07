@@ -9,7 +9,6 @@ For example, a simple game like [single-player Pong](https://en.wikipedia.org/wi
 - the x/y position of the "ball"
 - the vector on which the ball is currently traveling (i.e., which direction its going)
 - the y position of the "paddle"
-- the width/height of the "court"
 
 Given these dynamic state values, as well as some hard-coded ones (e.g., radius of the ball), one could easily render the current game objects to the screen. If we change these values and update the screen on a regular basis (e.g., within a `for` loop), the game will appear to animate.
 
@@ -39,11 +38,6 @@ In a browser-based JavaScript application, the program's state is commonly held 
 ```javascript
 //overall state
 let state = {
-	//court object
-	court: {
-		width: window.innerWidth,  //browser window width
-		height: window.innerHeight //browser window height
-	},
 	//ball object
 	ball: {
 		x: //...random x value...,
@@ -75,16 +69,16 @@ function advanceBall() {
 	state.ball.x += state.ball.vectorX;
 	state.ball.y += state.ball.vectorY;
 
-	//if the ball has hit the top or bottom wall
+	//if the ball has hit the top or bottom of the browser window
 	//negate vectorY so that it bounces back
 	if (state.ball.y - state.ball.radius <= 0 ||
-		state.ball.y + state.ball.radius >= state.court.height) {
+		state.ball.y + state.ball.radius >= window.innerHeight) {
 		state.ball.vectorY *= -1;
 	}
 
-	//if the ball has hit the right wall
+	//if the ball has hit the right edge of the browser window
 	//negate vectorX so that it bounces back
-	if (state.ball.x + state.ball.radius >= state.court.width) {
+	if (state.ball.x + state.ball.radius >= window.innerWidth) {
 		state.ball.vectorX *= -1;
 	}
 
