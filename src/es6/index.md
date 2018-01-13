@@ -8,7 +8,7 @@ Even if you don't use React, these new ES6 features might be useful to you. But 
 
 As you've no doubt noticed by now, all JavaScript files added to a web page share the same global namespace. In some ways this is good: library scripts can define new global functions that your scripts can call. But in other ways this can cause lots of problems: if a new library script defines global functions or variables that happen to have the same name as those defined by another script, the second one added to the page will silently overwrite the values associated with those globals, causing all kinds of errors.
 
-To fix this, ES6 defined new syntax for organizing code into modules, each of which has its own namespace. Anything you want to share with other modules can be explicitly exported, and when you import those shared things into another module, their names can prefixed with the module name, or adjusted to avoid naming conflicts.
+To fix this, ES6 defined new syntax for organizing code into modules, each of which has its own namespace. Anything you want to share with other modules can be explicitly exported, and when you import those shared things into another module, their names can be prefixed with the module name, or adjusted to avoid naming conflicts.
 
 > **NOTE: Browsers don't yet support support this module syntax natively,** but the React framework includes a module loader named [webpack](https://webpack.github.io/) that provides support for this feature. The ECMAScript committee is currently working on [a specification for browser-native module loaders](https://whatwg.github.io/loader/), but until that is ratified and implemented by all the browser vendors, third-party loaders in tools like webpack will be necessary.
 
