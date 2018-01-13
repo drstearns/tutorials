@@ -190,7 +190,7 @@ document.querySelector("button")
 
 Here we used `()` because our lambda function required no parameters, and we used `{}` because we don't want to just return the result of an expression. Instead, we want to perform an action: writing a message to the console. If you want to perform actions, use `{}` around the function body. If you just want to return the result of an expression, omit the `{}`.
 
-Besides a simpler and more-compact syntax, lambda functions also treat the `this` keyword differently. This is best explained with an example. By default, when an event listener function is invoked by the browser, the `this` keyword is bound to the _HTML Element_ that raised the event, not the object instance the event listener function might be attached to as a method. For example, this code won't work like you'd expect:
+Besides a simpler and more-compact syntax, lambda functions also treat the `this` keyword differently. This is best explained with an example. By default, when an event listener function is invoked by the browser, the `this` keyword is bound to the _HTML Element that raised the event_, not the event listener method's object instance. For example, this code won't work like you'd expect:
 
 ```javascript
 class Point {
