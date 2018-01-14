@@ -36,7 +36,13 @@ Let's return to our single-player Pong example to see how this interactive archi
 In a browser-based JavaScript application, the program's state is commonly held in one global (or top-level scope) object that has one property for each state value you need to track. For example, at the start of our Pong game JavaScript, we could declare one global variable named `state`, and add various properties for our game objects:
 
 ```javascript
-//overall state
+//constants
+const BALL_RADIUS = 5;
+const PADDLE_X = 5;
+const PADDLE_WIDTH = 5;
+const PADDLE_HEIGHT = 15;
+
+//application state
 let state = {
 	//ball object
 	ball: {
@@ -52,11 +58,69 @@ let state = {
 }
 ```
 
-Given this data and a few hard-coded values (e.g., ball radius, paddle `x` coordinate), we could render the current game state to the browser window in various ways. The simplest would be creating [SVG elements](https://developer.mozilla.org/en-US/docs/Web/SVG) for each game object (`<circle>` for the ball, `<rect>` for the paddle). Another more high-performance approach would be to draw shapes on to an HTML [`<canvas>` element](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial).
+Note that the `state` object tracks only the values that are likely to change while the application runs. Values that never change, such as the radius of the ball or the dimensions of the paddle, are better encoded as constants that we can refer to elsewhere in our code.
+
+### Rendering
+
+To make this state visible on screen, we need to create some HTML elements, and write a function that synchronizes those elements' attributes with the current application state values. The ball is best rendered as a circle, and the paddle as a rectangle, so [SVG elements](https://developer.mozilla.org/en-US/docs/Web/SVG) would be a sensible choice. Alternatively, one could use an [HTML `<canvas>` element](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial) and re-draw the shapes using JavaScript after each state change.
+
+The SVG elements would look something like this:
+
+```html
+<body>
+	<!-- SVG scene -->
+	<svg xmlns="http://www.w3.org/2000/svg">
+		<!-- ball -->
+		<circle cx="0" cy="0" r="5"/>
+		<!-- paddle -->
+		<rect x="5" y="0" width="5" height="15"/>
+	</svg>
+</body>
+```
+
+To make that `<svg>` element cover the entire browser viewport, add some style rules like this:
+
+```css
+/* remove any default margins/padding from the body */
+body {
+	margin: 0;
+	padding: 0;
+}
+/* make the svg element cover the entire viewport */
+svg {
+	width: 100vw;
+	height: 100vh;
+}
+```
+
+Finally, we define a function that accepts the current application state, and adjusts the attributes of those SVG elements to match:
+
+```javascript
+//select the elements once at startup
+let circle = document.querySelector("svg circle");
+let rect = document.querySelector("svg rect");
+
+//render will render the state to the page elements
+function render(state) {
+	//adjust element attriutes to match current state
+    circle.setAttribute("cx", state.ball.x);
+	circle.setAttribute("cy", state.ball.y);
+	rect.setAttribute("y", state.paddle.y);
+}
+```
+
+Given this, we can now render our application state to the screen whenever it changes. To render the initial state, just add this to the end of your JavaScript:
+
+```javascript
+//render the initial state
+render(state);
+```
+
+> **Note:** I added the SVG elements to the source HTML page to keep this example simple and easy-to-understand, but our program would be more flexible if the `render()` method _created_ the necessary SVG elements if they were not already in the page. That way we could add new game objects to the state over time and they would automatically get added to the page the next time `render()` was called. But since SVG is a dialect of XML, creating SVG elements using JavaScript is a bit more cumbersome than creating normal HTML elements. To create new SVG elements, you must use the `document.createElementNS()` method in the DOM, and supply the string `"http://www.w3.org/2000/svg"` as the namespace argument.
 
 ### Event Listeners
 
-After initializing the state, the program would next need add event listeners for at least two events:
+After initializing and rendering the state, the program would next need add event listeners for at least two events:
 
 - a timer event that occurs at a regular interval, which we will use to adjust the x/y position of the ball
 - the mouse move event, which we will use to adjust the y position of the paddle
@@ -64,30 +128,38 @@ After initializing the state, the program would next need add event listeners fo
 To add the timer, use the `setInterval()` function in the DOM. It takes a function to call and the number of milliseconds between each timer event:
 
 ```javascript
-function advanceBall() {
+function animate() {
 	//adjust the ball's x/y coordinate
 	state.ball.x += state.ball.vectorX;
 	state.ball.y += state.ball.vectorY;
 
 	//if the ball has hit the top or bottom of the browser window
 	//negate vectorY so that it bounces back
-	if (state.ball.y - state.ball.radius <= 0 ||
-		state.ball.y + state.ball.radius >= window.innerHeight) {
+	if (state.ball.y - BALL_RADIUS <= 0 ||
+		state.ball.y + BALL_RADIUS >= window.innerHeight) {
 		state.ball.vectorY *= -1;
 	}
 
 	//if the ball has hit the right edge of the browser window
 	//negate vectorX so that it bounces back
-	if (state.ball.x + state.ball.radius >= window.innerWidth) {
+	if (state.ball.x + BALL_RADIUS >= window.innerWidth) {
 		state.ball.vectorX *= -1;
 	}
 
-	//update the screen to match
-	//TODO:
+	//if the ball has hit the paddle, negate vectorX so that
+	//the ball bounces back
+	if (state.ball.x - BALL_RADIUS <= PADDLE_X + PADDLE_WIDTH && 
+		state.ball.y >= state.paddle.y && 
+		state.ball.y <= state.paddle.y + PADDLE_HEIGHT) {
+		state.ball.vectorX *= -1;
+	}
+
+	//render the adjusted state
+	render(state);
 }
 
-//call advanceBall() every 16 milliseconds
-state.ballTimer = setInterval(advanceBall, 16);
+//call animate() every 16 milliseconds
+state.ballTimer = setInterval(animate, 16);
 ```
 
 The `setInterval()` function returns a timer object that you can use to [stop the timer](https://www.w3schools.com/jsref/met_win_clearinterval.asp) when the game ends. You can store this in a separate variable, or you can simply add it to your game state as a new property.
@@ -103,10 +175,10 @@ function adjustPaddle(eventObj) {
 	//adjust the paddle's y coordinate so that
 	//the middle of the paddle is at the same spot
 	//as the mouse pointer
-	state.paddle.y = eventObj.clientY - (state.paddle.height / 2);
+	state.paddle.y = eventObj.clientY - (PADDLE_HEIGHT / 2);
 
-	//update the screen to match
-	//TODO:
+	//render the adjusted state
+	render(state);
 }
 
 document.body.addEventListener("mousemove", adjustPaddle)
@@ -114,13 +186,7 @@ document.body.addEventListener("mousemove", adjustPaddle)
 
 These two event listeners are all you need. The first updates the state of the ball, and the second updates the state of the paddle. The first will be called on a regular basis to animate the ball, and the second will be called whenever the user moves the mouse.
 
-The only things left to do to make this game function are as follows:
-
-- Add code to render the game state to the page. You can either create an SVG `<circle>` element for the ball and an SVG `<rect>` element for the paddle, or you can draw shapes on a `<canvas>` element.
-- Update the position of your rendered SVG elements, or redraw the shapes on the `<canvas>`, during the event listener functions.
-- During `advanceBall()` detect if the ball has gone to the left of the paddle, and if so, end the game.
-
-Give it a try!
+The only thing left to add is the logic that checks whether the ball has gone behind the paddle. When that occurs, the game should end. Try adding that to create a complete Pong game!
 
 
 
