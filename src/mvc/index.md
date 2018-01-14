@@ -1,0 +1,1 @@
+In the [../eventarch](Event-Driven Architecture tutorial) I explained how highly-interactive applications use event listener functions to modify the application's state and re-render that to the screen. 
