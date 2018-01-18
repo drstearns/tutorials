@@ -79,7 +79,7 @@ All of this syntactical similarity might lull you into the feeling that JavaScri
 
 One of the first significant differences between JavaScript and other statically-typed languages like Java is that variables and function parameters in JavaScript are **dynamically typed**. When you declare a variable or function parameter, you don't specify the type of data that variable or parameter should hold. Instead, it can hold any type, and you can even switch the type of data it holds over its lifetime. Try running the following to illustrate this:
 
-<script src="//repl.it/embed/KxQ0/1.js"></script>
+<iframe height="800px" width="100%" src="https://repl.it/@drstearns/dynamically-typed-variables?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 To declare a variable, use the `let` keyword followed by the variable's name, and an optional initializing expression. If you omit the initializing expression, the variable is automatically initialized to the constant value `undefined`.
 
@@ -87,13 +87,13 @@ To declare a variable, use the `let` keyword followed by the variable's name, an
 
 If you've programmed in JavaScript before, or have read older tutorials, you might have seen the `var` keyword used instead of `let` when declaring variables. The `let` keyword is relatively new, and there's an important difference between the two: `let` is block-scoped, while `var` is not. The difference is best explained with a quick example. Let's start with `var`. what do you think this program will print to the console after it runs? Take a guess and then run the script to find out if you were right.
 
-<script src="//repl.it/embed/KxSg/2.js"></script>
+<iframe height="400px" width="100%" src="https://repl.it/@drstearns/var-is-not-block-scoped?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
-If you thought it would print `5`, you are probably used to block-scoped variables in Java. In JavaScript, a variable declared with `var` is actually function or global-scoped, not block-scoped. The variable `x` in the example above is not actually re-declared inside the `if` condition block. Instead, the variable declared on line 0 is simply reused and reassigned on line 2 and 3. After you exit the `if` condition block, the variable `x` still points to that reassigned value, which is why this program prints `2` instead of `5`.
+If you thought it would print `5`, you are probably used to block-scoped variables in Java. In JavaScript, a variable declared with `var` is actually function or global-scoped, not block-scoped. The variable `x` in the example above is not actually re-declared inside the `if` condition block. Instead, the variable declared on line 1 is simply reused and reassigned on line 3 and 4. After you exit the `if` condition block, the variable `x` still points to that reassigned value, which is why this program prints `2` instead of `5`.
 
 If you use `let` instead, the variable will become block-scoped, so the `let x = 1;` inside the `if` condition block will declare a _new_ variable that can be seen and used only within the `if` block. Outside the `if` block, the global `x` variable will be used instead. Try running this code, which is exactly the same, only using `let` instead of `var`:
 
-<script src="//repl.it/embed/KxSx/1.js"></script>
+<iframe height="400px" width="100%" src="https://repl.it/@drstearns/let-is-block-scoped?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 In general, you should use `let` instead of `var` unless you are writing code that must run in [Internet Explorer (IE) version 10 or earlier](http://caniuse.com/#feat=let). IE 11 and Edge both support the `let` keyword, and Microsoft no longer supports earlier versions of IE, but [a small percentage of desktops still run Windows XP with IE 8](https://www.netmarketshare.com/browser-market-share.aspx?qprid=2&qpcustomd=0). If you must support these browsers, you can use a "transpiler" like [Babel](https://babeljs.io/) to translate source code with the new `let` keyword into equivalent code that uses `var`, at least until those older browsers are no longer a concern.
 
@@ -113,15 +113,15 @@ Just like `let`, the `const` keyword [isn't support in IE 10 or earlier](http://
 
 JavaScript has traditionally been a very forgiving language. If you forgot to declare a variable before you referenced it, the interpreter would just automatically declare the variable for you and keep going. This seemed like a good feature for JavaScript's original target audience: web designers and self-taught programmers. But this behavior created some significant problems that the language creators didn't anticipate. For example, try running this code:
 
-<script src="//repl.it/embed/LDcR/2.js"></script>
+<iframe height="400px" width="100%" src="https://repl.it/@drstearns/non-strict-mode-errors?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
-Do you see the error? On line 3 we try to set the `firstName` variable, but we made a typo and referred to `fistName` instead. The JavaScript interpreter saw this and decided we meant to create a new variable named `fistName` and assign a value to it, so that's what it did. We then ask for the value of `firstName` and unexpectedly get `undefined`.
+Do you see the error? On line 4 we try to set the `firstName` variable, but we made a typo and referred to `fistName` instead. The JavaScript interpreter saw this and decided we meant to create a new variable named `fistName` and assign a value to it, so that's what it did. We then ask for the value of `firstName` and unexpectedly get `undefined`.
 
 The language creators eventually realized that this behavior was probably more of a pitfall than a benefit, but they couldn't change the behavior without potentially breaking old code that might have relied on automatic variable declarations. So they introduced "strict mode," which you can enable by adding `"use strict";` to the top of your script, or to the top of a particular function. Older interpreters will simply evaluate this as a string literal that you never assign to a variable, so it effectively gets ignored. But newer interpreters that implement strict mode interpret this as a signal to switch into strict mode. This [disables a number of the forgiving "features"](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode) in the original language specification, making it more reliable and predictable.
 
 For example, with strict mode enabled, that same code will generate a runtime error instead of silently creating an unexpected result. This error will help you as a developer discover your mistake right away.
 
-<script src="//repl.it/embed/LDcR/3.js"></script>
+<iframe height="500px" width="100%" src="https://repl.it/@drstearns/strict-mode?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 It is considered good practice to always use strict mode. Just add `"use strict";` at the top of each of your script files. If you end up using build tools that combine your script files with other scripts you get from the web, and you're concerned that they might not work when strict mode is enabled, you can wrap your code in a function and put `"use strict";` at the start of that function instead. This will enforce strict mode only within that function, and not elsewhere in the script file.
 
@@ -303,13 +303,13 @@ JavaScript sports the same set of [operators](https://www.w3schools.com/jsref/js
 
 In most languages, the compiler prohibits you from doing silly things like comparing a number to a string using the `==` operator, but in JavaScript, that's totally legal. For example this code will execute without error, and you might be a little surprised by the result:
 
-<script src="//repl.it/embed/LAfJ/1.js"></script>
+<iframe height="400px" width="100%" src="https://repl.it/@drstearns/equality-and-coercion?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 When JavaScript sees the `==` operator used with disparate types, it attempts to coerce one of the values to the type of the other value, according to some rules. In this case it converts the number `10` to the string `"10"` because that is a safe operation that will never fail (you can always convert a number to a string, but not all strings can be converted to numbers). It then compares `"10"` to `"10"` and finds them equal.
 
 Although this automatic type coercion can be handy at times, it's dangerous in general and can lead to subtle bugs. Therefore, JavaScript also has a more strict equality operator: `===`. This operator does not do automatic type coercion, and will evaluate to `false` if the two values are of different types. Try running this code, which is exactly the same except for the operator used:
 
-<script src="//repl.it/embed/LAfl/0.js"></script>
+<iframe height="400px" width="100%" src="https://repl.it/@drstearns/strict-equal-operator?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 In general, it's best practice to use `===` and `!==` wherever possible, but beware that since `null` and `undefined` are technically different data types, `null == undefined` but `null !== undefined`. If you want to test whether a value is something other than `null` or `undefined`, you might want to take advantage of JavaScript's "truthy" and "falsy" behavior.
 
@@ -317,7 +317,7 @@ In general, it's best practice to use `===` and `!==` wherever possible, but bew
 
 JavaScript does automatic type coercion when evaluating Boolean expressions as well, even when you don't use any operators. For example, the following code will run, but the result may surprise you:
 
-<script src="//repl.it/embed/Kx4V/6.js"></script>
+<iframe height="1000px" width="100%" src="https://repl.it/@drstearns/truthiness?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 When the JavaScript interpreter sees `if (x)`, it knows it has to evaluate `x` as a Boolean expression (something that returns either `true` or `false`). In most languages, this would result in a compile error because a bare string isn't a Boolean value. But in JavaScript the interpreter just coerces `x` to a Boolean value and evaluates it for the condition. So what Boolean value should an empty string coerce to? Why, `false` of course! And what about a non-empty string? Well, that should obviously be `true`! And what about the literal string `"false"`? Well that's not empty, so it coerces to the Boolean value `true`. Makes perfect sense, right?
 
@@ -501,7 +501,7 @@ By subtracting `n2` from `n1` we fulfill the rules of the sort comparison functi
 
 Now let's use it to sort an array of numbers:
 
-<script src="//repl.it/embed/LA4B/1.js"></script>
+<iframe height="800px" width="100%" src="https://repl.it/@drstearns/sort-example?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 When we call `nums.sort(compareNums)` we are passing a reference to our `compareNums` function to the `.sort()` method as a parameter. This allows the `.sort()` method to invoke our `compareNums` function as many times as it needs to in order to sort the numbers.
 
@@ -569,7 +569,7 @@ If you're paying attention, you might be wondering how the returned function can
 
 To use this `descending()` function, we invoke it, passing another comparison function, and pass the new returned function to `.sort()`. Run this to see it in action!
 
-<script src="//repl.it/embed/LDXl/1.js"></script>
+<iframe height="1000px" width="100%" src="https://repl.it/@drstearns/sort-descending-using-closure?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>
 
 The power of doing it this way is that we can now use `descending()` to do a descending sort with _any_ sort comparison function. For example, we could use this same `descending()` function with the `comparePlayersByRank()` function defined in the previous section to sort the array of player objects by the `ranking` property in descending order:
 
