@@ -402,7 +402,7 @@ To return a value from a function you use the `return` keyword followed by an ex
 
 ### Functions are Values
 
-So far functions probably seem very similar to methods in Java, but this where things will start to get really weird. In JavaScript, _functions are values_. That is to say, a function can be used anywhere you can use a value (primitive values, arrays, or objects). You can assign a function to a variable, or pass a function as a parameter to another function, or even set an object property to a function (which is how we do [object-oriented programming in JavaScript](../jsoop/)).
+So far functions probably seem very similar to methods in Java, but this where things will start to get really weird. In JavaScript, _functions are values_. That is to say, a function can be used anywhere you can use a value (primitive values, arrays, or objects). You can assign a function to a variable, or pass a function as a parameter to another function, or even set an object property to a function (which is how we do object-oriented programming in JavaScript).
 
 This might be a bit to take in, so let's start with something simple, though trivial. For example, we can assign our `greet()` function above to a variable, and then call that function using the variable instead of the function's name:
 
@@ -634,5 +634,5 @@ players.sort(descending(compareByNumericProp("ranking")));
 
 JavaScript might seem simple at first glance, but as you've seen in this tutorial, it can get quite complex in a hurry. Like all languages, fluency comes with practice and time. There is no short-cut. If you want to be proficient in JavaScript, you must practice. The [Practice-It](https://practiceit.cs.washington.edu/problem/list) system created by UW CSE now includes JavaScript problem sets, and the W3 Schools offers a [large set of practice exercises](https://www.w3resource.com/javascript-exercises/) you can use to hone your skills. If you're taking INFO 343 with us, you'll also get plenty of practice both in-class and during your weekly challenges!
 
-Once you have a good grasp on the basics of JavaScript, move on to the [Functional Programming in JavaScript](../jsfunctional/) and the [Object-Oriented Programming in JavaScript](../jsoop/) tutorials.
+Once you have a good grasp on the basics of JavaScript, move on to the [Functional Programming in JavaScript](../jsfunctional/) tutorial.
 
