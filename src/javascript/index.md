@@ -430,6 +430,15 @@ const greet = function(name) {
 }
 
 greet("Mary"); // => "Hello, Mary!"
+
+//set `x` to be the same as `greet`;
+//that is, `x` will point to the same
+//function as `greet` does
+let x = greet;
+
+//invoke the same function through
+//the `x` variable
+x("Mary"); // => "Hello, Mary!"
 ```
 
 All we did here was change the syntax around: instead of declaring a function with a name, we declare a constant with that name and set it equal to a function. The interpreter handles either of these syntaxes in exactly the same way.
