@@ -114,11 +114,11 @@ It should report that the working directory is clean and there is nothing to com
 
 If you are on a lab machine, or if you just installed git and haven't configured it yet, you now need to tell git who you are so that you can add and commit changes to a repository. **You only need to do this once on your own machine**, but since our lab machines reset each time you logout, you must do this each time on a lab machine.
 
-Enter these commands in your terminal/command window, replacing _your full name_ with your full name and _your-email-address_ with the email address you used when you signed up for GitHub:
+Enter these commands in your terminal/command window, replacing _your full name_ with your full name and _your-email-address-on-github_ with the email address you used when you signed up for GitHub:
 
 ```bash
 git config --global user.name "your full name"
-git config --global user.email your-email-address
+git config --global user.email your-email-address-on-github
 ```
 
 If you're doing this on an iSchool lab machine, don't worry—this personal information will be erased when you log out and reboot the lab machine.
