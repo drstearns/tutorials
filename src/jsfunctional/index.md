@@ -376,7 +376,7 @@ let nums = [1,2,3,4,5];
 nums.reduce(sum, 0); // => 15
 ```
 
-The `.reduce()` method takes two parameters: a function, known as a **reducer**, and a starting value, known as the **accumulator**. The `.reduce()` method calls the reducer once for each element in the array, passing the current value of the accumulator as the first parameter, and the current array element as the second parameter. It resets the accumulator to whatever the reducer function returns, an continues processing the next element in the array.
+The `.reduce()` method takes two parameters: a function, known as a **reducer**, and a starting value, known as the **accumulator**. The `.reduce()` method calls the reducer once for each element in the array, passing the current value of the accumulator as the first parameter, and the current array element as the second parameter. It resets the accumulator to whatever the reducer function returns, and continues processing the next element in the array.
 
 The body of `.reduce()` would look something like this:
 
