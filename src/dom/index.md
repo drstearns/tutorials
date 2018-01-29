@@ -104,7 +104,7 @@ If you want to get all attributes, or if you're not sure which attributes are av
 
 ### Getting/Setting the Value of an Input
 
-The [`<input>`](http://www.w3schools.com/tags/tag_input.asp) element is used for gather input from the user, but it is a self-closing tag, and thus doesn't have any content. The value the user types into the input is actually stored in a `value` property which you can get or set. This property is updated every time the user types into the input.
+The [`<input>`](http://www.w3schools.com/tags/tag_input.asp) element is used to gather input from the user, but it is a self-closing tag, and thus doesn't have any content. The value the user types into the input is actually stored in a `value` property which you can get or set. This property is updated every time the user types into the input.
 
 ```javascript
 //get a reference to the input with the class name `name-input`
