@@ -99,7 +99,7 @@ Now that we understand the scoping rules for environment variables, I can now ex
 
 ### MacOS and Linux
 
-Both MacOS (formerly OS X) and Linxu are based on Unix, and both use [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) as the default command-line shell. Bash has a handy feature where it will execute a script each time you open a new Terminal window, or whenver you sign-in to an account via the command-line (e.g., `ssh` or `su`). These scripts are simply text files containing commands you would have normally typed manually at the command-line, and bash will execute them silently before you even see a prompt.
+Both MacOS (formerly OS X) and Linux are based on Unix, and both use [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) as the default command-line shell. Bash has a handy feature where it will execute a script each time you open a new Terminal window, or whenever you sign-in to an account via the command-line (e.g., `ssh` or `su`). These scripts are simply text files containing commands you would have normally typed manually at the command-line, and bash will execute them silently before you even see a prompt.
 
 On MacOS, bash will run the script stored in the `.bash_profile` file in your home directory (`~/.bash_profile`) whenever you open a new Terminal window, or whenever you sign-in to an account via the command line. On Linux, bash will run the script in `~/.bashrc` when you open a new Terminal window, but will run the script in `~/.bash_profile` when you sign-in to an account at the command line.
 
@@ -146,7 +146,7 @@ If you are using the Git Bash command-line shell on windows, follow the instruct
 
 If you are running Windows 10 Anniversary Edition or later, you can alternatively use the new [native bash support](https://msdn.microsoft.com/en-us/commandline/wsl/about). Follow their [installation instructions](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) to enable this feature. Since this enables an Ubuntu Linux subsystem, you should then be able to create/edit a `~/.bashrc` file as described in the [Linux section](#secmacosandlinux) above.
 
-The other alternative on Windows is to run a Linux virutal machine, and share your source files with it so that you can continue to edit the files using your favorite graphical tools. [Vagrant](https://www.vagrantup.com/) and [Docker](https://www.docker.com/) are popular tools for doing this.
+The other alternative on Windows is to run a Linux virtual machine, and share your source files with it so that you can continue to edit the files using your favorite graphical tools. [Vagrant](https://www.vagrantup.com/) and [Docker](https://www.docker.com/) are popular tools for doing this.
 
 
 ## Unsetting Environment Variables
