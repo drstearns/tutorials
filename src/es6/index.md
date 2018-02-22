@@ -85,6 +85,26 @@ let n = next();
 
 This `export default` technique is commonly used in object-oriented frameworks like React, where each JavaScript module file contains the code for just one React component. The component's class or function declaration is marked as the default export, so that other modules can import it using the syntax `import MyComponent from "./MyComponent.js"`.
 
+### Importing Packages Installed to node_modules
+
+The `import` syntax can be used to import things from not only your own source files, but also modules you install using the Node Package Manager, `npm`. The [NPM Registry](https://www.npmjs.com/) contains a dizzying number of packages that were created and shared by other developers, and you can install any of them into your project using this command, replacing `package-name` with the name of the package you want:
+
+```bash
+npm install package-name
+```
+
+NPM will create a `nodule_modules` sub-directory within your project if one doesn't exist already, and then download the named package to a new sub-directory inside `node_modules`. If you created a `package.json` file using `npm init`, it will also add a line to the `dependencies` section to remember that your project depends on the installed package.
+
+Once installed, you can then import things from that package using the same `import` syntax, but with one slight change:
+
+```javascript
+//to import from a package in node_modules,
+//just use the package name in the `from` clause
+import someExportedIdentifier from "package-name";
+```
+
+Instead of using a path in the `from` clause that starts with a `./`, use just the package name. If the module loader sees a path that starts with a `./` or `../`, it will look for another source file at that relative path. But if the module loader sees just a name with no leading `./` or `../`, it will assume that you are referring to a package within the `node_modules` sub-directory, and load the module from there.
+
 ## Classes
 
 JavaScript supported object-oriented programming from the beginning, but the syntax for defining something akin to a class, and calling superclass methods, was cumbersome and error-prone. ES6 defines a new `class` syntax with a `super` keyword that is very reminiscent of other OOP languages like Java:
