@@ -15,7 +15,7 @@ Building web servers from scratch requires a good code editor that is optimized 
 
 - [Visual Studio Code](https://code.visualstudio.com/): A free, cross-platform integrative development environment (IDE) from Microsoft that is nicely optimized for web development. It's remarkably good, and comes with just about everything you'd want pre-installed. Interestingly, it's actually a web application: the entire thing is built using HTML, CSS, and JavaScript, yet it still feels very snappy.
 - [Sublime Text](http://www.sublimetext.com/): A very fast cross-platform code editor that sells for $70 ([no student discounts](https://www.sublimetext.com/sales_faq), but you can register the license on many machines). It ships with less features than VSCode, but it can be easily extended using the [Package Control](https://packagecontrol.io/) add-in. It's written in C++ so it is much snappier than VSCode and does a better job with large files.
-- [JetBrains WebStorm](https://www.jetbrains.com/webstorm/) or [Gogland](https://www.jetbrains.com/go/): An incredibly powerful IDE optimized for web and Go development respectively, from the same people who develop IntelliJ IDEA. They charge a yearly subscription fee, but you can get a [free license while you are a student](https://www.jetbrains.com/student/). It's implemented in Java, so it takes a little while to start, and can sometimes feel more sluggish than Sublime or VSCode.
+- [JetBrains GoLand](https://www.jetbrains.com/go/): An incredibly powerful IDE optimized for Go development, from the same people who develop IntelliJ IDEA. They charge a yearly subscription fee, but you can get a [free license while you are a student](https://www.jetbrains.com/student/). It's implemented in Java, so it's a little slow to start, and can sometimes feel more sluggish than Sublime or VSCode.
 
 ## Standards-Compliant Web Browser with Developer Tools
 
@@ -43,11 +43,10 @@ Mac and Windows users should install the Docker CE Desktop App for their respect
 
 - [Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
 - [Windows 10 Professional or Enterprise](https://store.docker.com/editions/community/docker-ce-desktop-windows)
-- [Windows 10 Home](https://www.docker.com/products/docker-toolbox)
+
+> *Windows 10 Home Edition Users:* please [upgrade to at least the Professional edition](https://itconnect.uw.edu/wares/uware/microsoft/). The Home edition does not include a native hypervisor, so the current versions of Docker won't run on it. There is an older "Docker Toolbox" that you can use, but it requires installing a Virtual Machine Manager (VirtualBox) and a full Linux VM. It also causes a lot of headaches and is won't be supported in the future. 
 
 These desktop apps install a minimal Linux VM for the Docker daemon process, and use your OSs native hypervisor to run it. You communicate with the daemon process using the command line tools, which run on your host OS, and can be used from your normal terminal application.
-
-Note that Windows 10 **Home edition** doesn't include a native hypervisor, so you have to install the older Docker Toolbox on that platform. The Docker Toolbox installs an open-source, software-based virtual machine manager named [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and uses that to run the minimal Linux VM for the Docker daemon process. The Docker Toolbox is already labeled as "legacy" so support for it may be discontinued in the near future.
 
 Linux users should follow the [install instructions](https://docs.docker.com/engine/installation/#server) for their respective distro.
 
