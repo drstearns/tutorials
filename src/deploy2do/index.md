@@ -1,6 +1,6 @@
 Now that you know how to [build your own Docker containers](../docker/), it's now time to learn how you can deploy those to a VM running in the cloud. This tutorial describes how to deploy to DigitalOcean, which is a cloud hosting service that offers reasonable pricing, a clean and easy-to-use UI, superb tutorials, and a powerful API.
 
-DigitalOcean offers only a few core services, so it's much simpler than Amazon Web Services (AWS). Their core service is virtual machines, which they call "droplets" (a droplet in the vast digital ocean...get it?). They also offer load balancers and general file storage, but that's about it. Although they have a limited number of services, those services are relatively cheap: their entry-level droplets, which have 512MB of RAM and 20 GB of SSD storage, are only $5/month.
+DigitalOcean offers only a few core services, so it's much simpler than Amazon Web Services (AWS). Their core service is virtual machines, which they call "droplets" (a droplet in the vast digital ocean...get it?). They also offer load balancers and general file storage, but that's about it. Although they have a limited number of services, those services are relatively cheap: their entry-level droplets are only $5/month.
 
 If you don't already have a DigitalOcean account, [sign-up for one](https://cloud.digitalocean.com/registrations/new) before proceeding. If you are taking INFO 344, contact your TA for a promo code that you can use to get enough credit to cover the costs related to the assignments.
 
@@ -82,9 +82,7 @@ DigitalOcean has several pre-built images you can use for these droplets, includ
 
 You can of course choose any base Linux distro and install Docker yourself, but this one-click app a convenient way to get up-and-running quickly.
 
-After selecting the image, the next section of the page lets you choose the size of your VM. It will default to selecting the $20/month VM, so make sure you select the cheapest one instead for this tutorial.
-
-<p><img src="img/sizes.png" alt="list of sizes with cheapest option selected" class="screenshot"></p>
+After selecting the image, the next section of the page lets you choose the size of your VM. It will default to selecting the $20/month VM, so **make sure you select the cheapest one instead for this tutorial**.
 
 You don't need any additional block storage, so you can skip the next section. The following section lets you choose which data center you want your VM to run in. You should choose a data center that is geographically close to your target users and/or yourself. Although the Web often feels instantaneous, geography still matters: a few hundred milliseconds of extra latency can become noticeable if your application makes a lot of requests.
 
