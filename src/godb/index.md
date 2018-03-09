@@ -72,7 +72,7 @@ Relational databases are very similar to each other, and it's not uncommon for a
 To install the [MySQL diver for Go](https://github.com/go-sql-driver/mysql) on your system, use this command:
 
 ```bash
-go get github.com/go-sql-driver/mysql
+go get -u github.com/go-sql-driver/mysql
 ```
 
 If it worked, you won't see any output: no news is good news!
@@ -124,7 +124,9 @@ To run this program, execute this at the command line:
 go run main.go
 ```
 
-The `_ "github.com/go-sql-driver/mysql"` import line might look strange, but it is essentially importing the MySQL driver without creating a local name for the package in our code. Since we will be using only the common functions and structs in the `database/sql` package, we will never need to call the MySQL driver directly. As you might have noticed in your own code, Go requires that you actually use all variables you declare, and package names are just like variables. If you import a package but never use anything from it, the Go compiler will generate an error, and the `goimports` tool will simply remove the import. But if we don't import the package, its code won't be in our built executable, which will cause an error at runtime. To import a package that you never call, you can assign the blank identifier (`_`) to the imported package. This ensures the package gets into your built executable, but avoids the compile error you'd normally get from not calling any functions within that package. This is similar to how we use the blank identifier when ignoring one of the returned values from a function call.
+The `_ "github.com/go-sql-driver/mysql"` import line might look strange, but it is essentially importing the MySQL driver without creating a local name for the package in our code. Since we will be using only the common functions and structs in the `database/sql` package, we will never need to call the MySQL driver directly. As you might have noticed in your own code, Go requires that you actually _use_ all variables you declare, and package names are just like variables. If you import a package but never use anything from it, the Go compiler will generate an error, and the `goimports` tool will simply remove the import. But if we don't import the package, its code won't be in our built executable, which will cause an error at runtime. 
+
+To import a package that you never call, you can assign the blank identifier (`_`) to the imported package. This ensures the package gets into your built executable, but avoids the compile error you'd normally get from not calling any functions within that package. This is similar to how we use the blank identifier when ignoring one of the returned values from a function call.
 
 The code in `main()` starts by creating a **data source name** string, the [format](https://github.com/go-sql-driver/mysql#dsn-data-source-name) of which is defined by the MySQL driver package. Here we tell it to connect as the `root` user, supplying the value of the `MYSQL_ROOT_PASSWORD` environment variable as the password. We also specify that we want to connect to the server via TCP/IP at the address `127.0.0.1:3306`. The final `/demo` specifies the database name you want to use after connecting to the server. Here we ask for the database named "demo", which is the name we used in the `MYSQL_DATABASE` environment variable when we started the server.
 
@@ -134,26 +136,20 @@ Since new connections are only made as needed, the last bit of code here just pi
 
 ### Bootstrapping the Database Schema
 
-The MySQL database container starts clean with only the basic system tables, so you need to create whatever schema your app needs. You can do this from your Go program by executing `create table` queries:
+The MySQL database container starts clean with only the basic system tables, so you need to create whatever schema your app needs. The best way to do that is to build your own Docker container image, based on the MySQL image, adding a schema creation script. The MySQL container will execute any `.sql` scripts you put into the `/docker-entrypoint-initdb.d/` directory within the container when the container instance starts.
 
-```go
-//create a new table in the database named "contacts"
-//with columns for an auto-incremented ID, email
-//first name, last name, etc.
-q := `create table if not exists contacts (
+To try this, create a file named `schema.sql` in your project directory, and add this SQL statement to it:
+
+```sql
+create table if not exists contacts (
 	id int not null auto_increment primary key,
 	email varchar(128) not null,
 	first_name varchar(64) not null,
 	last_name varchar(128) not null
-)`
-if _, err := db.Exec(q); err != nil {
-	fmt.Printf("error creating table: %v\n", err)
-}
+);
 ```
 
-Executing `create table` statements from your Go program works works, but it quickly becomes awkward as your schema gets larger and more complex. A better alternative is to build your own Docker container image, based on the MySQL image, adding a schema creation script. The MySQL container will execute any `.sql` scripts you put into the `/docker-entrypoint-initdb.d/` directory within the container when the container instance starts.
-
-To try this, put the `create table` SQL above into a file named `schema.sql` and then create this Dockerfile:
+Then create this Dockerfile to build a new container image that automatically executes this script when it is started:
 
 ```docker
 FROM mysql
@@ -166,7 +162,7 @@ Then build the new image, giving it a name that starts with your Docker Hub user
 docker build -t your-dockerhub-name/mysqldemo .
 ```
 
-To run an instance of this new container image, use all of the same flags as above, but replace the `mysql` container image name with `your-dockerhub-name/mysqldemo`. Remember to stop and remove the existing container you ran earlier before running this new one. You can also remove the `create table` query from your Go code, as the table will be created as your customized container spins up.
+To run an instance of this new container image, use all of the same flags as above, but replace the `mysql` container image name with `your-dockerhub-name/mysqldemo`. Remember to stop and remove the existing container you ran earlier before running this new one.
 
 For more details, see the "Initializing a fresh instance" section of the [MySQL Docker container documentation](https://hub.docker.com/_/mysql/).
 
