@@ -191,6 +191,8 @@ if err != nil {
 
 The `.Exec()` method returns a [sql.Result](https://golang.org/pkg/database/sql/#Result) object, which exposes a `.LastInsertId()` method to get the newly-assigned primary key value for an inserted row. When we created the table above, we added the [auto_increment](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html) option to the `id` column, which tells MySQL to automatically assign a unique integer to that column in newly-inserted rows. Since the server assigns this value, your code typically needs to ask for it after insertion so that you can insert other related rows, or return the new primary key value to your web client.
 
+> **NOTE:** The PostgreSQL driver for go doesn't support the `.lastInsertId()` method, so with that driver you have to use an `INSERT...RETURNING` SQL statement and execute it using the `db.Query()` method instead. For more details, see the [PostgreSQL driver documentation](https://godoc.org/github.com/lib/pq#hdr-Queries).
+
 ### Guarding Against SQL Injection Attacks
 
 Many of the SQL statements you will execute from your web server will include values posted to your server by the web client. The first rule of web security is **assume all requests are hostile**, and the second related rule is **never trust data posted to your web server**. Many amateur developers simply concatenate posted values into their SQL statements, which creates a [SQL injection](https://www.owasp.org/index.php/SQL_Injection) vulnerability. For example **you should never do this**:
