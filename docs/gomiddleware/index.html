@@ -77,7 +77,7 @@ go run main.go</code></pre><p>Once the server is running, you can open <a href="
     <span class="token comment" spellcheck="true">//...existing code...</span>
 
     <span class="token comment" spellcheck="true">//wrap entire mux with logger and response header middleware</span>
-    wrappedMux <span class="token operator">:=</span> <span class="token function">NewResponseHeader</span><span class="token punctuation">(</span><span class="token function">NewLogger</span><span class="token punctuation">(</span>mux<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"X-My-Header"</span><span class="token punctuation">,</span> <span class="token string">"my header value"</span><span class="token punctuation">)</span>
+    wrappedMux <span class="token operator">:=</span> <span class="token function">NewLogger</span><span class="token punctuation">(</span><span class="token function">NewResponseHeader</span><span class="token punctuation">(</span>mux<span class="token punctuation">,</span> <span class="token string">"X-My-Header"</span><span class="token punctuation">,</span> <span class="token string">"my header value"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 
     log<span class="token punctuation">.</span><span class="token function">Printf</span><span class="token punctuation">(</span><span class="token string">"server is listening at %s"</span><span class="token punctuation">,</span> addr<span class="token punctuation">)</span>
     <span class="token comment" spellcheck="true">//use wrappedMux instead of mux as root handler</span>

@@ -127,7 +127,7 @@ func main() {
 	//...existing code...
 
 	//wrap entire mux with logger and response header middleware
-	wrappedMux := NewResponseHeader(NewLogger(mux), "X-My-Header", "my header value")
+	wrappedMux := NewLogger(NewResponseHeader(mux, "X-My-Header", "my header value"))
 
 	log.Printf("server is listening at %s", addr)
 	//use wrappedMux instead of mux as root handler
