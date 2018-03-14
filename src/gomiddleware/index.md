@@ -95,35 +95,29 @@ Now restart your web server and re-request your APIs. Because we wrapped the ent
 
 ## Chaining Middleware
 
-Because every middleware constructor both accepts and returns an `http.Handler`, you can chain multiple middleware handlers together. For example, say we also want to add CORS support to all of the handlers added to that mux. We would first create a CORS middleware handler.
+Because every middleware constructor both accepts and returns an `http.Handler`, you can chain multiple middleware handlers together. For example, say we also want to add a header to all responses written by all of the handlers added to that mux. We would first create another middleware handler.
 
 ```go
-//CORS is a middleware handler that adds CORS support
-type CORS struct {
+//ResponseHeader is a middleware handler that adds a header to the response
+type ResponseHeader struct {
 	handler http.Handler
+	headerName string
+	headerValue string
 }
 
-//ServeHTTP handles the request by adding the CORS headers
-//and calling the real handler if the method is something other
-//then OPTIONS (used for pre-flight requests)
-func (c *CORS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	//set the various CORS response headers depending on
-	//what you want your server to allow
-	w.Header().Add("Access-Control-Allow-Origin", "*")
-	//...more CORS response headers...
-
-	//if this is preflight request, the method will
-	//be OPTIONS, so call the real handler only if
-	//the method is something else
-	if r.Method != "OPTIONS" {
-		c.handler.ServeHTTP(w, r)
-	}
+//NewResponseHeader constructs a new ResponseHeader middleware handler
+func NewResponseHeader(handlerToWrap http.Handler, headerName string, headerValue string) *ResponseHeader {
+	return &CORS{handlerToWrap, headerName, headerValue}
 }
 
-//NewCORS constructs a new CORS middleware handler
-func NewCORS(handlerToWrap http.Handler) *CORS {
-	return &CORS{handlerToWrap}
+//ServeHTTP handles the request by adding the response header
+func (rh *ResponseHeader) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//add the header
+	w.Header().Add(rh.headerName, rh.headerValue)
+	//call the wrapped handler
+	rh.handler.ServeHTTP(w, r)
 }
+
 ```
 
 To use this and the logger middleware handler at the same time, just wrap one around the other:
@@ -132,8 +126,8 @@ To use this and the logger middleware handler at the same time, just wrap one ar
 func main() {
 	//...existing code...
 
-	//wrap entire mux with logger and CORS middleware
-	wrappedMux := NewCORS(NewLogger(mux))
+	//wrap entire mux with logger and response header middleware
+	wrappedMux := NewResponseHeader(NewLogger(mux), "X-My-Header", "my header value")
 
 	log.Printf("server is listening at %s", addr)
 	//use wrappedMux instead of mux as root handler
