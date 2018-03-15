@@ -106,11 +106,7 @@ To use this package in our project, we need to import it. Add the package's impo
 
 ```go
 import (
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"strings"
+	//...existing imports...
 
 	"golang.org/x/net/html"
 )
@@ -139,31 +135,63 @@ for {
 	//if it's an error token, we either reached
 	//the end of the file, or the HTML was malformed
 	if tokenType == html.ErrorToken {
+		err := tokenizer.Err()
+		if err == io.EOF {
+			//end of the file, break out of the loop
+			break
+		}
+		//otherwise, there was an error tokenizing,
+		//which likely means the HTML was malformed.
+		//since this is a simple command-line utility,
+		//we can just use log.Fatalf() to report the error
+		//and exit the process with a non-zero status code
 		log.Fatalf("error tokenizing HTML: %v", tokenizer.Err())
 	}
 
-	//if this is a start tag token...
-	if tokenType == html.StartTagToken {
-		//get the token
-		token := tokenizer.Token()
-		//if the name of the element is "title"
-		if "title" == token.Data {
-			//the next token should be the page title
-			tokenType = tokenizer.Next()
-			//just make sure it's actually a text token
-			if tokenType == html.TextToken {
-				//report the page title and break out of the loop
-				fmt.Println(tokenizer.Token().Data)
-				break
-			}
+	//process the token according to the token type...
+}
+```
+
+The `tokenType` returned from `tokenizer.Next()` will be one of their [token type constants](https://godoc.org/golang.org/x/net/html#TokenType). Here we check if it's an error token, and deal with the error. Error tokens occur either because we reached the end of the input stream, or because there was a true error tokenizing the HTML. If the former case, we just break out of the loop, but in the latter case we need to report the error and exit. Since this is just a simple command-line utility, we can use `log.Fatalf()` to do that. In a web server or other long-running process, you should report the error in some other way and continue running.
+
+If the token was not an error token, the type will be one of the following:
+
+- `html.StartTagToken`: a start tag such as `<title>`
+- `html.EndTagToken`: an end tag such as `</title>`
+- `html.SelfClosingTagToken`: a self-closing tag such as `<img ... />`
+- `html.TextToken`: text content within a tag
+- `html.CommentToken`: an HTML comment such as `<!-- comment -->`
+- `html.DoctypeToken`: an document type declaration such as `<!DOCTYPE html>`
+
+Since we are after the contents of the `<title>` token, we need to look for an `html.StartTagToken`, and in this case we can safely ignore the other types.
+
+
+```go
+
+//...existing looping and
+//error-checking code from above...
+
+//if this is a start tag token...
+if tokenType == html.StartTagToken {
+	//get the token
+	token := tokenizer.Token()
+	//if the name of the element is "title"
+	if "title" == token.Data {
+		//the next token should be the page title
+		tokenType = tokenizer.Next()
+		//just make sure it's actually a text token
+		if tokenType == html.TextToken {
+			//report the page title and break out of the loop
+			fmt.Println(tokenizer.Token().Data)
+			break
 		}
 	}
 }
 ```
 
-The `tokenType` returned from `tokenizer.Next()` will be one of their [token type constants](https://godoc.org/golang.org/x/net/html#TokenType). Here we check if it's a start-tag token, and if so, we then get the full Token struct. For all other token types, we don't even bother getting the full token, thereby saving memory allocations and processor cycles for initialization.
+The `tokenizer.Token()` method constructs and returns a [populated `html.Token` struct](https://godoc.org/golang.org/x/net/html#Token) with information about the token. For a start-tag token, the `.Data` field contains the name of the tag. Tag names are already converted to lowercase by the tokenizer, so we can simply compare it against `"title"`. If it is the title element, we can then read the next token, which should be the element's text content. 
 
-The token will have the tag name in its `.Data` field. Tag names are already converted to lowercase, so we can simply compare it against `"title"`. If it is the title element, we can then read the next token, which should be the element's text content. That's what we are after, so as soon as we get it, we print it and break out of the loop. Since this is the last code in the `main()` function, our program then exits.
+Since the page title is the _only_ thing we are after, we can break out of the loop as soon as we get it. If you need to continue processing other tags, don't break, but in this case we can since the title is all we need. Since this is the last code in the `main()` function, our program exits after we break out of the loop.
 
 ## Refactor the Code
 
