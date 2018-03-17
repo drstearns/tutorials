@@ -1,12 +1,12 @@
 Now that you know how to [build your own Docker containers](../docker/), it's now time to learn how you can deploy those to a VM running in the cloud. This tutorial describes how to deploy to DigitalOcean, which is a cloud hosting service that offers reasonable pricing, a clean and easy-to-use UI, superb tutorials, and a powerful API.
 
-DigitalOcean offers only a few core services, so it's much simpler than Amazon Web Services (AWS). Their core service is virtual machines, which they call "droplets" (a droplet in the vast digital ocean...get it?). They also offer load balancers and general file storage, but that's about it. Although they have a limited number of services, those services are relatively cheap: their entry-level droplets are only $5/month.
+DigitalOcean offers only a few core services, so it's much simpler than Amazon Web Services (AWS). Their primary service is virtual machines, which they call "droplets" (a droplet in the vast digital ocean...get it?). They also offer load balancers and general blob storage, but that's about it. Although they have a limited number of services, those services are relatively cheap: their entry-level droplets are only $5/month.
 
 If you don't already have a DigitalOcean account, [sign-up for one](https://cloud.digitalocean.com/registrations/new) before proceeding. If you are taking INFO 344, contact your TA for a promo code that you can use to get enough credit to cover the costs related to the assignments.
 
 ## Generating and Registering SSH Keys
 
-When you create a VM in any cloud infrastructure, you need a way to connect to it via `ssh` as the root user so that you can perform administrative tasks. SSH stands for "secure shell," and to be secure it needs to authenticate you. SSH can do that in one of two ways: you can supply the root user's password (not recommended); or you create and setup SSH keys (recommended).
+When you create a VM in any cloud infrastructure, you need a way to connect to it via `ssh` as a user with administrator privileges so that you can perform administrative tasks. SSH stands for "secure shell," and to be secure, it needs to authenticate you and encrypt communications between your development machine and the server. SSH can do that in one of two ways: you can supply the root user's password (not recommended); or you create and setup SSH keys (recommended).
 
 SSH keys are private/public key pairs, similar to the ones used in [TLS](../https/). You can generate this key pair on your development machine, and add the public key to any new droplet you create. When you connect, the `ssh` command uses your private key (which remains on your development machine only) to encrypt a message, and the droplet uses your public key to verify that message. Since you should be the only person in possession of your private key, it knows that you are you, and the authentication succeeds.
 
@@ -20,7 +20,7 @@ ls ~/.ssh
 
 If you see files named `id_rsa` and `id_rsa.pub`, you already have a key pair and you can skip to the next section.
 
-If you get a "no such file or directory" error, you don't have a key pair generated yet, so use this command to generate one:
+If you get a "no such file or directory" error, or if you don't see any files listed, you don't have a key pair generated yet. Use this command to generate one:
 
 ```bash
 ssh-keygen -t rsa
@@ -28,7 +28,7 @@ ssh-keygen -t rsa
 
 You will be prompted as to whether you want to add a passphrase to the private key. This is an added security measure you may want to use, but beware that you'll have to type this passphrase every time you use the key. Enter the passphrase, or just hit return to use no passphrase.
 
-You'll see some output telling you where the new "identification" (private key) and public key files were saved, as well as something that looks a bit like a QR code. Now we need to register the public key with our DigitalOcean account.
+You'll see some output telling you where the new "identification" (private key) and public key files were saved. Now we need to register the public key with our DigitalOcean account.
 
 ### Register your Public Key
 
@@ -66,7 +66,7 @@ sudo apt-get install -y xclip
 cat ~/.ssh/id_rsa.pub | xclip -selection c
 ```
 
-After you paste in the contents of the file, enter a name in the second box that describes the computer you are currently using (e.g., "Laptop" or "Home PC"). Since the private key will remain on this computer only, you should use something that identifies this particular computer.
+After you paste the contents of the file, enter a name in the second box that describes the computer you are currently using (e.g., "Laptop" or "Home PC"). Since the private key will remain on this computer only, you should use something that identifies this particular computer.
 
 You can add multiple SSH keys to your account, one for each computer you use. When you create a droplet, you can add all of the registered public keys to the new droplet, so that you can connect to it from any of your computers.
 
@@ -102,15 +102,17 @@ ssh root@ip-address
 
 You may see a message that the host is not yet in your known hosts list, and you can enter `yes` to add it to that list. You should then see a new prompt, which is a new bash shell running on your new droplet. You can now type commands as if you were directly connected to that droplet. Everything you type will be sent to the server and executed there.
 
+> **NOTE:** if the ssh connection times out, give it a minute and try again. Sometimes it takes a minute for the ssh server on a brand-new droplet to be ready for new connections.
+
 ## Verifying the Firewall
 
-The firewall should be enabled by default, but to verify this, enter this command:
+The firewall should be enabled by default, but to verify, enter this command:
 
 ```bash
 ufw status
 ```
 
-If it reports a status of "active" you are good to go. If it reports that the firewall is not enabled, you can enable it using these commands:
+The `ufw` command is short for "uncomplicated firewall," and the `status` subcommand displays the firewall's current status. If it reports a status of "active" you are good to go. If it reports that the firewall is not enabled, you can enable it using these commands:
 
 ```bash
 ufw allow OpenSSH
@@ -121,13 +123,56 @@ Use `ufw status` one more time to ensure that the firewall is now active.
 
 ## Running Your Docker Containers
 
-Docker should already be pre-installed, so to run any Docker container, simply use the `docker run` command that was discussed in the [Docker tutorial](../docker/). For example, to run your example web site container image you built during that tutorial, use this command
+Docker should already be pre-installed, so to run any Docker container, simply use the `docker run` command that was discussed in the [Docker tutorial](../docker/). For example, to run your example web site container image you built during that tutorial, use this command, replacing "your-dockerhub-name" with your Docker Hub name:
 
 ```bash
 docker run -d -p 80:80 --name exsite your-dockerhub-name/examplewebsite
 ```
 
 Docker will automatically open any published ports on the firewall, so your website should now be live on the Web. You can test it by requesting the URL `http://ip-address` where `ip-address` is the IP address of your droplet.
+
+## Executing Scripts on Your Droplet
+
+Running a single Docker container is easily done using the steps above, but when you need to run multiple containers, providing lots of command-line flags, it's better practice to put those `docker run` commands into a bash script that can you run on your droplet. This script can also include the necessary `docker pull` and `docker rm -f` commands to upgrade and run new versions of your containers.
+
+You can keep this bash script in your source code repository, yet run it on your droplet using `ssh`. For example, say you had a script named `upgrade-server.sh` that look something like this:
+
+```bash
+# pull most current version of example web site container image
+docker pull your-dockerhub-name/examplewebsite
+
+# stop and remove current container instance
+docker rm -f exsite 
+
+# run instance of newly-updated container image
+docker run -d -p 80:80 --name exsite your-dockerhub-name/examplewebsite
+```
+
+These commands need to be executed on the server, not on our local dev machine. We could copy this script file to the server, `ssh` into the server, and then execute the script. Or we could just ask `ssh` to run this script on the server in one operation:
+
+```bash
+ssh root@$ip-address 'bash -s' < upgrade-server.sh
+```
+
+The first part of this `ssh` command will look familiar, but what follows the user name and network address is a command you want to run on the server once `ssh` is connected. That command is `bash -s`, which runs an instance of the bash shell, telling it to execute the script it receives from standard input. The `< upgrade-server.sh` part redirects standard input to read the contents of the `upgrade-server.sh` file, so `bash` will execute everything in that file on the server.
+
+When executing `ssh` this way, you don't get an interactive terminal on the server. Instead it connects to your server, executes the command, and then disconnects, returning you to the command prompt on your local machine.
+
+To do a full deployment, you can write another script called `deploy.sh` that combines the `ssh` command above with a `docker push`:
+
+```bash
+# push the most recent container image we've built to Docker Hub
+docker push your-dockerhub-name/examplewebsite
+
+# execute the upgrade-server.sh script on our server
+# the -oStrictHostKeyChecking=no skips the prompt
+# about adding the host to the list of known hosts
+# so that this script doesn't get interrupted if the
+# server's IP/hostname is new to us
+ssh -oStrictHostKeyChecking=no root@$ip-address 'bash -s' < upgrade-server.sh
+```
+
+
 
 ## Associating a Domain Name
 
@@ -168,19 +213,20 @@ To create a new droplet from the Docker on Ubuntu image, you can use a command l
 ```bash
 doctl compute droplet create my-droplet-name \
 --image docker-16-04 \
---region nyc1 \
---size 512mb \
---ssh-keys ...ssh key fingerprint... \
+--region sfo2 \
+--size s-1vcpu-1gb \
+--ssh-keys ... ssh key fingerprint from: doctl compute ssh-key list ... \
 --wait
 ```
 
+
 The best documentation for this CLI is actually in the tool itself. Use `doctl help` to list all of the available subcommands, and if you want help with any particular subcommand, add the subcommand name after `doctl help` (for example, `doctl help compute`). You can keep going to see options for final commands: for example `doctl help compute droplet create`.
 
-Using this tool, you can easily write bash scripts to create droplets and manage domains. To run a script on a newly-created droplet, you can either use the `--user-data` flag when creating the droplet, or you can invoke the script after the droplet is running using `ssh` (replace `ip-address` with your droplet's IP address):
+Using this tool, you can easily write bash scripts to create droplets and manage domains.
 
-```bash
-ssh -oStrictHostKeyChecking=no root@$ip-address 'bash -s' < script-to-run-on-droplet.sh
-```
+## Declare it Using Terraform
 
-The `-oStrictHostKeyChecking=no` flag skips the part where ssh prompts you to add a new host to the list of known hosts. When scripting, you don't want programs prompting you for input.
+Another popular option for automating the creation of VMs is [Hashicorp's Terraform](https://www.terraform.io/). This tool allows you to declare what sort of cloud resources you want, and it handles detecting which already exist and which need to be created. It also works with multiple cloud providers (DigitalOcean, AWS, Google Cloud, etc). See their [Getting Started Guide](https://www.terraform.io/intro/index.html) to learn more.
+
+
 
