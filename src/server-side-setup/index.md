@@ -44,7 +44,7 @@ Mac and Windows users should install the Docker CE Desktop App for their respect
 - [Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
 - [Windows 10 Professional or Enterprise](https://store.docker.com/editions/community/docker-ce-desktop-windows)
 
-> *Windows 10 Home Edition Users:* please [upgrade to at least the Professional edition](https://itconnect.uw.edu/wares/uware/microsoft/). The Home edition does not include a native hypervisor, so the current versions of Docker won't run on it. There is an older "Docker Toolbox" that you can use, but it requires installing a Virtual Machine Manager (VirtualBox) and a full Linux VM. It also causes a lot of headaches and is won't be supported in the future. 
+> *Windows 10 Home Edition Users:* please [upgrade to at least the Professional edition](https://ischool.uw.edu/microsoftimagine). The Home edition does not include a native hypervisor, so the current versions of Docker won't run on it. There is an older "Docker Toolbox" that you can use, but it requires installing a Virtual Machine Manager (VirtualBox) and a full Linux VM. It also causes a lot of headaches and is won't be supported in the future. 
 
 These desktop apps install a minimal Linux VM for the Docker daemon process, and use your OSs native hypervisor to run it. You communicate with the daemon process using the command line tools, which run on your host OS, and can be used from your normal terminal application.
 
