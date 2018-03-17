@@ -135,7 +135,7 @@ Docker will automatically open any published ports on the firewall, so your webs
 
 Running a single Docker container is easily done using the steps above, but when you need to run multiple containers, providing lots of command-line flags, it's better practice to put those `docker run` commands into a bash script that can you run on your droplet. This script can also include the necessary `docker pull` and `docker rm -f` commands to upgrade and run new versions of your containers.
 
-You can keep this bash script in your source code repository, yet run it on your droplet using `ssh`. For example, say you had a script named `upgrade-server.sh` that look something like this:
+You can keep this bash script in your source code repository, yet run it on your droplet using `ssh`. For example, say you had a script named `upgrade-server.sh` that looks something like this:
 
 ```bash
 # pull most current version of example web site container image
@@ -156,12 +156,12 @@ ssh root@$ip-address 'bash -s' < upgrade-server.sh
 
 The first part of this `ssh` command will look familiar, but what follows the user name and network address is a command you want to run on the server once `ssh` is connected. That command is `bash -s`, which runs an instance of the bash shell, telling it to execute the script it receives from standard input. The `< upgrade-server.sh` part redirects standard input to read the contents of the `upgrade-server.sh` file, so `bash` will execute everything in that file on the server.
 
-When executing `ssh` this way, you don't get an interactive terminal on the server. Instead it connects to your server, executes the command, and then disconnects, returning you to the command prompt on your local machine.
+When executing `ssh` this way, you don't get an interactive terminal on the server. Instead it connects to your server, executes the script, and disconnects, returning you to the command prompt on your local machine.
 
 To do a full deployment, you can write another script called `deploy.sh` that combines the `ssh` command above with a `docker push`:
 
 ```bash
-# push the most recent container image we've built to Docker Hub
+# push the most recently-built container image to Docker Hub
 docker push your-dockerhub-name/examplewebsite
 
 # execute the upgrade-server.sh script on our server
