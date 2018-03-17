@@ -53,7 +53,7 @@ You can obtain a domain name from any domain registrar. My current favorite is [
 
 Once you have your domain name, you can [host that domain name with DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-host-name-with-digitalocean), pointing it at one of your running droplets. You can also define new sub-domains that point to different droplets: this enables you to have `example.com` point to a droplet that hosts your web client, while `api.example.com` points to a different droplet running your API server. If you ever need to scale out, you can point `api.example.com` to a [load balancer](https://www.digitalocean.com/community/tutorials/how-to-create-your-first-digitalocean-load-balancer) instead that distributes the requests amongst a group of droplets, each running a copy of your API server.
 
-### Run the Let's Encrypt Command
+### Run the Let's Encrypt Command on Ubuntu 16.04
 
 After you register and host your domain name, you need to `ssh` in to your droplets and run the `letsencrypt` command. This command will start a web server listening on ports 80 and 443, so you need to open those ports on the firewall. To do that, use these commands while connected to your droplet via `ssh`:
 
@@ -65,19 +65,19 @@ sudo ufw allow 443
 After the ports are open, you can run the `letsencrypt` command. DigitalOcean used to include this command in the "Docker x.x.x-ce on Ubuntu 16.04" One-Click app image, but they seem to have removed it in more recent versions. You can verify whether it's already installed by trying to execute `letsencrypt -h`. If you get an error saying that the command is not found or is not yet installed, you can install it easily using this command:
 
 ```bash
-apt update && apt install -y letsencrypt
+sudo apt update && apt install -y letsencrypt
 ```
 
-Then run the command like this, replacing `your-domain.com` with your domain name:
+Then run the command like this, replacing `your-host-name.com` with the server's host name (e.g., `example.com` or `api.example.com`):
 
 ```bash
-sudo letsencrypt certonly --standalone -d your-domain.com
+sudo letsencrypt certonly --standalone -d your-host-name.com
 ```
 
-The command will prompt you for an email address (for expiry notifications) and to accept their terms of service. After you do that, it will start its own web server and communicate with the central Let's Encrypt servers. It will ensure that the domain name you passed as the `-d` flag is pointing to the current server, after which it writes your server's cert and private key to the following files (replace `your-domain.com` with the name of your domain):
+The command will prompt you for an email address (for expiry notifications) and to accept their terms of service. After you do that, it will start its own web server and communicate with the central Let's Encrypt servers. It will ensure that the domain name you passed as the `-d` flag is pointing to the current server, after which it writes your server's cert and private key to the following files (replace `your-host-name.com` with your server's host name):
 
-- `/etc/letsencrypt/live/your-domain.com/fullchain.pem` : your server's certificate, along with all the other intermediate and root CA certs.
-- `/etc/letsencrypt/live/your-domain.com/privkey.pem` : your server's private key.
+- `/etc/letsencrypt/live/your-host-name.com/fullchain.pem` : your server's certificate, along with all the other intermediate and root CA certs.
+- `/etc/letsencrypt/live/your-host-name.com/privkey.pem` : your server's private key.
 
 Note that these files are actually symbolic links to files in the `/etc/letsencrypt/archive` directory. This will matter when we start trying to read them using a Docker mapped volume. More details in the sections that follow.
 
@@ -87,8 +87,46 @@ Note that these files are actually symbolic links to files in the `/etc/letsencr
 >	-n 								# non-interative mode
 >	--agree-tos 					# agree to TOS
 >	--email your-email-address 		# provide email address
->	-d your-domain.com 				# domain name
+>	-d your-host-name.com 			# host name
 > ```
+
+### Run Let's Encrypt on Amazon Linux 2
+
+If you are using an Amazon Linux 2 instance on AWS, the Let's Encrypt utility is named `certbot` instead. Installing this utility requires a few more commands than on Ubuntu 16.04, but it's fairly straightforward. Connect to your VM using `ssh` and then execute these commands:
+
+```bash
+# download the extra packages list for enterprise linux 7
+sudo wget -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
+# install the extra packages list
+sudo rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
+# enable the extra packages list
+sudo yum-config-manager --enable epel*
+# install the certbot package
+sudo yum install -y certbot
+```
+
+Before you run the `certbot` command, ensure that your VM's security group is configured to allow incoming connections on ports 80 and 443. Then  run the `certbot` command in standalone mode, providing your server's host name (e.g., `example.com` or `api.example.com`) in the `-d` flag:
+
+```bash
+sudo certbot certonly --standalone -d your-host-name.com
+```
+
+The command will prompt you for an email address (for expiry notifications) and to accept their terms of service. After you do that, it will start its own web server and communicate with the central Let's Encrypt servers. It will ensure that the domain name you passed as the `-d` flag is pointing to the current server, after which it writes your server's cert and private key to the following files (replace `your-host-name.com` with your server's host name):
+
+- `/etc/letsencrypt/live/your-host-name.com/fullchain.pem` : your server's certificate, along with all the other intermediate and root CA certs.
+- `/etc/letsencrypt/live/your-host-name.com/privkey.pem` : your server's private key.
+
+Note that these files are actually symbolic links to files in the `/etc/letsencrypt/archive` directory. This will matter when we start trying to read them using a Docker mapped volume. More details in the sections that follow.
+
+> **Pro Tip:** if you want to script the certbot command, you can agree to the terms of service and supply your email address via command-line flags. Use this command, replacing `your-email-address` with your email address:
+> ```bash
+> sudo certbot certonly --standalone 
+>	-n 								# non-interative mode
+>	--agree-tos 					# agree to TOS
+>	--email your-email-address 		# provide email address
+>	-d your-host-name.com 			# host name
+> ```
+
 
 ### Renewing Certs
 
@@ -98,12 +136,14 @@ Let's Encrypt certs are valid for only 90 days at a time. This is one of the way
 letsencrypt renew
 ```
 
+On Amazon Linux 2, use `certbot renew` instead.
+
 It should only take a few seconds, after which it should print a message confirming the renewal. If you're using Docker to run your web server, you can limit your downtime with a simple bash script like this:
 
 ```bash
 # temporarily stop your Docker container
 docker stop container-id-or-name
-# renew your cert
+# renew your cert (use 'certbot renew' on Amazon linux)
 letsencrypt renew
 # restart the stopped container
 docker start container-id-or-name
@@ -141,11 +181,11 @@ func main() {
 
 With this code, your Go server will only support HTTPS requests, not HTTP requests. This is actually a good idea, as the API server will be called only by client-side code, and not by end-users typing URLs in the browser. Client-side code can ensure that the API URLs start with `https://`, and this ensures that all communication is always encrypted.
 
-If you run this Go server within a Docker container, you must give the container access to the directory containing the Let's Encrypt cert and key. Remember that Docker containers are entirely isolated from the host operating system, including its file system, so you must mount the let's encrypt directory into a mounted volume within the container. You also need to set these new `TLSCERT` and `TLSKEY` environment variables as you run the container. The command would look like this (replace `your-domain.com` with your domain name):
+If you run this Go server within a Docker container, you must give the container access to the directory containing the Let's Encrypt cert and key. Remember that Docker containers are entirely isolated from the host operating system, including its file system, so you must mount the let's encrypt directory into a mounted volume within the container. You also need to set these new `TLSCERT` and `TLSKEY` environment variables as you run the container. The command would look like this (replace `your-host-name.com` with your host name):
 
 ```bash
-export TLSCERT=/etc/letsencrypt/live/your-domain.com/fullchain.pem
-export TLSKEY=/etc/letsencrypt/live/your-domain.com/privkey.pem
+export TLSCERT=/etc/letsencrypt/live/your-host-name.com/fullchain.pem
+export TLSKEY=/etc/letsencrypt/live/your-host-name.com/privkey.pem
 
 docker run -d \                            #run as detached process
 --name 344gateway \                        #name for container instance
@@ -156,7 +196,7 @@ docker run -d \                            #run as detached process
 your-dockerhub-name/your-container-name    #name of container image
 ```
 
-Note that we are mounting the `/etc/letsencrypt` directory as opposed to the `/etc/letsencrypt/live/your-domain.com/` directory, because the files in that latter directory are just symlinks to files in the `/etc/letsencrypt/archive/` directory. If we mount the more specific sub-directory, your Docker container won't be able to follow the symlinks, and thus won't be able to load the files.
+Note that we are mounting the `/etc/letsencrypt` directory as opposed to the `/etc/letsencrypt/live/your-host-name.com/` directory, because the files in that latter directory are just symlinks to files in the `/etc/letsencrypt/archive/` directory. If we mount the more specific sub-directory, your Docker container won't be able to follow the symlinks, and thus won't be able to load the files.
 
 
 ## Supporting HTTPS in NGINX
@@ -173,20 +213,20 @@ docker rm -f tmp-nginx
 
 This spins-up a new NGINX container, copies the `/etc/nginx/conf.d/default.conf` inside the container to the current directory on your machine, and stops/removes the container.
 
-Open the `default.conf` file and notice that it contains one `server {}` configuration block for HTTP. You need to modify it so that it looks like this, replacing `your-domain.com` with your domain name:
+Open the `default.conf` file and notice that it contains one `server {}` configuration block for HTTP. You need to modify it so that it looks like this, replacing `your-host-name.com` with your host name:
 
 ```
 server {
     listen       80;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    server_name your-domain.com; #REPLACE `your-domain.com` with your domain name!
+    server_name your-host-name.com; #REPLACE `your-host-name.com` with your host name!
     return 301 https://$server_name$request_uri;
 }
 
 server {
     listen       443 ssl;
-    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/your-host-name.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-host-name.com/privkey.pem;
 
     # ...rest of default configuration...
 }
