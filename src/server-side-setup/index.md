@@ -50,6 +50,12 @@ These desktop apps install a minimal Linux VM for the Docker daemon process, and
 
 Linux users should follow the [install instructions](https://docs.docker.com/engine/installation/#server) for their respective distro.
 
+To verify that your installation is working, run the following command in your terminal. It should download Docker's `hello-world:latest` container image and run it, which prints a confirmation message to your terminal:
+
+```bash
+docker run --rm hello-world
+```
+
 ## Postman
 
 When testing an API that uses HTTP methods other than GET, it's often helpful to have a tool that will let you do that interactively. [Postman](https://www.getpostman.com/) is ideal for that job. Install the full application (not the browser extension), and [get to know what it can do for you](https://www.getpostman.com/docs/).
