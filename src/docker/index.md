@@ -43,12 +43,11 @@ To build or run containers, you first need to install Docker on your machine. Li
 Mac and Windows users should install the Docker CE Desktop App for their respective platform:
 
 - [Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
-- [Windows 10 Professional or Enterprise](https://store.docker.com/editions/community/docker-ce-desktop-windows)
-- [Windows 10 Home](https://www.docker.com/products/docker-toolbox)
+- [Windows 10 Professional, Education, or Enterprise](https://store.docker.com/editions/community/docker-ce-desktop-windows)
 
 These desktop apps install a minimal Linux VM for the Docker daemon process, and use your OSs native hypervisor to run it. You communicate with the daemon process using the command line tools, which run on your host OS, and can be used from your normal terminal application.
 
-Note that Windows 10 **Home edition** doesn't include a native hypervisor, so you have to install the older Docker Toolbox on that platform. The Docker Toolbox installs an open-source, software-based virtual machine manager named [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and uses that to run the minimal Linux VM for the Docker daemon process. The Docker Toolbox is already labeled as "legacy" so support for it may be discontinued in the near future.
+Note that Windows 10 **Home edition** doesn't include a native hypervisor, so it can't run the Docker App for Windows. If you are running Windows Home edition, you can [upgrade to the Education edition for free while you are a student](https://ischool.uw.edu/microsoftimagine).
 
 ## Running Containers
 
