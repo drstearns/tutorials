@@ -95,5 +95,40 @@ ssh ec2-user@your-public-dns
 This connects to the VM using the user account `ec2-user`. This account has `sudo` permissions, so you will be able to install new software and do administrative tasks.
 
 
+## Install Docker
 
+Amazon Linux 2 doesn't have Docker pre-installed, so after you have connected to your VM using `ssh`, run these commands to install Docker:
+
+```bash
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+```
+
+That last command adds the `ec2-user` account (which you are using) to the `docker` user group so that you don't have to use `sudo` when running further Docker commands. But note that **group memberships are cached and not updated until you exit your `ssh` session and reconnect.** So execute the `exit` command to disconnect your `ssh` session, and then re-connect using the same `ssh` command you used above.
+
+## Edit Your Security Group
+
+By default, the firewall on your new EC2 instance will only allow `ssh` connections. If you want to run a web server on this VM, you need to edit the security group to allow incoming requests to ports 80 (HTTP) and/or 443 (HTTPS).
+
+In your browser, select the **Instances** link on the left of the EC2 dashboard. Select your instance from the list, and then find the link to this instance's security group in the **Description** tab below the list of instances. It should look something like this:
+
+<img class="screenshot" src="img/ec2-sec-group.png" alt="screenshot showing security group link"/>
+
+In this screen shot, the security group is named `launch-wizard-1`. Click that link to view the security group's rules.
+
+Switch to the **Inbound** tab to view the inbound security rules, which at this point will only allow SSH connections. Choose the **Edit** button to edit the rules. In the dialog box, choose the **Add Rule** button to add a rule and select **HTTP** or **HTTPS** from the drop down list, depending on which sort of connection you want to allow. You can also add multiple rules if you want to enable both HTTP and HTTPS connections. Choose **Save** to save your changes.
+
+<img class="screenshot" src="img/ec2-add-rules.png" alt="screenshot showing adding new rules to security group"/>
+
+## Run Containers
+
+At this point your VM is now ready to run Docker containers that listen on ports 80 or 443. Use the standard `docker run` commands to pull and run your containers. Remember to use the `-p` flag to publish ports from the host into the container so that HTTP[S] requests received by your VM will be forwarded into the running container.
+
+## Further Options
+
+If you want to associate a custom domain name with your EC2 instance, see the [Routing Traffic to an EC2 Instance](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-ec2-instance.html) guide on AWS.
+
+If you need to get a TLS certificate and key for your server, see the [Running Let's Encrypt on Amazon Linux 2 section](http://127.0.0.1:8080/https/#secrunletsencryptonamazonlinux2) in my HTTPS tutorial.
 
