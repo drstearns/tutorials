@@ -12,7 +12,7 @@ If you are a student, also sign up for [AWS Educate](https://aws.amazon.com/educ
 
 When you create a VM in any cloud infrastructure, you need a way to connect to it via `ssh` as a user with administrator privileges so that you can perform administrative tasks. SSH stands for "secure shell," and to be secure, it needs to authenticate you and encrypt communications between your development machine and the server. SSH can do that in one of two ways: you can supply the root user's password (not recommended); or you create and setup SSH keys (recommended).
 
-SSH keys are private/public key pairs, similar to the ones used in [TLS](../https/). You can generate this key pair on your development machine, and add the public key to any new VM you create. When you connect, the `ssh` command uses your private key (which remains on your development machine only) to encrypt a message, and the droplet uses your public key to verify that message. Since you should be the only person in possession of your private key, it knows that you are you, and the authentication succeeds.
+SSH keys are private/public key pairs, similar to the ones used in [TLS](../https/). You can generate this key pair on your development machine, and add the public key to any new VM you create. When you connect, the `ssh` command uses your private key (which remains on your development machine only) to encrypt a message, and the VM uses your public key to verify that message. Since you should be the only person in possession of your private key, it knows that you are you, and the authentication succeeds.
 
 ### Generate a Key Pair
 
@@ -34,7 +34,7 @@ By default, the new private key will be written to `~/.ssh/id_rsa` and the assoc
 
 You will also be prompted as to whether you want to add a passphrase to the private key. This is an added security measure you may want to use, but beware that you'll have to type this passphrase every time you use the key. Enter the passphrase, or just hit return to use no passphrase.
 
-You'll see some output telling you where the new "identification" (private key) and public key files were saved. Now we need to register the public key with our DigitalOcean account.
+You'll see some output telling you where the new "identification" (private key) and public key files were saved. Now we need to register the public key with the EC2 service.
 
 ## Register your Public Key with AWS EC2
 
@@ -82,7 +82,7 @@ Select the key pair you registered earlier. AWS will install the public key from
 
 After selecting your key pair, launch your instance. This will create a new Amazon Linux 2 VM, and you should be able to see it starting up in your list of EC2 instances.
 
-Once your instance is running and ready for an SSH connection, click on the instance in the list and find the **Public DNS (IPv4)** name for your new CM. It should be a sub-domain of `compute.amazonaws.com` (for example, `ec2-nn-nn-nn-nn.us-west-2.compute.amazonaws.com`. Copy this value to the clipboard.
+Once your instance is running and ready for an SSH connection, click on the instance in the list and find the **Public DNS (IPv4)** name for your new VM. It should be a sub-domain of `compute.amazonaws.com` (for example, `ec2-nn-nn-nn-nn.us-west-2.compute.amazonaws.com`. Copy this value to the clipboard.
 
 <img class="screenshot" src="img/ec2-pub-dns.png" alt="public DNS screenshot"/>
 
