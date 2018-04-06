@@ -8,9 +8,9 @@ If you do it right, your test code will actually be longer than your feature cod
 
 An automated test is just another program that calls your feature code, passing various kinds of inputs, and testing the outputs to ensure they are what you expect them to be. These programs should test both valid and invalid inputs, and if possible, trigger unusual error conditions to ensure that the feature code handles them properly. 
 
-Ideally, your tests should invoke every line of your feature code at some point. The percentage of lines invoked is known as your **code coverage**, and it should be as high as possible. In some cases you can achieve 100%, but in others there will be code paths that are run only when very unexpected errors occur that your tests can't fabricate.
+Ideally, your tests should invoke every line of your feature code at some point. The percentage of lines invoked is known as your **code coverage**, and it should be as high as possible. In many cases you can achieve 100%, but in some cases there will be code paths that are run only when very unexpected errors occur that your tests can't fabricate.
 
-You can write automated tests in any language, but some languages offer specialized tools or environments for writing and running these tests. For example, Go defines a way to write automated tests that are automatically excluded from your compiled executable, but can be run at development time using their `go test` tool. This tool also provides [code coverage analysis](https://blog.golang.org/cover), showing you exactly which lines were exercised by your tests, and which were not. In the Node.js ecosystem, the [mocha.js](https://mochajs.org/) framework is often used to run tests.
+You can write automated tests in any language, but some languages offer specialized tools or environments for writing and running these tests. For example, Go defines a way to write automated tests that are automatically excluded from your compiled executable, but can be run at development time using their `go test` tool. This tool also provides [code coverage analysis](https://blog.golang.org/cover), showing you exactly which lines were exercised by your tests, and which were not.
 
 ## Levels of Testing
 
