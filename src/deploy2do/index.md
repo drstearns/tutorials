@@ -172,9 +172,11 @@ docker push your-dockerhub-name/examplewebsite
 ssh -oStrictHostKeyChecking=no root@$ip-address 'bash -s' < upgrade-server.sh
 ```
 
-> **Windows Users:** keep in mind that Windows and Unix-based systems (such as Linux) use different byte sequences for line endings in text files, so any Bash script you run on a Linux server via `ssh` **must be saved using Unix-style line endings**. On Windows each line in a text file typically ends with the byte sequence `0x0D 0x0A`, which is Carriage Return (CR) followed by Line Feed (LF), often expressed in code as `\r\n`. On Unix each line ends with just `0x0A` (LF or `\n`). If you try to execute a bash script that has Windows-style line endings on a Linux server via `ssh`, the Bash shell won't interpret the line endings correctly, and will get all kinds of really strange errors.
+> **Windows Users:** keep in mind that Windows and Unix-based systems (such as Linux) use different byte sequences for line endings in text files, so any Bash script you run on a Linux server via `ssh` **must be saved using Unix-style line endings**. On Windows each line in a text file typically ends with the byte sequence `0x0D 0x0A`, which is Carriage Return (CR) followed by Line Feed (LF), often expressed in code as `\r\n`. On Unix each line ends with just `0x0A` (LF or `\n`). If you try to execute a bash script that has Windows-style line endings on a Linux server via `ssh`, the Bash shell on the Linux side won't interpret the line endings correctly, and will generate all kinds of really strange errors.
 
 > Thankfully, all code editors will let you override the default line endings used for a given file, so you can tell your editor to use only LF for bash scripts you intend to run on your Linux server. In Visual Studio Code, click on the `CRLF` text in the blue status bar at the bottom of the window, choose `LF` from the popup list shown at the top of the window, and save the file to convert the line endings. Editors should recognize the line endings used for a given file when you load it, and preserve those line endings when re-saving.
+
+> Note that this applies only to scripts that you want to execute _on a Linux server_. Any Bash script you intend to execute locally on your Windows development machine can have Windows-style line endings.
 
 
 ## Associating a Domain Name
