@@ -108,8 +108,8 @@ func main() {
 	pwd := "my secret password"
 	iterations := 300000
 
-	//generate a salt value using the crypto/rand package
-	salt := make([]byte, 0, 8)
+	//generate an 8-byte salt value using the crypto/rand package
+	salt := make([]byte, 8)
 	_, err := rand.Read(salt)
 	if err != nil {
 		fmt.Printf("error generating salt: %v\n", err)
