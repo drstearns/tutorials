@@ -1,6 +1,6 @@
 Web-based information systems need to store and manage large amounts of data, so they typically enlist the help of a persistent database management system (DBMS). These are separate server processes that manage the data and indexes on disk, while supporting simultaneous access by multiple clients.
 
-This tutorial assumes you've already taken [a relational DBMS course](https://www.washington.edu/students/crscat/info.html#info340) and already know the basics of the Structured Query Language (SQL). I will show you how to interact with a relational DBMS (RDBMS) from Go, and how to avoid SQL injection attacks.
+This tutorial assumes you've already taken [a relational DBMS course](https://www.washington.edu/students/crscat/info.html#info330) and already know the basics of the Structured Query Language (SQL). I will show you how to interact with a relational DBMS (RDBMS) from Go, and how to avoid SQL injection attacks.
 
 I will also show you how to interact with the distributed document-oriented DBMS MongoDB. As opposed to a relational database that stores data in flat tables with columns, MongoDB stores full JSON documents that can have arbitrary schema, nested objects, arrays, etc. This flexibility is handy for many types of information systems, but it does come with a few trade-offs that I will discuss in more detail below.
 
