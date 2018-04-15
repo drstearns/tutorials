@@ -107,7 +107,7 @@ type ResponseHeader struct {
 
 //NewResponseHeader constructs a new ResponseHeader middleware handler
 func NewResponseHeader(handlerToWrap http.Handler, headerName string, headerValue string) *ResponseHeader {
-	return &CORS{handlerToWrap, headerName, headerValue}
+	return &ResponseHeader{handlerToWrap, headerName, headerValue}
 }
 
 //ServeHTTP handles the request by adding the response header
