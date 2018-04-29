@@ -60,9 +60,9 @@ At this point you can see how this structure sets us up for very fast retrieval 
 - let current node = root node
 - for each letter in the prefix
 	- find the child node of current node associated with that letter
-	- if there is no child associated with that letter, no keys start with the prefix, so return and empty list
+	- if there is no child associated with that letter, no keys start with the prefix, so return an empty/nil list
 	- set current node = child node
-- child node now points to the branch containing all keys that start with the prefix; recurse down the branch, gathering the keys and values, and return them
+- current node now points to the branch containing all keys that start with the prefix; recurse down the branch, gathering the keys and values, and return them
 
 The important thing to note here is that finding the start of the branch containing all keys and values takes at most _len(prefix)_ lookups, _regardless of how many entries there are in the trie_. The retrieval complexity depends on the length of the key prefix, not the number of entries in the trie, so the retrieval performance remains about the same as we add more entries. Compare that with a binary search tree, which requires at most _log(n)_ comparisons to find the first matching key, where _n_ is the number of _entries_ in the tree.
 
