@@ -8,7 +8,7 @@ There are a few different ways to accomplish this, but they all use some sort of
 
 ![request/response flow showing session token](img/token-flow.png)
 
-Since the token is passed back and forth between the client and server, invalid or modified tokens must be easily detectable by the server and rejected. And in most cases, the tokens should expire after some period of inactivity so that sessions time-out if the user navigates away without signing-out.
+Since the token is passed back and forth between the client and server, and since that token grants authenticated access, all communication between the client and the server must be done over an encrypted HTTPS connection. Since clients could try to generate new tokens, or potentially change previously-issued tokens, invalid or modified tokens must be easily detectable by the server and rejected. And in most cases, the tokens should expire after some period of inactivity so that sessions time-out if the user navigates away without signing-out.
 
 > **NOTE:** Before we dive into the details of how we accomplish all of this, I should stress that HTTP was never designed to support stateful sessions. All of the techniques described in the following sections are essentially hacks that developers have created to enable something the protocol was never really designed to do. So if some of this seems unreasonably complicated, that's why.
 
