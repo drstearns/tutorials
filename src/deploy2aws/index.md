@@ -130,5 +130,5 @@ At this point your VM is now ready to run Docker containers that listen on ports
 
 If you want to associate a custom domain name with your EC2 instance, see the [Routing Traffic to an EC2 Instance](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-ec2-instance.html) guide on AWS.
 
-If you need to get a TLS certificate and key for your server, see the [Running Let's Encrypt on Amazon Linux 2 section](http://127.0.0.1:8080/https/#secrunletsencryptonamazonlinux2) in my HTTPS tutorial.
+If you need to get a TLS certificate and key for your server, see the [Running Let's Encrypt on Amazon Linux 2 section](../https/#secrunletsencryptonamazonlinux2) in my HTTPS tutorial.
 
