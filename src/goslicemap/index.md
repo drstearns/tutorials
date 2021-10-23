@@ -111,7 +111,7 @@ type SharedLink struct {
 func main() {
 	//create an instance of SharedLink,
 	//setting only the PageURL field.
-	//the PageURL field remains nil
+	//the Keywords field remains nil
 	sl := &SharedLink{
 		PageURL: "https://ischool.uw.edu",
 	}
