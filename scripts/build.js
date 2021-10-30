@@ -154,7 +154,7 @@ function processTutorial(srcPath, destPath) {
         }
 
         //default author
-        meta.author = meta.author || {name: "Dave Stearns", url: "https://ischool.uw.edu/people/faculty/dlsinfo"};
+        meta.author = meta.author || {name: "Dave Stearns", url: "https://www.linkedin.com/in/david-stearns-09a27319"};
 
         //set last edited time
         meta.lastEdited = moment(fs.statSync(srcTutorial).mtimeMs).format("ll");
